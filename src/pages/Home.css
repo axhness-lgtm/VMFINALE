@@ -1,0 +1,271 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300&family=DM+Mono:wght@300;400&family=Inter:wght@100;300;400&display=swap');
+
+:root {
+  --home-bg: #0d0804;
+  --home-accent: #e45a0b;
+  --home-text: #E6E1D8;
+}
+
+.home-page {
+  background-color: var(--home-bg);
+  color: var(--home-text);
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ── NOISE OVERLAY ── */
+.grain-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.06;
+}
+
+/* ── HERO SECTION ── */
+.hero-3d-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.canvas-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.hero-overlay-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  pointer-events: none;
+}
+
+.hero-est {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.4em;
+  opacity: 0.4;
+  margin-bottom: 2rem;
+  display: block;
+}
+
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(3rem, 10vw, 6rem);
+  letter-spacing: 0.02em;
+  margin: 0;
+  line-height: 1;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.hero-title span {
+  display: inline-block;
+}
+
+.hero-subtitle {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: lowercase;
+  opacity: 0.6;
+  margin-top: 1.5rem;
+  display: block;
+}
+
+/* ── CUSTOM CURSOR ── */
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--home-accent);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10000;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s, background 0.3s;
+}
+
+.custom-cursor.hover {
+  width: 60px;
+  height: 60px;
+  background: rgba(228, 90, 11, 0.2);
+  border: none;
+}
+
+/* ── SCROLL INDICATOR ── */
+.scroll-indicator-wrap {
+  position: absolute;
+  bottom: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.scroll-line {
+  width: 1px;
+  height: 0;
+  background: var(--home-accent);
+  margin-bottom: 1rem;
+}
+
+.scroll-text {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.5;
+}
+
+/* ── AUDIO TOGGLE ── */
+.audio-toggle {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  z-index: 100;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.audio-icon {
+  width: 20px;
+  height: 20px;
+  stroke: var(--home-text);
+  opacity: 0.4;
+  transition: opacity 0.3s;
+}
+
+.audio-toggle:hover .audio-icon {
+  opacity: 1;
+}
+
+/* ── SECTION 02: THE IDEA ── */
+.idea-section {
+  position: relative;
+  width: 100%;
+  background-color: #efe9e1;
+  color: #0d0804;
+  display: flex;
+  min-height: 300vh; /* Long scroll for the 3 states */
+}
+
+/* Torn Paper Edge */
+.idea-section::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background-color: #efe9e1;
+  mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1000 40" xmlns="http://www.w3.org/2000/svg"><path d="M0 40 L0 20 L20 10 L40 25 L60 15 L80 30 L100 10 L120 20 L140 5 L160 15 L180 25 L200 10 L220 20 L240 5 L260 15 L280 25 L300 10 L320 20 L340 5 L360 15 L380 25 L400 10 L420 20 L440 5 L460 15 L480 25 L500 10 L520 20 L540 5 L560 15 L580 25 L600 10 L620 20 L640 5 L660 15 L680 25 L700 10 L720 20 L740 5 L760 15 L780 25 L800 10 L820 20 L840 5 L860 15 L880 25 L900 10 L920 20 L940 5 L960 15 L980 25 L1000 10 L1000 40 Z" fill="black"/></svg>');
+  mask-size: cover;
+  z-index: 10;
+}
+
+.idea-sticky-wrap {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+.idea-text-column {
+  width: 60%;
+  height: 100%;
+  padding: 10vw 5vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px);
+  background-size: 100% 48px; /* Ruled lines */
+}
+
+.idea-canvas-column {
+  width: 40%;
+  height: 100%;
+  position: relative;
+}
+
+.idea-canvas-container {
+  width: 100%;
+  height: 100%;
+}
+
+.truth-line {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(2rem, 5vw, 52px);
+  line-height: 1.2;
+  margin: 1.5rem 0;
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.truth-line.visible {
+  clip-path: inset(0 0 0 0);
+}
+
+.truth-line.highlight {
+  color: var(--home-accent);
+}
+
+.idea-footer-line {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 4rem;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.idea-footer-line.visible {
+  opacity: 0.6;
+}
+
+@media (max-width: 768px) {
+  .idea-section {
+    min-height: auto;
+  }
+  .idea-sticky-wrap {
+    flex-direction: column;
+    height: auto;
+    position: relative;
+  }
+  .idea-text-column, .idea-canvas-column {
+    width: 100%;
+    height: auto;
+    min-height: 50vh;
+  }
+}
