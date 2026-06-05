@@ -1,0 +1,272 @@
+/* YinYangLedger.css */
+
+.yin-yang-ledger {
+  position: relative;
+  width: 100%;
+  height: auto;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+  background-color: #efe9e1;
+}
+
+/* Top Half (The Archive) */
+.ledger-top-half {
+  background-color: #002fa7; /* Solid Ink Blue */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 40px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.ledger-title {
+  font-family: var(--font-serif);
+  font-size: clamp(3rem, 9vw, 10.5rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 0.9;
+  text-transform: uppercase;
+  margin: 0;
+  text-align: center;
+  /* Hollowed out Cream line-art font */
+  color: transparent;
+  -webkit-text-stroke: 2px #efe9e1;
+}
+
+/* Bottom Half (The Interface) */
+.ledger-bottom-half {
+  background-color: #efe9e1; /* Solid Archival Cream */
+  border-top: 2px solid #002fa7; /* Sharp 2px Blue rule line */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 40px;
+  position: relative;
+  box-sizing: border-box;
+  transition: background-color 0.3s ease;
+}
+
+/* Hovering over bottom half lights up the background slightly or shows focus */
+.ledger-bottom-half:hover {
+  background-color: #f7f3ed;
+}
+
+/* Marquee Ribbons (Sandwiched exactly between the two halves) */
+.marquee-ribbon-sandwich {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  pointer-events: none; /* Let hovers pass through to bottom half */
+  box-shadow: 0px 8px 30px rgba(0, 47, 167, 0.2);
+}
+
+.marquee-ribbon {
+  width: 100%;
+  height: 38px;
+  display: flex;
+  overflow: hidden;
+  white-space: nowrap;
+  border-top: 1px solid #efe9e1;
+  border-bottom: 1px solid #efe9e1;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  box-sizing: border-box;
+  background-color: #002fa7;
+  color: #efe9e1;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Force all ribbons to blue color scheme */
+.ribbon-1, .ribbon-2, .ribbon-3 {
+  background-color: #002fa7 !important;
+  color: #efe9e1 !important;
+  border-color: #efe9e1 !important;
+}
+
+/* Marquee Track and Animations */
+.marquee-track {
+  display: flex;
+  width: max-content;
+}
+
+.marquee-text-content {
+  padding-right: 20px;
+}
+
+.ribbon-1 .marquee-track {
+  animation: marquee-left 25s linear infinite;
+}
+
+.ribbon-2 .marquee-track {
+  animation: marquee-right 20s linear infinite;
+}
+
+.ribbon-3 .marquee-track {
+  animation: marquee-left 28s linear infinite;
+}
+
+/* Freeze States on Hover (When parent has .is-hovered) */
+.yin-yang-ledger.is-hovered .marquee-track {
+  animation-play-state: paused !important; /* Freeze immediately */
+}
+
+/* Terminal Feed Container */
+.terminal-feed-container {
+  width: 100%;
+  max-width: 860px;
+  background-color: #efe9e1; /* Beige card background */
+  border: 2px solid #002fa7;
+  box-shadow: 12px 12px 0px 0px #002fa7; /* Brutalist Blue shadow */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.terminal-feed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  border-bottom: 2px solid #002fa7;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 900;
+  color: #002fa7;
+  background-color: #efe9e1;
+}
+
+.header-right {
+  display: flex;
+  gap: 32px;
+}
+
+.terminal-feed-body {
+  padding: 24px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #002fa7;
+  background-color: #efe9e1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-sizing: border-box;
+}
+
+.terminal-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.terminal-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: #002fa7;
+  white-space: nowrap;
+}
+
+.terminal-table th {
+  font-weight: bold;
+  padding-bottom: 14px;
+  color: rgba(0, 47, 167, 0.7);
+}
+
+.terminal-table td {
+  padding: 5px 0;
+  font-weight: bold;
+}
+
+/* Columns spacing/alignment */
+.terminal-table th:nth-child(1), .terminal-table td:nth-child(1) { width: 14%; }
+.terminal-table th:nth-child(2), .terminal-table td:nth-child(2) { width: 16%; }
+.terminal-table th:nth-child(3), .terminal-table td:nth-child(3) { width: 38%; }
+.terminal-table th:nth-child(4), .terminal-table td:nth-child(4) { width: 16%; }
+.terminal-table th:nth-child(5), .terminal-table td:nth-child(5) { width: 16%; }
+
+.terminal-prompt {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #002fa7;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.cursor-block {
+  animation: cursor-blink-block 0.8s step-end infinite;
+  margin-left: 2px;
+}
+
+/* Marquee Animation Keyframes */
+@keyframes marquee-left {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes marquee-right {
+  0% { transform: translate3d(-50%, 0, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes cursor-blink-block {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+/* Responsive CSS */
+@media (max-width: 768px) {
+  .yin-yang-ledger {
+    height: auto;
+  }
+  
+  .ledger-top-half {
+    padding: 60px 20px;
+  }
+  
+  .ledger-title {
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+  }
+  
+  .ledger-bottom-half {
+    padding: 40px 20px;
+  }
+  
+  .marquee-ribbon {
+    height: 32px;
+    font-size: 11px;
+  }
+  
+  .terminal-feed-container {
+    max-width: 100%;
+    box-shadow: 6px 6px 0px 0px #002fa7;
+  }
+
+  .terminal-feed-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px 16px;
+  }
+
+  .header-right {
+    width: 100%;
+    justify-content: space-between;
+    gap: 0;
+  }
+
+  .terminal-feed-body {
+    padding: 16px;
+  }
+}

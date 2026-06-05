@@ -6,11 +6,11 @@ import * as random from 'maath/random/dist/maath-random.esm';
 function DriftingParticles() {
   const ref = useRef();
   // Generate random points in a sphere
-  const sphere = random.inSphere(new Float32Array(3000), { radius: 1.5 });
+  const sphere = random.inSphere(new Float32Array(2000), { radius: 1.5 });
 
   useFrame((state, delta) => {
-    ref.current.rotation.x -= delta / 20;
-    ref.current.rotation.y -= delta / 25;
+    ref.current.rotation.x -= delta / 35;
+    ref.current.rotation.y -= delta / 40;
   });
 
   return (
@@ -18,11 +18,11 @@ function DriftingParticles() {
       <Points ref={ref} positions={sphere} stride={3} frustumCulled={false}>
         <PointMaterial
           transparent
-          color="#3B3833" // Deep brown/charcoal
-          size={0.005}
+          color="#e45a0b" // Warm spice orange
+          size={0.003}
           sizeAttenuation={true}
           depthWrite={false}
-          opacity={0.4}
+          opacity={0.15}
         />
       </Points>
     </group>

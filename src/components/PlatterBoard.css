@@ -1,0 +1,377 @@
+/* PlatterBoard.css - Brutalist Platter Dashboard Styles */
+
+.platter-system-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 2rem auto;
+  background-color: #efe9e1; /* Cream canvas background */
+  border: 2px solid #002fa7; /* Ink Blue outer frame */
+  border-radius: var(--card-radius);
+  color: #002fa7;
+  font-family: var(--font-mono), monospace;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Header Grid */
+.platter-header-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  border-bottom: 2px solid #002fa7;
+}
+
+@media (min-width: 768px) {
+  .platter-header-grid {
+    grid-template-columns: 1.5fr 1fr 1.2fr;
+  }
+}
+
+.platter-header-grid .border-box {
+  padding: 1.5rem;
+  border-bottom: 2px solid #002fa7;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .platter-header-grid .border-box {
+    border-bottom: none;
+    border-right: 2px solid #002fa7;
+  }
+  .platter-header-grid .border-box:last-child {
+    border-right: none;
+  }
+}
+
+.monospace-tag {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  opacity: 0.8;
+  margin-bottom: 0.5rem;
+}
+
+.display-serif-title {
+  font-family: var(--font-serif), serif;
+  font-size: 1.75rem;
+  font-weight: 900;
+  line-height: 1.0;
+  margin: 0 0 0.5rem 0;
+  color: #002fa7;
+  text-transform: uppercase;
+}
+
+.monospace-sub {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+  margin: 0;
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0.25rem;
+}
+
+.status-label {
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.status-indicator-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #e45a0b; /* Orange blinker */
+  border-radius: 50%;
+}
+
+.status-indicator-dot.pulsing {
+  animation: status-pulse 1.5s step-end infinite;
+}
+
+@keyframes status-pulse {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+.status-indicator-square {
+  width: 8px;
+  height: 8px;
+  background-color: #002fa7;
+  display: inline-block;
+}
+
+.telemetry-data {
+  font-size: 11px;
+  font-weight: 900;
+  color: #e45a0b;
+}
+
+/* Master Interactive Blueprint Workspace */
+.blueprint-workspace {
+  position: relative;
+  width: 100%;
+  height: 750px;
+  background-color: #efe9e1;
+  border-bottom: 2px solid #002fa7;
+  box-sizing: border-box;
+  overflow: hidden;
+  /* Blueprint drafting grid pattern shows through the transparent 3D floor */
+  background-image: 
+    linear-gradient(rgba(0, 47, 167, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 47, 167, 0.05) 1px, transparent 1px);
+  background-size: 25px 25px;
+}
+
+/* Absolute Floating Side Cards */
+.fixed-card {
+  position: absolute;
+  background-color: #efe9e1;
+  border: 2px solid #002fa7;
+  border-radius: var(--card-radius);
+  padding: 1rem;
+  box-shadow: 4px 4px 0px rgba(0, 47, 167, 0.08);
+  z-index: 40;
+  box-sizing: border-box;
+  width: 200px;
+}
+
+.fixed-card .card-title {
+  font-size: 11px;
+  font-weight: 900;
+  border-bottom: 1.5px solid #002fa7;
+  padding-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.05em;
+}
+
+.fixed-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.fixed-card li {
+  font-size: 10px;
+  font-weight: 800;
+  margin-bottom: 0.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fixed-card p {
+  font-size: 10px;
+  font-weight: 800;
+  margin: 0 0 0.25rem 0;
+}
+
+.inline-square {
+  width: 6px;
+  height: 6px;
+  background-color: #002fa7;
+  display: inline-block;
+}
+
+.sauce-matrix-card {
+  left: 24px;
+  bottom: 24px;
+}
+
+.archive-note-card {
+  right: 24px;
+  bottom: 24px;
+}
+
+/* 2D HTML Floating Telemetry Badges (rendered inside ThreeJS Canvas) */
+.telemetry-badge {
+  background-color: #efe9e1;
+  border: 1.5px solid #002fa7;
+  border-radius: var(--card-radius);
+  padding: 4px 8px;
+  box-shadow: 3px 3px 0px rgba(0, 47, 167, 0.08);
+  color: #002fa7;
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  font-weight: 900;
+  white-space: nowrap;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 110px;
+  box-sizing: border-box;
+}
+
+.badge-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px dashed rgba(0, 47, 167, 0.25);
+  padding-bottom: 2px;
+  font-size: 8px;
+}
+
+.badge-body {
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.square-marker {
+  width: 5px;
+  height: 5px;
+  background-color: #002fa7;
+  display: inline-block;
+}
+
+/* Telemetry Badge - Hover Active State */
+.telemetry-badge.hot-state {
+  background-color: #e45a0b; /* Hot Orange */
+  color: #efe9e1; /* Cream Text */
+  border-color: #002fa7;
+  box-shadow: 3px 3px 0px rgba(0, 47, 167, 0.08);
+}
+
+.telemetry-badge.hot-state .badge-header {
+  border-bottom-color: rgba(239, 233, 225, 0.3);
+  color: #efe9e1;
+}
+
+.telemetry-badge.hot-state .square-marker {
+  background-color: #efe9e1;
+}
+
+/* Bottom Logs Grid */
+.platter-footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  border-top: 2px solid #002fa7;
+}
+
+@media (min-width: 768px) {
+  .platter-footer-grid {
+    grid-template-columns: repeat(4, 1fr) 1.5fr;
+  }
+}
+
+.platter-footer-grid .border-box {
+  padding: 1rem 1.25rem;
+  border-bottom: 2px solid #002fa7;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .platter-footer-grid .border-box {
+    border-bottom: none;
+    border-right: 2px solid #002fa7;
+  }
+  .platter-footer-grid .border-box:last-child {
+    border-right: none;
+  }
+}
+
+.monospace-tag-label {
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.monospace-log-line {
+  font-size: 9px;
+  font-weight: 800;
+  margin: 0 0 0.25rem 0;
+  white-space: nowrap;
+}
+
+.error-text {
+  color: #e45a0b;
+}
+
+/* Stamp Panel (Orange Inverted) */
+.footer-stamp-block.orange-invert {
+  background-color: #e45a0b;
+  color: #efe9e1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: none;
+}
+
+.footer-stamp-block .monospace-tag-label {
+  color: #efe9e1;
+  opacity: 0.8;
+}
+
+.manifest-header {
+  font-size: 11px;
+  font-weight: 900;
+  margin-bottom: 0.25rem;
+}
+
+.timestamp-data {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.stamp-right {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.stamp-vector-reticle {
+  width: 100%;
+  height: 100%;
+  animation: reticle-spin 12s linear infinite;
+}
+
+@keyframes reticle-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Live HUD Ticker Overlay */
+.live-hud-ticker {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #e45a0b;
+  color: #efe9e1;
+  font-size: 9px;
+  font-weight: 900;
+  padding: 8px 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 50;
+  box-sizing: border-box;
+  border-top: 2px solid #002fa7;
+}
+
+.ticker-alert {
+  color: #002fa7;
+}
+
+.ticker-body {
+  letter-spacing: 0.05em;
+}
+
+.ticker-cursor {
+  animation: ticker-blink 1s step-end infinite;
+}
+
+@keyframes ticker-blink {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}

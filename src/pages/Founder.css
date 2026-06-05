@@ -1,0 +1,605 @@
+/* Founder.css - Home-Kitchen Architecture Styling */
+
+/* Common Easing and Variables */
+:root {
+  --slow-ease: cubic-bezier(0.25, 1, 0.5, 1);
+  --brand-cream: var(--bg-cream);
+  --brand-orange: var(--puffy-orange);
+  --brand-blue: var(--blue);
+}
+
+.founder-page {
+  position: relative;
+  min-h-screen: 100vh;
+  background-color: var(--brand-cream);
+  overflow-x: hidden;
+  padding-top: 3rem;
+  color: var(--brand-blue);
+  box-sizing: border-box;
+}
+
+/* Margin Indicators */
+.margin-indicator.left {
+  position: fixed;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%) rotate(-90deg);
+  transform-origin: left center;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--brand-blue);
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 50;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .margin-indicator.left {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   SECTION 1: THE COUNTER MANIFESTO (HERO)
+   ========================================================================== */
+.counter-manifesto-section {
+  padding: 4rem 1.5rem;
+  border-bottom: 2px solid var(--brand-blue);
+}
+
+.manifesto-grid {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-cols: 1fr;
+  gap: 3rem;
+  border: 2px solid var(--brand-blue);
+  background-color: var(--brand-cream);
+}
+
+@media (min-width: 768px) {
+  .manifesto-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+}
+
+.manifesto-photo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem;
+  background-color: var(--brand-cream);
+}
+
+@media (min-width: 768px) {
+  .manifesto-photo-container {
+    border-right: 2px solid var(--brand-blue);
+    padding: 4rem;
+  }
+}
+
+.manifesto-photo-frame {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  padding: 12px 12px 28px 12px;
+  box-shadow: none;
+  border: 1px solid rgba(0, 47, 167, 0.15);
+  filter: drop-shadow(6px 8px 0px rgba(26, 26, 26, 0.12));
+  transform: rotate(2.5deg);
+  transition: transform 0.4s var(--slow-ease);
+}
+
+.manifesto-photo-frame:hover {
+  transform: scale(1.04) rotate(1deg) translateY(-4px);
+  filter: drop-shadow(12px 16px 8px rgba(26, 26, 26, 0.16));
+}
+
+.manifesto-img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  filter: grayscale(10%) contrast(110%);
+  mask-image: url('/assets/vectors/torn-paper-edge.svg');
+  mask-size: 100% 100%;
+  -webkit-mask-image: url('/assets/vectors/torn-paper-edge.svg');
+  -webkit-mask-size: 100% 100%;
+}
+
+.manifesto-photo-tag {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--brand-cream);
+  mix-blend-mode: difference;
+}
+
+.manifesto-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2.5rem;
+  background-color: var(--brand-cream);
+}
+
+@media (min-width: 768px) {
+  .manifesto-content {
+    padding: 4rem;
+  }
+}
+
+.manifesto-headline {
+  font-family: var(--font-serif);
+  font-size: 2.75rem;
+  line-height: 0.95;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: var(--brand-blue);
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 1024px) {
+  .manifesto-headline {
+    font-size: 4.5rem;
+  }
+}
+
+.manifesto-headline .highlight-text {
+  font-style: italic;
+  font-weight: 400;
+}
+
+.living-room-statement-container {
+  border-top: 1px solid var(--brand-blue);
+  border-bottom: 1px solid var(--brand-blue);
+  padding: 1.5rem 0;
+}
+
+.living-room-statement {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  line-height: 1.5;
+  color: var(--brand-blue);
+  text-transform: none; /* keep normal casing for the manifesto body text */
+}
+
+@media (min-width: 768px) {
+  .living-room-statement {
+    font-size: 1.5rem;
+  }
+}
+
+.typewriter-cursor {
+  font-family: var(--font-mono);
+  display: inline-block;
+  margin-left: 2px;
+  color: var(--brand-blue);
+}
+
+/* ==========================================================================
+   SECTION 2: THE CORE COMPACT
+   ========================================================================== */
+.core-compact-section {
+  background-color: var(--brand-cream);
+  border-bottom: 2px solid var(--brand-blue);
+}
+
+.core-compact-container {
+  width: 100%;
+  margin: 0;
+}
+
+.compact-row {
+  border-bottom: 1px solid var(--brand-blue);
+  cursor: pointer;
+  background-color: var(--brand-cream);
+  transition: background-color 0.4s var(--slow-ease);
+}
+
+.compact-row:last-child {
+  border-bottom: none;
+}
+
+.compact-row:hover,
+.compact-row.row-active {
+  background-color: rgba(0, 47, 167, 0.03); /* Soft flood of Ink Blue */
+}
+
+.compact-row-header {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .compact-row-header {
+    padding: 2.25rem 4rem;
+  }
+}
+
+.compact-row-icon-box {
+  width: 42px;
+  height: 42px;
+  border: 2px solid var(--brand-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1.5rem;
+  background-color: var(--brand-cream);
+  flex-shrink: 0;
+}
+
+.compact-row-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--brand-blue);
+  transition: transform 0.4s var(--slow-ease);
+  transform-origin: center;
+}
+
+.compact-row:hover .compact-row-icon,
+.compact-row.row-active .compact-row-icon {
+  transform: rotate(90deg);
+}
+
+.compact-row-title {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--brand-blue);
+}
+
+@media (min-width: 768px) {
+  .compact-row-title {
+    font-size: 1.1rem;
+  }
+}
+
+.compact-row-body-wrapper {
+  max-height: 0px;
+  overflow: hidden;
+  transition: max-height 0.4s var(--slow-ease);
+}
+
+.compact-row:hover .compact-row-body-wrapper,
+.compact-row.row-active .compact-row-body-wrapper {
+  max-height: 200px;
+}
+
+.compact-row-body {
+  padding: 0 1.5rem 1.5rem 5.6rem;
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--brand-blue);
+  text-transform: none;
+}
+
+@media (min-width: 768px) {
+  .compact-row-body {
+    padding: 0 4rem 2.25rem 8.25rem;
+    font-size: 1.35rem;
+    max-width: 900px;
+  }
+}
+
+/* ==========================================================================
+   SECTION 3: THE SILENT LABOR (HOST'S RITUAL SLIDER)
+   ========================================================================== */
+.silent-labor-section {
+  padding: 6rem 1.5rem;
+  background-color: var(--brand-cream);
+  border-bottom: 2px solid var(--brand-blue);
+}
+
+.silent-labor-grid {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4rem;
+}
+
+@media (min-width: 1024px) {
+  .silent-labor-grid {
+    grid-template-columns: 5fr 7fr;
+    gap: 6rem;
+    align-items: center;
+  }
+}
+
+.silent-labor-info-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.sys-data-tag {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--brand-blue);
+  margin-bottom: 1.5rem;
+}
+
+.silent-labor-headline {
+  font-size: 2.5rem;
+  line-height: 1.0;
+  font-weight: 900;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .silent-labor-headline {
+    font-size: 3.75rem;
+  }
+}
+
+.silent-labor-copy {
+  font-size: 1.15rem;
+  line-height: 1.5;
+  color: var(--brand-blue);
+  text-transform: none;
+}
+
+@media (min-width: 768px) {
+  .silent-labor-copy {
+    font-size: 1.35rem;
+  }
+}
+
+.silent-labor-interactive-column {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 380px;
+  position: relative;
+  perspective: 1200px;
+}
+
+.card-deck-container {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  height: 280px;
+}
+
+.deck-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--brand-cream);
+  border: 2px solid var(--brand-blue);
+  border-radius: 4px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  transform-origin: bottom center;
+  /* Grid lines on deck cards */
+  background-image: 
+    linear-gradient(rgba(0, 47, 167, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 47, 167, 0.05) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+.top-card {
+  cursor: grab;
+}
+
+.top-card:active {
+  cursor: grabbing;
+}
+
+.card-top-bar {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: var(--brand-blue);
+  border-bottom: 1px solid rgba(0, 47, 167, 0.2);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.click-indicator {
+  opacity: 0.6;
+}
+
+.card-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+  line-height: 1.1;
+}
+
+.card-text {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--brand-blue);
+  text-transform: none;
+  font-weight: bold;
+}
+
+/* ==========================================================================
+   SECTION 4: THE FRAMEWORK TRUTHS
+   ========================================================================== */
+.framework-truths-section {
+  background-color: var(--brand-blue);
+  color: var(--brand-cream);
+  border-bottom: 2px solid var(--brand-blue);
+}
+
+.framework-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .framework-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+.framework-col {
+  padding: 4rem 2rem;
+  border-bottom: 1px solid var(--brand-cream);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+@media (min-width: 768px) {
+  .framework-col {
+    padding: 6rem 3rem;
+    border-bottom: none;
+    border-right: 1px solid var(--brand-cream);
+  }
+  
+  .framework-col:last-child {
+    border-right: none;
+  }
+}
+
+.framework-header {
+  font-family: var(--font-serif);
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: var(--brand-cream);
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+}
+
+@media (min-width: 1024px) {
+  .framework-header {
+    font-size: 2.25rem;
+  }
+}
+
+.framework-text {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 800;
+  line-height: 1.6;
+  color: var(--brand-cream);
+  text-transform: none;
+  opacity: 0.9;
+}
+
+/* ==========================================================================
+   SECTION 5: THE THRESHOLD CROSSING (CTA & COLLOSSAL BASE FOOTER)
+   ========================================================================== */
+.threshold-crossing-section {
+  background-color: var(--brand-cream);
+  padding: 8rem 1.5rem 10rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 2px solid var(--brand-blue);
+}
+
+.invitation-container {
+  position: relative;
+  z-index: 20;
+  background-color: var(--brand-cream);
+  border: 2px solid var(--brand-blue);
+  border-radius: var(--card-radius);
+  padding: 3rem 2rem;
+  max-width: 680px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 6px 6px 0px rgba(0, 47, 167, 0.08);
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .invitation-container {
+    padding: 4.5rem 3.5rem;
+  }
+}
+
+.invitation-headline {
+  font-size: 2rem;
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 2.5rem;
+  color: var(--brand-blue);
+}
+
+@media (min-width: 768px) {
+  .invitation-headline {
+    font-size: 2.75rem;
+  }
+}
+
+.cta-button-link {
+  text-decoration: none;
+  display: inline-block;
+  width: 100%;
+}
+
+.cta-mechanical-button {
+  background-color: var(--brand-orange);
+  color: var(--brand-cream);
+  border: 2px solid var(--brand-blue);
+  border-radius: var(--card-radius);
+  padding: 1.25rem 2rem;
+  font-size: 0.85rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  box-shadow: 8px 8px 0px rgba(0, 47, 167, 0.08);
+  transition: all 0.4s var(--slow-ease);
+  cursor: pointer;
+  outline: none;
+  width: 100%;
+  max-width: 480px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.cta-mechanical-button:hover {
+  transform: translate(4px, 4px);
+  box-shadow: 4px 4px 0px 0px var(--brand-blue);
+}
+
+.colossal-base-text {
+  position: absolute;
+  bottom: -2vw;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-size: 11vw;
+  font-weight: 900;
+  line-height: 0.8;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--brand-blue);
+  opacity: 0.15;
+  z-index: 10;
+  pointer-events: none;
+}

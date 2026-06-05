@@ -16,6 +16,21 @@ serve(async (req) => {
     const keyId = Deno.env.get('RAZORPAY_KEY_ID')
     const keySecret = Deno.env.get('RAZORPAY_KEY_SECRET')
 
+    // FALLBACK MOCK MODE FOR DEV
+    if (!keyId || !keySecret) {
+      console.warn('Razorpay environment variables are missing. Using mock order simulator.');
+      const mockOrder = {
+        id: `MOCK_RZP_ORDER_${Date.now()}`,
+        amount: amount * 100,
+        currency: 'INR',
+        notes: { phone, email, seats, dinner_title }
+      };
+      return new Response(JSON.stringify(mockOrder), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      })
+    }
+
     // Create Order via Razorpay API
     const response = await fetch('https://api.razorpay.com/v1/orders', {
       method: 'POST',

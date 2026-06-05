@@ -1,0 +1,80 @@
+/* CommandDeckHero.css */
+
+.command-deck-hero {
+  position: relative;
+  width: 100%;
+  min-height: 85vh; /* Covers the viewport fold beautifully */
+  background-color: #e45a0b; /* Vibrant High-Impact Orange */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 100px 8% 80px 8%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.deck-headline {
+  position: relative;
+  z-index: 10; /* Passes on top of the trailing image squares */
+  font-family: var(--font-serif);
+  font-size: clamp(3.5rem, 9.5vw, 9.5rem);
+  line-height: 0.8;
+  letter-spacing: -0.04em;
+  color: #efe9e1; /* Cream */
+  text-shadow: 3px 3px 0px #002fa7; /* Vibrant Ink Blue drop shadow */
+  margin: 0;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.deck-spec-manual {
+  position: relative;
+  z-index: 10; /* Passes on top of the trailing image squares */
+  font-family: var(--font-mono);
+  font-size: clamp(12px, 1.8vw, 18px);
+  font-weight: bold;
+  color: #002fa7; /* Vibrant Ink Blue */
+  letter-spacing: 0.05em;
+  margin-top: auto;
+  padding-top: 48px;
+}
+
+/* Dynamic Cursor Trail Squares */
+.trail-image-square {
+  position: absolute;
+  width: clamp(70px, 11vw, 120px);
+  height: clamp(70px, 11vw, 120px);
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
+  z-index: 2; /* Sits behind text, but above container background */
+  border: 3px solid #002fa7; /* Bold Ink Blue brutalist border */
+  box-shadow: 6px 6px 0px 0px rgba(0, 47, 167, 0.45); /* Flat brutalist shadow */
+  animation: trail-fade 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes trail-fade {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5) rotate(var(--rotation));
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(var(--rotation));
+  }
+  80% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(var(--rotation));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8) rotate(var(--rotation));
+  }
+}
+
+@media (max-width: 768px) {
+  .command-deck-hero {
+    min-height: 70vh;
+    padding: 60px 24px;
+  }
+}

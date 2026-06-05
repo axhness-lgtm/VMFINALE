@@ -1,16 +1,19 @@
 :root {
-    --bg-color: #E6E1D8; /* Warm, earthy paper feel */
-    --text-color: #2F2D2A; /* Charcoal/dark brown */
-    --text-muted: #726E65; /* Soft earthy gray */
+    --bg-canvas: #efe9e1;
+    --text-ink: #2b2621;
+    --text-muted: #726E65;
+    --accent-orange: #e45a0b;
     
-    --font-heading: 'Cormorant Garamond', serif;
+    --font-serif-header: 'Cormorant Garamond', serif;
+    --font-serif-book: 'Cormorant Garamond', serif; /* Use book weight */
+    --font-script: 'Homemade Apple', cursive;
     --font-body: 'Inter', sans-serif;
     
     --spacing-huge: 22vh;
     --spacing-large: 15vh;
     --spacing-medium: 8vh;
     
-    --easing: cubic-bezier(0.25, 0.1, 0.25, 1);
+    --easing-ink: cubic-bezier(0.23, 1, 0.32, 1); /* Soft, low-velocity transition */
 }
 
 * {
@@ -19,29 +22,44 @@
     box-sizing: border-box;
 }
 
-body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    font-family: var(--font-body);
-    font-weight: 300;
-    line-height: 1.6;
-    overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
-/* Subtle texture */
-.noise-overlay {
+/* Animated Grain Texture Overlay */
+.paper-texture {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
     pointer-events: none;
     z-index: 9999;
-    opacity: 0.15;
-    background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+    opacity: 0.12;
+    background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+    animation: grain-flicker 0.2s steps(2) infinite;
     mix-blend-mode: multiply;
+}
+
+@keyframes grain-flicker {
+    0% { transform: translate(0, 0); }
+    10% { transform: translate(-1%, -1%); }
+    20% { transform: translate(1%, 1%); }
+    30% { transform: translate(-2%, 0); }
+    40% { transform: translate(2%, -1%); }
+    50% { transform: translate(-1%, 2%); }
+    60% { transform: translate(1%, -2%); }
+    70% { transform: translate(2%, 1%); }
+    80% { transform: translate(-2%, -1%); }
+    90% { transform: translate(1%, 2%); }
+    100% { transform: translate(0, 0); }
+}
+
+body {
+    background-color: var(--bg-canvas);
+    color: var(--text-ink);
+    font-family: var(--font-serif-book);
+    font-weight: 300;
+    line-height: 1.7; /* User specified 1.7x line-height for prose */
+    letter-spacing: 0.02em; /* User specified wide tracking */
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
 }
 
 main {
@@ -328,6 +346,48 @@ a {
     transform: translateY(0);
 }
 
+/* --- REFINEMENTS --- */
+
+/* Bracketed UI style */
+.bracket-label {
+    font-family: var(--font-serif-header);
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.bracket-btn {
+    font-family: var(--font-serif-header);
+    font-size: 1.1rem;
+    color: var(--text-ink);
+    cursor: pointer;
+    transition: all 0.4s var(--easing-ink);
+    display: inline-flex;
+    align-items: center;
+    background: transparent;
+    border: none;
+    padding: 0.5rem 1rem;
+}
+
+.bracket-btn::before { content: "[ "; opacity: 0.4; margin-right: 0.5rem; transition: margin 0.3s; }
+.bracket-btn::after { content: " ]"; opacity: 0.4; margin-left: 0.5rem; transition: margin 0.3s; }
+
+.bracket-btn:hover { color: var(--accent-orange); }
+.bracket-btn:hover::before { margin-right: 0.8rem; opacity: 1; color: var(--accent-orange); }
+.bracket-btn:hover::after { margin-left: 0.8rem; opacity: 1; color: var(--accent-orange); }
+
+/* Handwritten Marginalia */
+.marginalia {
+    font-family: var(--font-script);
+    color: var(--accent-orange);
+    font-size: 0.95rem;
+    font-weight: 300;
+    opacity: 0.8;
+}
+
 /* --- RESPONSIVE --- */
 @media (max-width: 1024px) {
     .image-blend-wrapper {
@@ -336,83 +396,33 @@ a {
 }
 
 @media (max-width: 768px) {
+    /* Reset all asymmetric vertical transforms and margins to a clean, single-column stack */
+    .asymmetric-offset, 
+    .vertical-offset-huge, 
+    .vertical-offset-med, 
+    .vertical-offset-small {
+        transform: none !important;
+        margin-top: 0 !important;
+        margin-bottom: 3rem !important;
+        position: static !important;
+    }
+    
+    .staggered-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 2rem !important;
+    }
+
     .hero {
-        padding-left: 0;
-        align-items: center;
-        text-align: center;
+        padding: 10vh 6vw;
+        height: auto;
+        min-height: 80vh;
+        align-items: flex-start;
+        text-align: left;
     }
     
     .hero-headline {
-        margin-bottom: 1.5rem;
-    }
-    
-    .pause {
-        justify-content: center;
-        padding-right: 0;
-    }
-    
-    .pause-text::before {
-        display: none;
-    }
-    
-    .experience {
-        padding-left: 0;
-        justify-content: center;
-    }
-    
-    .poetic-lines .line-2, 
-    .poetic-lines .line-3 {
-        margin-left: 0;
-    }
-    
-    .poetic-lines {
-        text-align: center;
-        align-items: center;
-    }
-    
-    .image-blend-wrapper {
-        width: 100vw;
-        height: 45vh;
-    }
-    
-    .scarcity {
-        justify-content: center;
-        padding-right: 0;
-    }
-    
-    .transition {
-        padding-left: 0;
-        justify-content: center;
-        text-align: center;
-    }
-    
-    .upcoming-dinner {
-        justify-content: center;
-    }
-    
-    .dinner-details {
-        margin-left: 0;
-        border-left: none;
-        border-top: 1px solid rgba(47, 45, 42, 0.15);
-        padding-left: 0;
-        padding-top: 2.5rem;
-        align-items: center;
-        text-align: center;
-    }
-    
-    .community {
-        padding-left: 0;
-        justify-content: center;
-    }
-    
-    .echo-lines {
-        text-align: center;
-        align-items: center;
-    }
-    
-    .echo-lines .echo-2, 
-    .echo-lines .echo-3, 
-    .echo-lines .point {
-        margin-left: 0;
+        font-size: 3.5rem;
+        line-height: 1.1;
     }
 }

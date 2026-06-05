@@ -1,132 +1,321 @@
+@import url('https://fonts.googleapis.com/css2?family=League+Gothic&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Mistrully';
+  src: url('/fonts/Mistrully.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
 :root {
-  --bg-dark: #0d0804;
-  --bg-dark-warm: #1c0e06;
-  --bg-light: #efe9e1;
-  --bg-parchment: #f5efe7;
-  --bg-society: #e8e0d5;
-  --orange: #e45a0b;
-  --orange-muted: #e45a0b33;
-  --white: #ffffff;
-  --text-muted: #888888;
+  --bg-cream: #f4ebd9;       /* The base warm paper tone */
+  --ink-black: #1a1a1a;      /* Soft, organic black charcoal */
+  --puffy-orange: #e86321;   /* The warm brand signature color */
+  --font-editorial: 'EB Garamond', serif;
+  --font-journal: 'Architects Daughter', cursive;
+  --font-typewriter: 'Special Elite', monospace;
+
+  --cream: var(--bg-cream);
+  --orange: var(--puffy-orange);
+  --blue: #002fa7;
   
-  --font-serif: 'Cormorant Garamond', serif;
-  --font-mono: 'DM Mono', monospace;
-  --font-cursive: 'Libre Baskerville', serif;
+  --font-serif: var(--font-editorial), Georgia, serif;
+  --font-mono: 'Mistrully', cursive;
+  --font-script: 'Mistrully', cursive;
+
+  /* Soften the geometric blow slightly */
+  --card-radius: 20px; /* Highly rounded cards */
+  --handwritten-font: 'Mistrully', cursive;
+  --typewriter-font: 'Mistrully', cursive;
+  --patina: #2e7d82; /* earthy oxidized copper patina blue */
+  --burnt-char: #8e4a23; /* deep char-burnt orange-brown */
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@layer base {
+  body {
+    background-color: var(--bg-cream);
+    color: var(--blue);
+    font-family: var(--font-serif);
+    line-height: 1.7;
+    letter-spacing: 0.02em;
+    overflow-x: hidden;
+    position: relative;
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: grayscale;
+    
+    /* Notebook paper grid background lines */
+    background-image: 
+      linear-gradient(rgba(0, 47, 167, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 47, 167, 0.035) 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif font-bold tracking-tight text-blue;
+    line-height: 1;
+    text-transform: uppercase;
+  }
 }
 
-html.lenis {
-  height: auto;
+@layer components {
+  /* Brutalist Components */
+  .bracket-btn {
+    @apply font-mono text-sm md:text-base cursor-pointer transition-all duration-300 inline-flex items-center bg-transparent border-brutal border-blue py-3 px-6 text-blue uppercase tracking-widest hover:translate-x-1 hover:translate-y-1 hover:shadow-none active:bg-blue active:text-cream font-bold;
+    border-radius: var(--card-radius);
+    box-shadow: 4px 4px 0px rgba(0, 47, 167, 0.12);
+  }
+  
+  .brutal-card {
+    @apply bg-cream border-brutal border-blue p-8 md:p-12;
+    border-radius: var(--card-radius);
+    box-shadow: 4px 4px 0px rgba(0, 47, 167, 0.08);
+  }
+  
+  .brutal-input {
+    @apply bg-transparent border-brutal border-blue p-4 font-mono text-sm w-full outline-none transition-all placeholder:text-blue/40;
+    border-radius: var(--card-radius);
+  }
+  .brutal-input:focus {
+    box-shadow: 4px 4px 0px rgba(0, 47, 167, 0.08);
+  }
 }
 
-.lenis.lenis-smooth {
-  scroll-behavior: auto;
+/* Handwritten / Typewriter Helpers */
+.font-handwritten {
+  font-family: var(--handwritten-font), cursive !important;
+  text-transform: none !important;
 }
 
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
+.font-typewriter {
+  font-family: var(--typewriter-font), monospace !important;
 }
 
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
-
-.lenis.lenis-scrolling iframe {
-  pointer-events: none;
-}
-
-body {
-  background-color: var(--bg-dark);
-  color: var(--white);
-  font-family: var(--font-serif);
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Custom Cursor */
-.custom-cursor {
-  width: 30px;
-  height: 30px;
-  border: 1px solid rgba(228, 90, 11, 0.8);
-  background-color: rgba(228, 90, 11, 0.05);
-  box-shadow: 0 0 15px rgba(228, 90, 11, 0.3), inset 0 0 10px rgba(228, 90, 11, 0.2);
-  border-radius: 50%;
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-  transition: width 0.3s ease, height 0.3s ease, background-color 0.3s ease, border 0.3s ease;
-  transform: translate(-50%, -50%);
-  mix-blend-mode: screen;
-}
-
-.custom-cursor.hovering {
-  width: 60px;
-  height: 60px;
-  background-color: rgba(228, 90, 11, 0.15);
-  border: 1px solid rgba(228, 90, 11, 1);
-  box-shadow: 0 0 25px rgba(228, 90, 11, 0.5), inset 0 0 15px rgba(228, 90, 11, 0.4);
-}
-
-/* Grain Overlay */
-.grain-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 9998;
-  opacity: 0.06;
-  background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
-}
-
-/* Typography Utilities */
-.text-serif { font-family: var(--font-serif); }
-.text-mono { font-family: var(--font-mono); }
-.text-cursive { font-family: var(--font-cursive); font-style: italic; }
-
-.italic { font-style: italic; }
-.orange { color: var(--orange); }
-
-/* Section Containers */
-section {
+/* Distressed Rubber Stamp Core */
+.distressed-stamp {
+  font-family: var(--typewriter-font), monospace;
+  color: var(--burnt-char);
+  border: 3px double var(--burnt-char);
+  padding: 6px 12px;
+  text-transform: uppercase;
+  font-weight: 900;
+  display: inline-block;
+  opacity: 0;
+  transform: scale(3) rotate(-12deg);
+  background-color: transparent;
   position: relative;
-  width: 100%;
-  min-height: 100vh;
   overflow: hidden;
 }
 
-.section-light {
-  background-color: var(--bg-light);
-  color: var(--bg-dark);
-}
-
-/* 3D Canvas Container */
-.canvas-container {
+/* Texture effect for distressed stamp */
+.distressed-stamp::after {
+  content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="4" stitchTiles="stitch"/><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 15 -7"/></filter><rect width="100%" height="100%" filter="url(%23rough)" fill="white"/></svg>');
+  mix-blend-mode: screen;
+  pointer-events: none;
+  opacity: 0.7;
 }
 
-.content-layer {
+/* The Physics-Based Slam Animation */
+.stamp-slam-active {
+  animation: stamp-slam-crunch 0.22s cubic-bezier(0.12, 0, 0.39, 0) forwards;
+}
+
+@keyframes stamp-slam-crunch {
+  0% {
+    opacity: 0;
+    transform: scale(3) rotate(-25deg);
+  }
+  75% {
+    opacity: 0.85;
+    transform: scale(1.05) rotate(-10deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(-8deg);
+  }
+}
+
+/* Global Effects: Unbleached Paper Texture */
+.texture-overlay {
+  @apply fixed inset-0 pointer-events-none z-[9999] opacity-[0.16] mix-blend-multiply;
+  background-image: url('https://grainy-gradients.vercel.app/noise.svg');
+}
+
+.paper-texture {
+  @apply fixed inset-0 pointer-events-none z-[-1] opacity-[0.28] mix-blend-multiply;
+  background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+}
+
+/* Fix 3: System Noise Texture */
+.noise-bg {
   position: relative;
-  z-index: 2;
+}
+
+.noise-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  pointer-events: none;
+  background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" /></filter><rect width="100%" height="100%" filter="url(%23noise)"/></svg>');
+  z-index: 999;
+}
+
+/* Fix 5: The "System Ready" HUD */
+.system-hud {
+  position: fixed;
+  top: 15px;
+  right: 24px;
+  z-index: 9999;
+  background-color: #efe9e1;
+  border: 1.5px solid #002fa7;
+  border-radius: var(--card-radius);
+  padding: 6px 12px;
+  font-family: var(--handwritten-font), cursive;
+  font-size: 11px;
+  font-weight: bold;
+  color: #002fa7;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 3px 3px 0px rgba(0, 47, 167, 0.08);
+}
+
+.status-light {
+  width: 6px;
+  height: 6px;
+  background-color: #e45a0b;
+  border-radius: 50%;
+  animation: status-blink 2s step-end infinite;
+}
+
+@keyframes status-blink {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+/* Fix 6: Mechanical "Clunk" Animation */
+.latch-engage {
+  animation: latch-engage-anim 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes latch-engage-anim {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+/* Fix 2: Snappy Transition Utility */
+.snappy-transition {
+  transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+/* Mistrully adjustments for readability and normal mixed case type */
+*[class*="mono"], *[class*="Courier"], *[class*="monospace"], .monospace-tag, .monospace-sub, .live-hud-ticker, .system-hud, .ledger-title, .log-row, .placeholder-text, .ticker-caps, .sprout-tag-text, .compact-row-title, .sys-data-tag, .card-top-bar, .card-text, .framework-text, .cta-mechanical-button, .bm-label, .bm-input, .bm-otp-box, .bm-confirmed-row, .bm-confirmed-note, .bm-btn-primary, .bm-btn-ghost, .bm-error, .bm-divider, .font-mono, pre, code, kbd, samp, input, textarea, select, button {
+  text-transform: none !important;
+  font-weight: 300 !important;
+  letter-spacing: 0.05em !important;
+}
+
+/* Specific button letter-spacing fixes */
+.bracket-btn {
+  text-transform: none !important;
+  letter-spacing: 0.08em !important;
+}
+
+/* --- SCRAPBOOK DESIGN ENGINE STYLES --- */
+
+/* The Global Texture Overlay */
+body::after, .scrapbook-canvas-container {
+  content: "";
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  background-image: url('/assets/textures/fibrous-paper-grain.webp');
+  background-repeat: repeat;
+  opacity: 0.14; /* Keep it subtle but distinct */
+  mix-blend-mode: multiply; /* Crucial: blends directly into colors underneath */
+  z-index: 9999; /* Always sits on top */
+}
+
+/* Asset Pipeline & Edge Masking Protocol */
+.scrapbook-card {
+  background: #ffffff;
+  padding: 12px 12px 24px 12px;
+  /* Use a drop-shadow filter so the shadow conforms to the irregular shape */
+  filter: drop-shadow(6px 8px 0px rgba(26, 26, 26, 0.12));
+  transform: rotate(2deg);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.scrapbook-card img {
   width: 100%;
-  height: 100%;
+  height: auto;
+  /* Applies an irregular torn paper edge format using an alpha mask */
+  mask-image: url('/assets/vectors/torn-paper-edge.svg');
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-image: url('/assets/vectors/torn-paper-edge.svg');
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
 }
 
-h1, h2, h3 {
-  font-weight: 300;
+/* Tactile Micro-Interactions & The Stamp Engine */
+.interactive-sticker {
+  cursor: pointer;
+  will-change: transform, filter;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.32), 
+              filter 0.4s ease;
 }
 
-p {
-  line-height: 1.6;
+.interactive-sticker:hover {
+  /* Elevates the object and adjusts its tilt dynamically */
+  transform: scale(1.06) rotate(4deg) translateY(-4px);
+  /* Deepens the shadow to reinforce the feeling of physical lifting */
+  filter: drop-shadow(12px 16px 8px rgba(26, 26, 26, 0.18));
 }
+
+/* Ink Stamp Slam Animation Engine for Completed States */
+.ink-stamp-active {
+  animation: stamp-slam-crunch 0.25s cubic-bezier(0.11, 0, 0, 1) forwards;
+}
+
+@keyframes stamp-slam-crunch {
+  0% {
+    opacity: 0;
+    transform: scale(2.5) rotate(-35deg);
+  }
+  85% {
+    opacity: 0.9;
+    transform: scale(1.05) rotate(-12deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(-15deg);
+  }
+}
+
+/* Washi Tape Accent Overlay */
+.washi-tape {
+  position: absolute;
+  background: rgba(232, 215, 185, 0.48); /* semi-transparent unbleached masking tape */
+  box-shadow: 1px 1px 2px rgba(26, 26, 26, 0.06);
+  backdrop-filter: blur(0.5px);
+  z-index: 50;
+  pointer-events: none;
+  /* Torn edge vector mask */
+  mask-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 100 20' xmlns='http://www.w3.org/2000/svg'><path d='M0,2 Q5,0 10,2 T20,1 T30,3 T40,1 T50,2 T60,1 T70,3 T80,1 T90,2 T100,1 L100,19 Q95,20 90,18 T80,19 T70,17 T60,19 T50,18 T40,19 T30,17 T20,19 T10,18 T0,19 Z' fill='black'/></svg>");
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 100 20' xmlns='http://www.w3.org/2000/svg'><path d='M0,2 Q5,0 10,2 T20,1 T30,3 T40,1 T50,2 T60,1 T70,3 T80,1 T90,2 T100,1 L100,19 Q95,20 90,18 T80,19 T70,17 T60,19 T50,18 T40,19 T30,17 T20,19 T10,18 T0,19 Z' fill='black'/></svg>");
+  -webkit-mask-size: 100% 100%;
+}
+
+

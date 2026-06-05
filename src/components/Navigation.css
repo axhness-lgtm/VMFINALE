@@ -1,49 +1,27 @@
-.minimal-nav {
-  position: absolute;
-  top: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 50;
-  width: 100%;
+/* Navigation.css */
+
+@keyframes marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-marquee {
   display: flex;
-  justify-content: center;
+  width: max-content;
+  animation: marquee 30s linear infinite;
 }
 
-.nav-links {
-  display: flex;
-  gap: 3rem;
-  align-items: center;
+/* Bracketed micro-indicators in margins (Home Landing Frame 1 logic) */
+.margin-indicator {
+  @apply fixed hidden lg:block font-mono text-[10px] uppercase tracking-widest rotate-90 origin-left z-50 opacity-60;
 }
-
-.nav-links a {
-  color: rgba(255, 255, 255, 0.4);
-  text-decoration: none;
-  font-family: var(--font-mono, 'DM Mono', monospace);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.3em;
-  transition: all 0.3s ease;
-  position: relative;
+.margin-indicator.left {
+  @apply left-8 top-1/2 -translate-y-1/2 -translate-x-1/2;
 }
-
-.nav-links a:hover,
-.nav-links a.active {
-  color: rgba(255, 255, 255, 1);
-}
-
-.nav-links a::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 50%;
-  width: 0;
-  height: 1px;
-  background-color: var(--orange, #e45a0b);
-  transition: all 0.3s ease;
-  transform: translateX(-50%);
-}
-
-.nav-links a:hover::after,
-.nav-links a.active::after {
-  width: 100%;
+.margin-indicator.right {
+  @apply right-8 top-1/2 -translate-y-1/2 translate-x-1/2;
 }

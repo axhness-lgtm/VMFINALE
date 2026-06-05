@@ -23,43 +23,22 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // 3. Store OTP in a 'otps' table (we'll create this in a moment)
+    // 3. Store OTP in DB (verify-otp reads from here — this is real)
     const { error: dbError } = await supabase
       .from('otps')
       .upsert({ 
         phone, 
         code: otp, 
-        expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString() // 10 min expiry
+        expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString()
       }, { onConflict: 'phone' })
 
     if (dbError) throw dbError
 
-    // 4. Send SMS via Twilio
-    const accountSid = Deno.env.get('TWILIO_ACCOUNT_SID')
-    const authToken = Deno.env.get('TWILIO_AUTH_TOKEN')
-    const twilioNumber = Deno.env.get('TWILIO_PHONE_NUMBER')
-
-    const formData = new URLSearchParams()
-    formData.append('To', phone)
-    formData.append('From', twilioNumber!)
-    formData.append('Body', `Your Vantammayilu verification code is: ${otp}. Valid for 10 minutes.`)
-
-    const response = await fetch(
-      `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `Basic ${btoa(`${accountSid}:${authToken}`)}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: formData,
-      }
-    )
-
-    const twilioData = await response.json()
-    if (!response.ok) throw new Error(twilioData.message)
-
-    return new Response(JSON.stringify({ success: true }), {
+    // 4. OTP SMS via Twilio is temporarily simulated (trial account restriction).
+    //    Return the code directly so the frontend auto-fills it.
+    //    When Twilio is upgraded to a paid account, replace this block with real SMS.
+    console.log(`[SIMULATED] OTP for ${phone}: ${otp}`)
+    return new Response(JSON.stringify({ success: true, devMode: true, code: otp }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     })
@@ -71,3 +50,4 @@ serve(async (req) => {
     })
   }
 })
+

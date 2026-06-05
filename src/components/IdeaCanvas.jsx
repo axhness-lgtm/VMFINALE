@@ -6,88 +6,77 @@ import gsap from 'gsap';
 
 function SceneContent({ scrollProgress }) {
   const groupRef = useRef();
-  const forkRef = useRef();
-  const tableRef = useRef();
   
-  // States: 
-  // 0.0 - 0.33: Fork only
-  // 0.33 - 0.66: Fork + Hand (represented by a sphere/primitive for now to ensure reliability)
-  // 0.66 - 1.0: Full Table (8 plates)
-
+  // Warm Candlelight movement
   useFrame((state) => {
+    const time = state.clock.getElapsedTime();
     if (!groupRef.current) return;
     
-    // Smooth camera orbit in State 3 (last 33%)
-    if (scrollProgress > 0.66) {
-      const angle = state.clock.getElapsedTime() * 0.2;
-      state.camera.position.x = Math.sin(angle) * 10;
-      state.camera.position.z = Math.cos(angle) * 10;
-      state.camera.lookAt(0, 0, 0);
-    } else {
-      // Transition camera position based on scroll
-      const targetZ = THREE.MathUtils.lerp(6, 12, scrollProgress);
-      const targetY = THREE.MathUtils.lerp(0, 8, scrollProgress);
-      state.camera.position.z = THREE.MathUtils.lerp(state.camera.position.z, targetZ, 0.1);
-      state.camera.position.y = THREE.MathUtils.lerp(state.camera.position.y, targetY, 0.1);
-      state.camera.lookAt(0, 0, 0);
-    }
+    // Flickering candle light intensity
+    const intensity = 2 + Math.sin(time * 3) * 0.5 + Math.random() * 0.2;
+    groupRef.current.children.forEach(child => {
+      if (child.type === 'SpotLight') child.intensity = intensity;
+    });
+
+    // Camera drift
+    const targetX = Math.sin(time * 0.2) * 5;
+    const targetY = 8 + Math.cos(time * 0.3) * 2;
+    state.camera.position.x = THREE.MathUtils.lerp(state.camera.position.x, targetX, 0.05);
+    state.camera.position.y = THREE.MathUtils.lerp(state.camera.position.y, targetY, 0.05);
+    state.camera.lookAt(0, 0, 0);
   });
 
   return (
     <group ref={groupRef}>
-      {/* STATE 1 & 2: FORK */}
-      <group visible={scrollProgress < 0.7}>
-        <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
-          <mesh ref={forkRef} rotation={[Math.PI / 4, 0, 0]}>
-            <cylinderGeometry args={[0.05, 0.05, 2, 16]} />
-            <meshStandardMaterial color="#333" metalness={0.8} roughness={0.2} />
-            {/* Simple tines */}
-            {[...Array(4)].map((_, i) => (
-              <mesh key={i} position={[(i - 1.5) * 0.1, 1, 0]}>
-                <boxGeometry args={[0.03, 0.4, 0.03]} />
-                <meshStandardMaterial color="#333" metalness={0.8} roughness={0.2} />
-              </mesh>
-            ))}
-          </mesh>
-        </Float>
-      </group>
+      {/* THE TABLE SURFACE */}
+      <mesh position={[0, -0.1, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[6, 64]} />
+        <meshStandardMaterial color="#efe9e1" roughness={0.8} metalness={0.1} />
+      </mesh>
 
-      {/* STATE 2: THE "HAND" (Abstract low-poly representation) */}
-      <group visible={scrollProgress > 0.3 && scrollProgress < 0.7}>
-        <mesh position={[0, -1, 0]} rotation={[0.4, 0, 0]}>
-          <boxGeometry args={[0.6, 1.2, 0.4]} />
-          <meshStandardMaterial color="#d4a373" roughness={0.8} />
-        </mesh>
-      </group>
-
-      {/* STATE 3: FULL TABLE (8 Plates) */}
-      <group visible={scrollProgress > 0.6}>
-        {[...Array(8)].map((_, i) => {
-          const angle = (i / 8) * Math.PI * 2;
-          const radius = 3.5;
-          return (
-            <mesh 
-              key={i} 
-              position={[Math.cos(angle) * radius, 0, Math.sin(angle) * radius]}
-              rotation={[-Math.PI / 2, 0, 0]}
-            >
+      {/* DYNAMIC PLATES (Populating on scroll) */}
+      {[...Array(8)].map((_, i) => {
+        const angle = (i / 8) * Math.PI * 2;
+        const radius = 4;
+        const visible = scrollProgress > (i / 10);
+        return (
+          <group 
+            key={i} 
+            position={[Math.cos(angle) * radius, 0, Math.sin(angle) * radius]}
+            rotation={[0, -angle, 0]}
+            visible={visible}
+          >
+            {/* Plate */}
+            <mesh rotation={[-Math.PI / 2, 0, 0]}>
               <cylinderGeometry args={[0.8, 0.8, 0.05, 32]} />
-              <meshStandardMaterial color="#fff" roughness={0.3} />
+              <meshStandardMaterial color="#fff" roughness={0.2} />
             </mesh>
-          );
-        })}
-        {/* Table top */}
-        <mesh position={[0, -0.1, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <circleGeometry args={[5, 64]} />
-          <meshStandardMaterial color="#efe9e1" roughness={1} />
-        </mesh>
-      </group>
+            
+            {/* Flower / Centerpiece (Emerging) */}
+            {visible && i % 3 === 0 && (
+              <mesh position={[0, 0.5, 0]}>
+                <sphereGeometry args={[0.2, 16, 16]} />
+                <meshStandardMaterial color="#e45a0b" emissive="#e45a0b" emissiveIntensity={0.5} />
+              </mesh>
+            )}
 
-      <ambientLight intensity={0.5} />
-      <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={2} color="#e45a0b" />
-      <pointLight position={[-10, -10, -10]} intensity={1} color="#4ea8de" />
+            {/* Note Scrap (Memory Residue) */}
+            {visible && (
+              <mesh position={[0.5, 0.05, 0.5]} rotation={[0, 0.2, 0]}>
+                <boxGeometry args={[0.4, 0.01, 0.3]} />
+                <meshStandardMaterial color="#fdfaf6" roughness={1} />
+              </mesh>
+            )}
+          </group>
+        );
+      })}
+
+      {/* AMBIENT LIGHTING */}
+      <ambientLight intensity={0.4} />
+      <spotLight position={[5, 10, 5]} angle={0.25} penumbra={1} intensity={2} color="#e45a0b" castShadow />
+      <pointLight position={[-5, 5, -5]} intensity={0.5} color="#13368d" />
       
-      <ContactShadows position={[0, -2, 0]} opacity={0.4} scale={20} blur={2.4} />
+      <ContactShadows position={[0, -0.05, 0]} opacity={0.3} scale={15} blur={2.5} />
     </group>
   );
 }
