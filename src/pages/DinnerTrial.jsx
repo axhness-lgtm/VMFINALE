@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import BookingModal from '../components/BookingModal';
 import { supabase } from '../supabase';
@@ -89,6 +89,99 @@ const projectPoint = (x, y, h = 0) => {
 
 // ─── MAIN COMPONENT ──────────────────────────────────────────────────────────
 export default function DinnerTrial() {
+  const containerRef = useRef(null);
+  const imageRef = useRef(null);
+  const requestRef = useRef(null);
+
+  const mouse = useRef({ x: 0, y: 0, targetX: 0, targetY: 0, dist: 0 });
+  const rotX = useRef({ val: 0, vel: 0 });
+  const rotY = useRef({ val: 0, vel: 0 });
+
+  const maxTilt = 18; // maximum degree of tilt
+  const stiffness = 0.02; // spring stiffness
+  const damping = 0.82; // spring damping
+
+  useEffect(() => {
+    const handleMouseMoveGlobal = (e) => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+
+      // Calculate mouse position relative to center of container
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+
+      // Check if mouse is outside the bounds of the container
+      const isOutside = (
+        e.clientX < rect.left ||
+        e.clientX > rect.right ||
+        e.clientY < rect.top ||
+        e.clientY > rect.bottom
+      );
+
+      if (isOutside) {
+        mouse.current.targetX = 0;
+        mouse.current.targetY = 0;
+        mouse.current.dist = 0;
+      } else {
+        const distance = Math.sqrt(x * x + y * y);
+        const maxRadius = Math.sqrt((rect.width / 2) ** 2 + (rect.height / 2) ** 2) || 1;
+        const dNorm = Math.min(distance / maxRadius, 1.0);
+
+        mouse.current.targetX = x;
+        mouse.current.targetY = y;
+        mouse.current.dist = dNorm;
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMoveGlobal);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMoveGlobal);
+    };
+  }, []);
+
+  // Main animation frame loop for physics
+  useEffect(() => {
+    const updatePhysics = (time) => {
+      if (!containerRef.current || !imageRef.current) {
+        requestRef.current = requestAnimationFrame(updatePhysics);
+        return;
+      }
+
+      const rect = containerRef.current.getBoundingClientRect();
+      const W = rect.width || 920;
+      const H = rect.height || 600;
+
+      const tiltScale = Math.min(mouse.current.dist, 1.0);
+      // rotateX uses Y-offset, rotateY uses X-offset
+      const targetRotX = - (mouse.current.targetY / (H / 2)) * maxTilt * tiltScale;
+      const targetRotY = (mouse.current.targetX / (W / 2)) * maxTilt * tiltScale;
+
+      // Update spring physics
+      const updateSpring = (spring, target) => {
+        const force = (target - spring.val) * stiffness;
+        spring.vel = (spring.vel + force) * damping;
+        spring.val += spring.vel;
+      };
+
+      updateSpring(rotX.current, targetRotX);
+      updateSpring(rotY.current, targetRotY);
+
+      if (imageRef.current) {
+        imageRef.current.style.transform = `perspective(1000px) rotateX(${rotX.current.val}deg) rotateY(${rotY.current.val}deg) translate(-20px, -40px)`;
+      }
+
+      requestRef.current = requestAnimationFrame(updatePhysics);
+    };
+
+    requestRef.current = requestAnimationFrame(updatePhysics);
+
+    return () => {
+      if (requestRef.current) {
+        cancelAnimationFrame(requestRef.current);
+      }
+    };
+  }, []);
+
   const [selectedSeats, setSelectedSeats] = useState([1]);
   const [hoveredSeat, setHoveredSeat] = useState(null);
   const [waitlistEmail, setWaitlistEmail] = useState('');
@@ -255,10 +348,11 @@ export default function DinnerTrial() {
       ═══════════════════════════════════════════════════════════════════ */}
       <section className="chabudai-matrix-section relative" style={{ marginTop: '100px' }}>
         {!capacityZero ? (
-          <div className="matrix-viewport-container">
+          <div className="matrix-viewport-container" ref={containerRef}>
             {/* MASTER ARCHITECTURAL CANVAS SHEETS */}
             <div className="isometric-projection-stage flex justify-center items-center pointer-events-none ink-reveal">
               <img
+                ref={imageRef}
                 src="/assets/dintablepho2.png"
                 alt="Dinner Table Layout"
                 className="w-full h-auto object-contain mx-auto"
