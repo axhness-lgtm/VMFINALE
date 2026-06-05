@@ -21,7 +21,8 @@ serve(async (req) => {
       weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
     })
 
-    // ── 1. Send Email via Resend ───────────────────────────────────────────
+    // ── 1. Send Email via Resend (DISABLED - ONLY USING WHATSAPP) ──────────
+    /*
     const resendKey = Deno.env.get('RESEND_API_KEY')
     if (resendKey) {
       await fetch('https://api.resend.com/emails', {
@@ -54,6 +55,7 @@ serve(async (req) => {
         }),
       }).catch(err => console.error('Resend error:', err))
     }
+    */
 
     // ── 2. Send WhatsApp via Twilio ────────────────────────────────────────
     // Reuses the same Twilio account already used for OTP SMS — no new service needed.
