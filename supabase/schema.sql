@@ -130,6 +130,10 @@ CREATE POLICY "Public can view active dinners"
 -- Allow anyone to read confirmed_seats count (for live counter)
 -- All writes go through service-role edge functions only
 
+DROP POLICY IF EXISTS "Allow public insert to contacts" ON contacts;
+CREATE POLICY "Allow public insert to contacts"
+  ON contacts FOR INSERT WITH CHECK (true);
+
 -- ══════════════════════════════════════════════════════════════════════════════
 -- RPC: increment confirmed_seats atomically (called by verify-payment function)
 -- ══════════════════════════════════════════════════════════════════════════════
