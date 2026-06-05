@@ -560,7 +560,7 @@ export default function BookingModal({ isOpen, onClose, dinner, initialSeats = 1
                 </div>
               </div>
               {otp.join('').length === 6 && (
-                <div style={{ fontFamily: 'Mistrully, cursive', fontSize: '14px', color: '#e45a0b', opacity: 0.85, marginBottom: '4px' }}>
+                <div style={{ fontSize: '18px', color: '#e45a0b', opacity: 0.85, marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                   Code auto-filled — click verify to continue
                 </div>
               )}

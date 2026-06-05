@@ -50,6 +50,11 @@
 }
 
 /* ─── MODAL PANEL ────────────────────────────────────────────── */
+.bm-modal,
+.bm-modal * {
+  font-family: 'League Gothic', sans-serif !important;
+}
+
 .bm-modal {
   position: relative;
   background: #ebe3d9;
@@ -119,12 +124,11 @@
 }
 
 .bm-step-tag {
-  font-family: 'Mistrully', cursive;
-  font-size: 13px;
-  font-weight: 400;
+  font-size: 18px;
+  font-weight: 900;
   color: #002fa7;
-  letter-spacing: 0.04em;
-  text-transform: none;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   opacity: 0.7;
   margin-bottom: -4px;
 }
@@ -141,13 +145,13 @@
 }
 
 .bm-subtitle {
-  font-family: 'Mistrully', cursive;
-  font-size: 16px;
-  font-weight: 400;
+  font-size: 22px;
+  font-weight: 900;
   color: #002fa7;
   opacity: 0.8;
-  line-height: 1.4;
+  line-height: 1.1;
   margin: 0;
+  text-transform: uppercase;
 }
 
 /* ─── FORM FIELDS ────────────────────────────────────────────── */
@@ -189,12 +193,11 @@
 }
 
 .bm-label {
-  font-family: 'Mistrully', cursive;
-  font-size: 14px;
-  font-weight: 400;
+  font-size: 20px;
+  font-weight: 900;
   color: #002fa7;
-  letter-spacing: 0.03em;
-  text-transform: none;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .bm-input {
@@ -444,16 +447,16 @@
   color: #ebe3d9;
   border: none;
   border-radius: var(--card-radius);
-  font-family: 'Mistrully', cursive;
-  font-weight: 400;
-  font-size: 20px;
-  letter-spacing: 0.03em;
-  text-transform: none;
-  padding: 14px 16px 6px 16px;
+  font-weight: 900;
+  font-size: 32px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 10px 16px 10px 16px;
   cursor: pointer;
   transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
   box-shadow: 4px 4px 0 0 rgba(0,47,167,0.12);
   margin-top: 4px;
+  line-height: 1;
 }
 .bm-btn-primary:hover:not(:disabled) {
   background: #001e6e;
@@ -472,14 +475,14 @@
 .bm-btn-ghost {
   background: none;
   border: none;
-  font-family: 'Mistrully', cursive;
-  font-size: 16px;
-  font-weight: 400;
+  font-size: 24px;
+  font-weight: 900;
   color: rgba(0,47,167,0.6);
   cursor: pointer;
-  letter-spacing: 0.02em;
-  text-align: center;
-  padding: 4px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 8px;
+  margin-top: 4px;
   transition: color 0.15s;
 }
 .bm-btn-ghost:hover:not(:disabled) { color: #002fa7; }
