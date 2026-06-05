@@ -11,7 +11,7 @@ import TextureOverlay from './components/TextureOverlay';
 
 function CustomNavigation() {
   const location = useLocation();
-  if (location.pathname === '/dinner-trial') return null;
+  if (location.pathname === '/dinner-trial' || location.pathname === '/') return null;
   return <Navigation />;
 }
 
@@ -23,13 +23,13 @@ function App() {
         <CustomNavigation />
         <main>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<DinnerTrial />} />
             <Route path="/community" element={<Community />} />
             <Route path="/founder" element={<Founder />} />
             <Route path="/substack" element={<Substack />} />
             <Route path="/dinner" element={<Dinner />} />
             <Route path="/dinner-trial" element={<DinnerTrial />} />
-            <Route path="*" element={<Home />} />
+            <Route path="*" element={<DinnerTrial />} />
           </Routes>
         </main>
       </Router>
