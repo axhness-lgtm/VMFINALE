@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './Footer.css';
+import { ArrowRight, Mail } from 'lucide-react';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
@@ -8,8 +8,7 @@ export default function Footer() {
 
   const handleSubscribe = (e) => {
     e.preventDefault();
-    setSubscribed(true);
-    setEmail('');
+    if(email) setSubscribed(true);
   };
 
   const handleBackToTop = (e) => {
@@ -18,110 +17,145 @@ export default function Footer() {
   };
 
   return (
-    <footer style={{ borderRadius: 'var(--card-radius)' }} className="sitewide-block-manifesto relative bg-[#e45a0b] text-[#002fa7] border-4 border-[#002fa7] min-h-[600px] overflow-hidden flex flex-col justify-between py-16 px-6 md:px-12 select-none mt-20">
+    <footer className="w-full bg-[#fdfaf5] border-t border-[var(--text-main)]/10 pt-24 pb-12 px-6 md:px-12 mt-12 relative overflow-hidden paper-texture">
       
-      {/* Background Monumental Typography Anchor */}
-      <div className="absolute inset-0 flex flex-col justify-center items-center pointer-events-none opacity-90 select-none overflow-hidden leading-none z-0">
-        <h1 className="font-serif text-[13vw] font-black uppercase tracking-tight text-[#002fa7] manifesto-text-shadow leading-none text-center">
-          VANTAMMA
-        </h1>
-        <h1 className="font-serif text-[13vw] font-black uppercase tracking-tight text-[#002fa7] manifesto-text-shadow leading-none text-center -mt-4">
-          YILU
-        </h1>
+      {/* Abstract Map Fragment Background */}
+      <div className="absolute -bottom-20 -left-20 w-96 h-96 opacity-5 pointer-events-none z-0">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <path fill="currentColor" d="M44.7,-76.4C58.8,-69.2,71.8,-59.1,79.6,-45.8C87.4,-32.6,90,-16.3,88.5,-0.9C87,14.6,81.4,29.1,72.6,41.2C63.8,53.2,51.8,62.8,38.1,70.5C24.4,78.2,9,83.9,-5.4,81.8C-19.7,79.6,-33,69.5,-46.8,60.6C-60.5,51.7,-74.6,44,-82.4,31.4C-90.2,18.8,-91.7,1.4,-86.6,-13.3C-81.6,-28.1,-70,-40.2,-56.9,-48.9C-43.8,-57.5,-29.2,-62.7,-14.9,-68.8C-0.5,-74.9,14.6,-82.1,30.6,-83.6C44.7,-76.4,44.7,-76.4,44.7,-76.4Z" transform="translate(100 100)" />
+        </svg>
       </div>
 
-      {/* Overlapping Global Card Matrix */}
-      <div className="relative z-10 max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 mt-12 md:mt-24">
+      <div className="container mx-auto max-w-6xl relative z-10 flex flex-col lg:flex-row gap-16 lg:gap-8 items-center lg:items-start justify-between">
         
-        {/* Card A: Directory & Substack Intake */}
-        <div style={{ borderRadius: 'var(--card-radius)', boxShadow: '4px 4px 0px rgba(0, 47, 167, 0.08)' }} className="relative bg-[#efe9e1] border-4 border-[#002fa7] p-8 max-w-md mx-auto w-full rotate-[-1deg]">
-          {/* Masking tape details */}
-          <div className="absolute -top-3 left-1/4 -translate-x-1/2 w-20 h-6 bg-[#e6dfd5]/80 border border-[#002fa7]/20 rotate-[-3deg] shadow-[2px_2px_0px_0px_rgba(0,0,0,0.05)] pointer-events-none" />
-          <div className="absolute -top-3 right-1/4 translate-x-1/2 w-20 h-6 bg-[#e6dfd5]/80 border border-[#002fa7]/20 rotate-[2deg] shadow-[2px_2px_0px_0px_rgba(0,0,0,0.05)] pointer-events-none" />
+        {/* Left Side: Editorial Note & Sign-off */}
+        <div className="w-full lg:w-5/12 flex flex-col relative">
+          {/* Decorative Stamp */}
+          <div className="absolute -top-12 -left-8 stamp rotate-[-15deg] opacity-60 scale-110 z-10 bg-[var(--bg-primary)]">
+            VIZAG MAIN
+          </div>
+          
+          {/* Taped-in Illustration */}
+          <div className="relative mb-12 w-3/4 max-w-[300px] torn-edge shadow-md hover-lift rotate-[-2deg] z-20 polaroid-frame">
+            <div className="masking-tape w-20 h-5 -top-2 left-6 -rotate-3" />
+            <img 
+              src="/footerass.png" 
+              alt="Vantammayilu Illustration" 
+              className="w-full h-auto object-cover grayscale-[0.2] sepia-[0.1]"
+            />
+          </div>
 
-          <h3 className="font-serif text-xl md:text-2xl font-black uppercase tracking-tight mb-4">
-            [ INTAKE // REGISTRATION ]
-          </h3>
-          <p className="font-mono text-[10px] md:text-xs mb-6 leading-relaxed">
-            Register your protocol for seats at the kitchen porch. New letters and scrapbooks sent weekly.
-          </p>
-
-          <form onSubmit={handleSubscribe} className="space-y-4">
-            {subscribed ? (
-              <div style={{ borderRadius: 'var(--card-radius)' }} className="border-2 border-[#002fa7] p-3 text-center bg-[#e45a0b] text-[#efe9e1] font-mono text-xs font-bold">
-                [ Protocol Saved // Welcome ]
-              </div>
-            ) : (
-              <div className="flex flex-col gap-3">
-                <input 
-                  type="email" 
-                  required
-                  placeholder="name@server.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  style={{ borderRadius: 'var(--card-radius)' }}
-                  className="w-full bg-[#efe9e1] border-2 border-[#002fa7] font-mono text-xs p-3 outline-none focus:bg-[#002fa7]/5 text-[#002fa7]"
-                />
-                <button 
-                  type="submit" 
-                  style={{ borderRadius: 'var(--card-radius)', boxShadow: '2px 2px 0px rgba(0, 47, 167, 0.12)' }}
-                  className="w-full bg-[#e45a0b] text-[#efe9e1] font-mono text-xs font-bold p-3 border-2 border-[#002fa7] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all duration-150 cursor-pointer"
-                >
-                  Subscribe
-                </button>
-              </div>
-            )}
-          </form>
-        </div>
-
-        {/* Card B: Global Sitewide Links */}
-        <div style={{ borderRadius: 'var(--card-radius)', boxShadow: '4px 4px 0px rgba(0, 47, 167, 0.08)' }} className="relative bg-[#efe9e1] border-4 border-[#002fa7] p-8 max-w-md mx-auto w-full rotate-[1deg]">
-          {/* Masking tape details */}
-          <div className="absolute -top-3 left-1/3 -translate-x-1/2 w-20 h-6 bg-[#e6dfd5]/80 border border-[#002fa7]/20 rotate-[2deg] shadow-[2px_2px_0px_0px_rgba(0,0,0,0.05)] pointer-events-none" />
-          <div className="absolute -top-3 right-1/3 translate-x-1/2 w-20 h-6 bg-[#e6dfd5]/80 border border-[#002fa7]/20 rotate-[-3deg] shadow-[2px_2px_0px_0px_rgba(0,0,0,0.05)] pointer-events-none" />
-
-          <h3 className="font-serif text-xl md:text-2xl font-black uppercase tracking-tight mb-6">
-            [ ARCHIVAL INDEX ]
-          </h3>
-
-          <ul className="space-y-4 font-mono text-xs md:text-sm font-bold">
-            <li>
-              <Link to="/dinner" className="hover:text-[#e45a0b] transition-colors flex justify-between items-center border-b border-dashed border-[#002fa7]/20 pb-2">
-                <span>[ 01 / Book a Seat ]</span>
-                <span>→</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/substack" className="hover:text-[#e45a0b] transition-colors flex justify-between items-center border-b border-dashed border-[#002fa7]/20 pb-2">
-                <span>[ 02 / Journal ]</span>
-                <span>→</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/community" className="hover:text-[#e45a0b] transition-colors flex justify-between items-center border-b border-dashed border-[#002fa7]/20 pb-2">
-                <span>[ 03 / Fellowship ]</span>
-                <span>→</span>
-              </Link>
-            </li>
-            <li>
-              <a href="#" onClick={handleBackToTop} className="hover:text-[#e45a0b] transition-colors flex justify-between items-center border-b border-dashed border-[#002fa7]/20 pb-2">
-                <span>[ 04 / Back to Top ↑ ]</span>
-                <span>▲</span>
-              </a>
-            </li>
-          </ul>
-
-          <div className="mt-8 font-mono text-[9px] opacity-60 text-right">
-            Est. 2026 // Cultivated for Gathering
+          <div className="relative pl-4 md:pl-8 border-l border-dashed border-[var(--text-main)]/20 mb-12">
+            <h2 className="font-heading text-4xl md:text-5xl lg:text-6xl text-[var(--text-main)] mb-6 leading-[0.95]">
+              To the stranger<br/>reading this...
+            </h2>
+            <p className="font-body text-xl md:text-2xl text-[var(--text-main)]/80 leading-relaxed italic mb-8 max-w-md">
+              There is a seat waiting for you. Come hungry, bring a story, and leave the rest to us.
+            </p>
+            <div className="mt-8 relative inline-block">
+              <span className="handwritten-annotation text-4xl rotate-[-8deg] ml-8 block">Until the next table,</span>
+              <span className="handwritten-annotation text-5xl rotate-[-5deg] ml-16 mt-4 block text-[var(--accent-primary)]">Hyndavi</span>
+            </div>
           </div>
         </div>
+
+        {/* Middle: The Ticket Stub Newsletter */}
+        <div className="w-full lg:w-4/12 flex justify-center z-20">
+          <div className="bg-[#fcfbf9] w-full max-w-sm border-2 border-dashed border-[var(--text-main)]/30 p-8 shadow-xl rotate-[1deg] hover-lift ticket-edge relative">
+            <div className="masking-tape w-16 h-4 -bottom-2 right-12 rotate-[-2deg]" />
+            <div className="absolute top-4 right-4 stamp rotate-12 opacity-40 scale-75 border-red-800 text-red-800">WAITLIST</div>
+            
+            <div className="flex items-center gap-3 text-[var(--text-main)] mb-6 border-b border-[var(--text-main)]/10 pb-4">
+              <Mail size={20} className="text-[var(--accent-primary)]" />
+              <h3 className="font-heading text-2xl uppercase tracking-widest">The Guest List</h3>
+            </div>
+            
+            <p className="font-body text-[var(--text-main)]/70 mb-8 italic">
+              Strangers hear about the next dinner first. Drop your email to get the invite.
+            </p>
+            
+            <form onSubmit={handleSubscribe} className="flex flex-col gap-4">
+              <div className="flex flex-col gap-1 border-b border-[var(--text-main)]/30 pb-2">
+                <label className="font-mono text-[10px] uppercase tracking-widest text-[var(--text-main)]/50">Passenger Email</label>
+                <input 
+                  type="email" 
+                  placeholder="hello@example.com"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="bg-transparent border-none outline-none font-body text-lg text-[var(--text-main)] placeholder:text-[var(--text-main)]/30 w-full"
+                />
+              </div>
+              <button 
+                type="submit" 
+                className="mt-4 bg-[var(--accent-primary)] text-white py-3 px-6 font-mono text-xs uppercase tracking-widest hover:bg-[var(--text-main)] transition-colors text-center shadow-sm w-full"
+              >
+                {subscribed ? 'Ticket Confirmed ✓' : 'Request a Seat'}
+              </button>
+            </form>
+            
+            {/* Ticket stub perforated edge detail */}
+            <div className="absolute left-0 right-0 bottom-12 border-t-2 border-dotted border-[var(--text-main)]/20"></div>
+            <div className="absolute bottom-4 left-0 right-0 flex justify-between px-8 text-[9px] font-mono uppercase text-[var(--text-main)]/40 tracking-widest">
+              <span>Class: Economy</span>
+              <span>Seat: TBD</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Side: Margins & Navigation */}
+        <div className="w-full lg:w-3/12 flex flex-col items-center lg:items-end justify-between relative h-full">
+          
+          {/* Circular Stamp */}
+          <div className="relative w-32 h-32 mb-12 opacity-80 animate-[spin_20s_linear_infinite] pointer-events-none">
+            <svg viewBox="0 0 100 100" className="w-full h-full text-[var(--accent-primary)]">
+              <path id="circlePath" d="M 50, 50 m -40, 0 a 40,40 0 1,1 80,0 a 40,40 0 1,1 -80,0" fill="transparent" />
+              <text fontSize="11" fontFamily="monospace" letterSpacing="2.5" fill="currentColor">
+                <textPath href="#circlePath">
+                  • STORIES BY THE SEA • VANTAMMAYILU 
+                </textPath>
+              </text>
+            </svg>
+          </div>
+
+          <div className="flex flex-col gap-6 text-center lg:text-right relative">
+            <div className="masking-tape w-8 h-3 -left-4 top-2 rotate-90 opacity-60 hidden lg:block" />
+            
+            <div className="flex flex-col gap-3 font-body text-xl lg:text-2xl text-[var(--text-main)]/80 hover-lift-inverse">
+              <Link to="/dinner" className="hover:text-[var(--accent-primary)] transition-colors italic border-b border-transparent hover:border-dashed hover:border-[var(--accent-primary)] w-max lg:ml-auto mx-auto lg:mx-0">Dinners.</Link>
+              <Link to="/about" className="hover:text-[var(--accent-primary)] transition-colors italic border-b border-transparent hover:border-dashed hover:border-[var(--accent-primary)] w-max lg:ml-auto mx-auto lg:mx-0">Story.</Link>
+              <Link to="/journal" className="hover:text-[var(--accent-primary)] transition-colors italic border-b border-transparent hover:border-dashed hover:border-[var(--accent-primary)] w-max lg:ml-auto mx-auto lg:mx-0">Journal.</Link>
+              <Link to="/community" className="hover:text-[var(--accent-primary)] transition-colors italic border-b border-transparent hover:border-dashed hover:border-[var(--accent-primary)] w-max lg:ml-auto mx-auto lg:mx-0">Community.</Link>
+            </div>
+            
+            <div className="mt-8 flex flex-col gap-2 font-mono text-xs text-[var(--text-main)]/50 tracking-widest uppercase">
+              <a href="#" className="hover:text-[var(--text-main)] transition-colors">Instagram</a>
+              <a href="#" className="hover:text-[var(--text-main)] transition-colors">Substack</a>
+              <a href="#" className="hover:text-[var(--text-main)] transition-colors">Contact</a>
+            </div>
+          </div>
+          
+        </div>
       </div>
 
-      {/* Sitewide Footer Metadata strip */}
-      <div className="relative z-10 w-full flex flex-col md:flex-row justify-between items-center mt-12 md:mt-24 border-t border-[#002fa7]/20 pt-6 font-mono text-[10px]">
-        <span>© 2026 VANTAMMAYILU. ALL RIGHTS RESERVED.</span>
-        <span className="mt-2 md:mt-0">[ Design by Antigravity for the Bold ]</span>
+      {/* Very Bottom Bar */}
+      <div className="container mx-auto max-w-6xl mt-24 border-t border-[var(--text-main)]/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 relative z-10">
+        <div className="flex items-center gap-3">
+          <span className="font-logo text-2xl text-[var(--accent-primary)] opacity-80">V</span>
+          <span className="font-mono text-[10px] uppercase tracking-widest text-[var(--text-main)]/40">© {new Date().getFullYear()} Vantammayilu. All rights reserved.</span>
+        </div>
+        <div className="flex gap-6 font-mono text-[10px] uppercase tracking-widest text-[var(--text-main)]/40">
+          <a href="#" className="hover:text-[var(--text-main)] transition-colors">Terms</a>
+          <a href="#" className="hover:text-[var(--text-main)] transition-colors">Privacy</a>
+          <a href="#" onClick={handleBackToTop} className="hover:text-[var(--text-main)] transition-colors flex items-center gap-1 group">
+            Back to top <ArrowRight size={10} className="-rotate-90 group-hover:-translate-y-1 transition-transform"/>
+          </a>
+        </div>
       </div>
+      
+      {/* Final subtle coffee ring overlapping the edge */}
+      <div className="absolute bottom-4 right-1/3 w-24 h-24 coffee-ring opacity-40 rotate-[80deg] pointer-events-none" />
+      
     </footer>
   );
 }

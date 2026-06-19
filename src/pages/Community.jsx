@@ -1,479 +1,514 @@
-import React, { useState, useRef, useEffect } from 'react';
-import YinYangLedger from '../components/YinYangLedger';
-import CommandDeckHero from '../components/CommandDeckHero';
-import Footer from '../components/Footer';
-import './Community.css';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Sparkles, Send, Heart, Quote, Star, Plus } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-// ─── CARD IMAGE SEQUENCES ──────────────────────────────────────────────────
-// Each orbit has 8 unique slots; we loop them twice to get 16 cards.
-// Index in this array → which crop file to load (1-based).
-const CURATOR_CARD_SEQ  = [1, 2, 3, 4, 5, 6, 7, 8]; // NODE_01 … NODE_08
-const COLLECTION_CARD_SEQ = [1, 2, 3, 4, 5, 6, 7, 8]; // VOL_01 … VOL_08
-
-// ─── GALLERY DATA (shown in center panel when a slot is active) ────────────
-const GALLERY_DATA = [
-  {
-    id: 1,
-    curator: { name: "John Maeda", role: "President, RSD", nodeId: "NODE_001" },
-    collection: {
-      name: "Abstractions",
-      curatedBy: "JOHN MAEDA",
-      description: "A collection of next-gen figurative images that evolve through form, color, and composition.",
-      piecesCount: "26 Pieces",
-      volId: "VOL_001"
-    }
-  },
-  {
-    id: 2,
-    curator: { name: "Kenya Hara", role: "Designer, Muji", nodeId: "NODE_002" },
-    collection: {
-      name: "Emptiness",
-      curatedBy: "KENYA HARA",
-      description: "A study on white spaces, void, and potentiality in everyday object representation.",
-      piecesCount: "14 Pieces",
-      volId: "VOL_002"
-    }
-  },
-  {
-    id: 3,
-    curator: { name: "Paola Antonelli", role: "Curator, MoMA", nodeId: "NODE_003" },
-    collection: {
-      name: "Synthetic Life",
-      curatedBy: "PAOLA ANTONELLI",
-      description: "Exploring the boundary between organic systems and computational design artifacts.",
-      piecesCount: "32 Pieces",
-      volId: "VOL_003"
-    }
-  },
-  {
-    id: 4,
-    curator: { name: "Es Devlin", role: "Stage Designer", nodeId: "NODE_004" },
-    collection: {
-      name: "Kinetic Light",
-      curatedBy: "ES DEVLIN",
-      description: "Sculptural forms that interact with shifting colored rays, defining temporary spaces.",
-      piecesCount: "19 Pieces",
-      volId: "VOL_004"
-    }
-  },
-  {
-    id: 5,
-    curator: { name: "Dieter Rams", role: "Industrial Icon", nodeId: "NODE_005" },
-    collection: {
-      name: "Pure Utility",
-      curatedBy: "DIETER RAMS",
-      description: "Ten principles materialized. Honest, unobtrusive designs that prioritize function.",
-      piecesCount: "40 Pieces",
-      volId: "VOL_005"
-    }
-  },
-  {
-    id: 6,
-    curator: { name: "Zaha Hadid", role: "Architect", nodeId: "NODE_006" },
-    collection: {
-      name: "Parametric Curves",
-      curatedBy: "ZAHA HADID",
-      description: "Fluid structures that challenge gravity and geometry, creating seamless landscapes.",
-      piecesCount: "22 Pieces",
-      volId: "VOL_006"
-    }
-  },
-  {
-    id: 7,
-    curator: { name: "Stefan Sagmeister", role: "Graphic Artist", nodeId: "NODE_007" },
-    collection: {
-      name: "Beautiful Chaos",
-      curatedBy: "STEFAN SAGMEISTER",
-      description: "Typographical experiments that test human perception, emotion, and visual overload.",
-      piecesCount: "15 Pieces",
-      volId: "VOL_007"
-    }
-  },
-  {
-    id: 8,
-    curator: { name: "Neri Oxman", role: "Biomimeticist, MIT", nodeId: "NODE_008" },
-    collection: {
-      name: "Material Ecology",
-      curatedBy: "NERI OXMAN",
-      description: "Structures grown by silkworms and synthesized from chitin, mapping sustainable futures.",
-      piecesCount: "28 Pieces",
-      volId: "VOL_008"
-    }
-  }
+const initialEntries = [
+  { name: "Anonymous", text: "Came for the food. Stayed for the people.", date: "Vol 01", sticker: "🍋" },
+  { name: "Maya S.", text: "I haven't had a conversation like this in years.", date: "Vol 02", sticker: "🌿" },
+  { name: "Rahul K.", text: "Exactly what Vizag needed.", date: "Vol 03", sticker: "⛵" },
+  { name: "Priya N.", text: "I booked the next dinner before I got home.", date: "Vol 04", sticker: "☕" },
+  { name: "David G.", text: "I came alone. I didn't leave that way.", date: "Vol 04", sticker: "🎒" }
 ];
 
-// ─── POLAROID CARD COMPONENT ───────────────────────────────────────────────
-function PolaroidCard({ type, cardNum, isFront, nodeLabel }) {
-  const imgSrc = type === 'curator'
-    ? `/images/crops/curator_card_${cardNum}.png`
-    : `/images/crops/collection_card_${cardNum}.png`;
-  return (
-    <div className={`polaroid-inner ${isFront ? 'polaroid-front' : ''}`}>
-      <div className="polaroid-photo">
-        <img src={imgSrc} alt={nodeLabel} draggable={false} />
-      </div>
-      <div className="polaroid-label">{nodeLabel}</div>
-      <div className="polaroid-dot" />
-    </div>
-  );
-}
+const stickers = ["🍋", "🌿", "⛵", "☕", "🎒", "🗺️", "🍊", "🍷"];
 
-// ─── MAIN COMPONENT ────────────────────────────────────────────────────────
+const heroPeople = [
+  { id: 5, top: "10%", left: "5%", rotate: "-12deg", size: "w-28 md:w-36 lg:w-44" },
+  { id: 6, top: "45%", left: "12%", rotate: "8deg", size: "w-32 md:w-40 lg:w-48" },
+  { id: 7, top: "75%", left: "4%", rotate: "-6deg", size: "w-36 md:w-44 lg:w-52" },
+  { id: 8, top: "25%", left: "20%", rotate: "15deg", size: "w-24 md:w-32 lg:w-36", hiddenOnMobile: true },
+  
+  { id: 9, top: "12%", right: "8%", rotate: "10deg", size: "w-32 md:w-40 lg:w-48" },
+  { id: 10, top: "35%", right: "22%", rotate: "-14deg", size: "w-28 md:w-36 lg:w-44", hiddenOnMobile: true },
+  { id: 11, top: "65%", right: "6%", rotate: "18deg", size: "w-36 md:w-44 lg:w-52" },
+  { id: 12, top: "85%", right: "20%", rotate: "-5deg", size: "w-24 md:w-32 lg:w-36" },
+  { id: 13, top: "50%", right: "15%", rotate: "6deg", size: "w-32 md:w-40 lg:w-44", hiddenOnMobile: true },
+];
+
 export default function Community() {
-  const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
-  const [closestIdxState, setClosestIdxState]       = useState(0);
-  const [galleryBaseAngle, setGalleryBaseAngle]     = useState(0);
-  const [isGalleryAutoPlay, setIsGalleryAutoPlay]   = useState(true);
-  const [galleryHovered, setGalleryHovered]         = useState(false);
+  const [guestbook, setGuestbook] = useState(initialEntries);
+  const [name, setName] = useState('');
+  const [text, setText] = useState('');
+  const [selectedSticker, setSelectedSticker] = useState('🍋');
 
-  const baseAngleRef          = useRef(0);
-  const targetBaseAngleRef    = useRef(0);
-  const isGalleryAutoPlayRef  = useRef(true);
-  const galleryHoveredRef     = useRef(false);
-  const resumeTimeoutRef      = useRef(null);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!name.trim() || !text.trim()) return;
 
-  useEffect(() => { isGalleryAutoPlayRef.current = isGalleryAutoPlay; }, [isGalleryAutoPlay]);
-  useEffect(() => { galleryHoveredRef.current = galleryHovered; },      [galleryHovered]);
+    const newEntry = {
+      name: name.trim(),
+      text: text.trim(),
+      date: "Just now",
+      sticker: selectedSticker
+    };
 
-  const handleGallerySelect = (index) => {
-    setIsGalleryAutoPlay(false);
-    isGalleryAutoPlayRef.current = false;
-
-    const targetVal    = -index * (2 * Math.PI / 16);
-    const diff         = targetVal - baseAngleRef.current;
-    const adjustedDiff = Math.atan2(Math.sin(diff), Math.cos(diff));
-    targetBaseAngleRef.current = baseAngleRef.current + adjustedDiff;
-
-    if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
-    resumeTimeoutRef.current = setTimeout(() => {
-      setIsGalleryAutoPlay(true);
-      isGalleryAutoPlayRef.current = true;
-    }, 8000);
+    setGuestbook([newEntry, ...guestbook]);
+    setName('');
+    setText('');
+    setSelectedSticker('🍋');
   };
 
-  useEffect(() => {
-    let frameId;
-    let lastTime             = performance.now();
-    let autoplayAccumulator  = 0;
-
-    const tick = (now) => {
-      const delta = (now - lastTime) / 1000;
-      lastTime    = now;
-
-      if (isGalleryAutoPlayRef.current && !galleryHoveredRef.current) {
-        autoplayAccumulator += delta;
-        if (autoplayAccumulator >= 5.0) {
-          autoplayAccumulator = 0;
-          targetBaseAngleRef.current -= 2 * Math.PI / 16;
-        }
-      } else {
-        autoplayAccumulator = 0;
-      }
-
-      const diff = targetBaseAngleRef.current - baseAngleRef.current;
-      if (Math.abs(diff) > 0.001) {
-        baseAngleRef.current += diff * 5 * delta;
-      } else {
-        baseAngleRef.current = targetBaseAngleRef.current;
-      }
-      setGalleryBaseAngle(baseAngleRef.current);
-
-      let closestIdx = 0;
-      let maxCos     = -2;
-      for (let i = 0; i < 16; i++) {
-        const theta = baseAngleRef.current + i * (2 * Math.PI / 16);
-        const c     = Math.cos(theta);
-        if (c > maxCos) { maxCos = c; closestIdx = i; }
-      }
-      setClosestIdxState(closestIdx);
-      setActiveGalleryIndex(closestIdx % 8);
-
-      frameId = requestAnimationFrame(tick);
-    };
-
-    frameId = requestAnimationFrame(tick);
-    return () => {
-      cancelAnimationFrame(frameId);
-      if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
-    };
-  }, []);
-
-  const R        = 290;  // orbit radius — scaled for 88vh section
-  const isAligned = Math.abs(galleryBaseAngle - targetBaseAngleRef.current) < 0.05;
-
-  // Build 16-slot arrays for each orbit
-  const curatorNodes    = Array.from({ length: 16 }, (_, idx) => {
-    const theta    = galleryBaseAngle + idx * (2 * Math.PI / 16);
-    const isFront  = idx === closestIdxState;
-    const cardNum  = CURATOR_CARD_SEQ[idx % 8];
-    const nodeLabel= `NODE_0${String(idx % 8 + 1).padStart(1, '0')}`;
-    return { idx, theta, isFront, cardNum, nodeLabel,
-      opacity : isFront ? 1.0  : 0.70,
-      zIndex  : isFront ? 200  : Math.floor(Math.cos(theta) * 100) + 100,
-      rotation: isFront ? 0    : theta + Math.PI / 2
-    };
-  });
-
-  const collectionNodes = Array.from({ length: 16 }, (_, idx) => {
-    const theta    = galleryBaseAngle + idx * (2 * Math.PI / 16);
-    const isFront  = idx === closestIdxState;
-    const cardNum  = COLLECTION_CARD_SEQ[idx % 8];
-    const volLabel = `VOL_0${String(idx % 8 + 1).padStart(1, '0')}`;
-    return { idx, theta, isFront, cardNum, volLabel,
-      opacity : isFront ? 1.0  : 0.70,
-      zIndex  : isFront ? 200  : Math.floor(Math.cos(theta) * 100) + 100,
-      rotation: isFront ? 0    : theta + Math.PI / 2
-    };
-  });
-
-  const activeData = GALLERY_DATA[activeGalleryIndex];
-
   return (
-    <main className="community-page noise-bg">
-      <div className="texture-overlay" />
+    <div className="w-full relative bg-[var(--bg-primary)]">
+      
+      {/* 1. HERO SECTION */}
+      <section className="relative min-h-[85vh] flex items-center justify-center pt-40 pb-20 px-6 lg:px-16 overflow-hidden">
+        {/* Soft background accents */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[var(--accent-primary)]/5 rounded-full filter blur-3xl pointer-events-none" />
 
-      {/* SECTION 1: THE ASSEMBLY HERO */}
-      <CommandDeckHero />
-
-      {/* SECTION 2: ARCH CIRCLES GALLERY */}
-      <section
-        className="art-gallery-section"
-        onMouseEnter={() => setGalleryHovered(true)}
-        onMouseLeave={() => setGalleryHovered(false)}
-      >
-        {/* Inner border frame */}
-        <div className="gallery-border-inner" />
-
-        {/* ── LOGO ── */}
-        <div className="gallery-logo-container animate-fade-in">
-          <div className="gallery-logo-arch">arch</div>
-          <div className="gallery-logo-circles">CIRCLES<sup>™</sup></div>
-          <div className="gallery-logo-sys">ARCH<br />.SYS</div>
-        </div>
-
-        {/* ── VERTICAL SIDE LABELS ── */}
-        <div className="vertical-label left-label">
-          <span className="vlabel-bracket">[</span>
-          <span className="vlabel-text">CURATORS</span>
-          <span className="vlabel-sep">//</span>
-          <span className="vlabel-text">NODE</span>
-          <span className="vlabel-bracket">]</span>
-        </div>
-        <div className="vertical-label right-label">
-          <span className="vlabel-bracket">[</span>
-          <span className="vlabel-text">COLLECTIONS</span>
-          <span className="vlabel-sep">//</span>
-          <span className="vlabel-text">NODE</span>
-          <span className="vlabel-bracket">]</span>
-        </div>
-
-        {/* ── ORBIT 1: CURATORS (left arc) ── */}
-        {curatorNodes.map((node) => (
-          <div
-            key={`curator-${node.idx}`}
-            className={`loop-card curator-card ${node.isFront ? 'active' : ''}`}
-            style={{
-              left     : `calc(50% - 190px - ${R}px + ${R * Math.cos(node.theta)}px)`,
-              top      : `calc(52% + ${R * Math.sin(node.theta)}px)`,
-              transform: `translate(-50%, -50%) rotate(${node.rotation}rad)`,
-              opacity  : node.opacity,
-              zIndex   : node.zIndex,
-            }}
-            onClick={() => handleGallerySelect(node.idx)}
-          >
-            {/* Cozy Washi Tape overlay */}
-            <div 
-              className="washi-tape"
-              style={{
-                top: node.isFront ? '-14px' : '-10px',
-                left: '15%',
-                width: node.isFront ? '65px' : '45px',
-                height: node.isFront ? '16px' : '12px',
-                transform: `rotate(${(node.idx % 2 === 0 ? -6 : 8)}deg)`,
-                opacity: 0.8,
-                zIndex: 210,
-              }}
-            />
-            <PolaroidCard
-              type="curator"
-              cardNum={node.cardNum}
-              isFront={node.isFront}
-              nodeLabel={node.nodeLabel}
-            />
-          </div>
-        ))}
-
-        {/* ── CENTER DISPLAY ── */}
-        <div className="center-gallery-card">
-
-          {/* LEFT: curator info text */}
-          <div className={`center-card-curator-col ${isAligned ? 'aligned' : ''}`}>
-            <div className="center-curator-name">{activeData.curator.name}</div>
-            <div className="center-curator-role">{activeData.curator.role}</div>
-            <div className="center-curator-node">[ {activeData.curator.nodeId} ]</div>
-          </div>
-
-          {/* CENTER-LEFT: large curator portrait — use high-res crop for index 0, else card crop */}
-          <div className="center-portrait-frame" style={{ position: 'relative' }}>
-            <div 
-              className="washi-tape" 
+        {/* Scattered background people illustrations */}
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+          {heroPeople.map((p, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 * i, duration: 1, ease: "easeOut" }}
+              className={`absolute ${p.size} ${p.hiddenOnMobile ? 'hidden md:block' : ''}`}
               style={{ 
-                top: '-12px', 
-                left: '20%', 
-                width: '75px', 
-                height: '18px',
-                transform: 'rotate(-4deg)',
-                opacity: 0.85,
-                zIndex: 210
-              }} 
-            />
-            <img
-              src={
-                activeGalleryIndex === 0
-                  ? '/images/crops/center_john_maeda.png'
-                  : `/images/crops/curator_card_${CURATOR_CARD_SEQ[activeGalleryIndex]}.png`
-              }
-              alt={activeData.curator.name}
-              className="center-portrait-img"
-            />
-          </div>
-
-          {/* CENTER: collection details + button */}
-          <div className={`center-card-details-col ${isAligned ? 'aligned' : ''}`}>
-            <h3 className="center-collection-name">{activeData.collection.name.toUpperCase()}</h3>
-            <div className="center-curated-by">[ CURATED BY: {activeData.collection.curatedBy} ]</div>
-            <p className="center-collection-desc">{activeData.collection.description}</p>
-            <button className="view-collection-btn">[ VIEW COLLECTION ]</button>
-          </div>
-
-          {/* CENTER-RIGHT: large collection artwork — use high-res for index 0 */}
-          <div className="center-art-frame" style={{ position: 'relative' }}>
-            <div 
-              className="washi-tape" 
-              style={{ 
-                top: '-12px', 
-                left: '40%', 
-                width: '75px', 
-                height: '18px',
-                transform: 'rotate(6deg)',
-                opacity: 0.85,
-                zIndex: 210
-              }} 
-            />
-            <img
-              src={
-                activeGalleryIndex === 0
-                  ? '/images/crops/center_abstractions.png'
-                  : `/images/crops/collection_card_${COLLECTION_CARD_SEQ[activeGalleryIndex]}.png`
-              }
-              alt={activeData.collection.name}
-              className="center-art-img"
-            />
-          </div>
-
-          {/* RIGHT: collection meta text */}
-          <div className={`center-card-art-col ${isAligned ? 'aligned' : ''}`}>
-            <div className="center-art-name">{activeData.collection.name.toUpperCase()}</div>
-            <div className="center-art-pieces">{activeData.collection.piecesCount}</div>
-            <div className="center-art-vol">[ {activeData.collection.volId} ]</div>
-            <div className="center-art-dot" />
-          </div>
-
-        </div>
-
-        {/* ── ORBIT 2: COLLECTIONS (right arc) ── */}
-        {collectionNodes.map((node) => (
-          <div
-            key={`collection-${node.idx}`}
-            className={`loop-card collection-card ${node.isFront ? 'active' : ''}`}
-            style={{
-              right    : `calc(50% - 190px - ${R}px + ${R * Math.cos(node.theta)}px)`,
-              top      : `calc(52% + ${R * Math.sin(node.theta)}px)`,
-              transform: `translate(50%, -50%) rotate(${node.rotation}rad)`,
-              opacity  : node.opacity,
-              zIndex   : node.zIndex,
-            }}
-            onClick={() => handleGallerySelect(node.idx)}
-          >
-            {/* Cozy Washi Tape overlay */}
-            <div 
-              className="washi-tape"
-              style={{
-                top: node.isFront ? '-14px' : '-10px',
-                right: '15%',
-                width: node.isFront ? '65px' : '45px',
-                height: node.isFront ? '16px' : '12px',
-                transform: `rotate(${(node.idx % 2 === 0 ? 6 : -8)}deg)`,
-                opacity: 0.8,
-                zIndex: 210,
+                top: p.top, 
+                left: p.left, 
+                right: p.right, 
+                rotate: p.rotate 
               }}
-            />
-            <PolaroidCard
-              type="collection"
-              cardNum={node.cardNum}
-              isFront={node.isFront}
-              nodeLabel={node.volLabel}
-            />
-          </div>
-        ))}
-
-        {/* ── BOTTOM: More Archive Circles ── */}
-        <div className="more-circles-container">
-          <div className="more-circles-icon">
-            {/* compass / directional cross */}
-            <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-              <circle cx="12" cy="12" r="9" />
-              <line x1="12" y1="3"  x2="12" y2="21" />
-              <line x1="3"  y1="12" x2="21" y2="12" />
-              <line x1="6.5" y1="6.5"  x2="8" y2="8" />
-              <line x1="17.5" y1="6.5" x2="16" y2="8" />
-              <line x1="6.5" y1="17.5" x2="8" y2="16" />
-              <line x1="17.5" y1="17.5" x2="16" y2="16" />
-            </svg>
-          </div>
-          <div className="more-circles-text">[ MORE ARCHIVE CIRCLES ]</div>
-        </div>
-
-        {/* ── BOTTOM ICON BAR ── */}
-        <div className="gallery-bottom-actions-container">
-          <button className="bottom-icon-btn" aria-label="Like">
-            <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-            </svg>
-          </button>
-          <button className="bottom-icon-btn" aria-label="Cart">
-            <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-              <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.06 1.4-2.54h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
-            </svg>
-          </button>
-          <button className="bottom-icon-btn" aria-label="Settings">
-            <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-              <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
-            </svg>
-          </button>
-        </div>
-
-      </section>
-
-      {/* SECTION 2.5: YIN-YANG LEDGER */}
-      <YinYangLedger />
-
-      {/* SECTION 3: SOCIETY BLOCK GRID & SHADOW WORDMARK */}
-      <section className="society-grid-section">
-        <div className="dense-grid">
-          {[...Array(48)].map((_, i) => (
-            <div key={i} className="id-block">
-              <span className="font-mono text-[8px] font-bold">ID: 0{i + 100}</span>
-              <div className="w-4 h-4 rounded-full bg-blue/20 self-end" />
-            </div>
+            >
+              <img src={`/people${p.id}.png`} alt={`Guest ${i}`} className="w-full h-auto drop-shadow-md filter contrast-[1.05]" />
+            </motion.div>
           ))}
         </div>
-        <div className="giant-wordmark-container">
-          <h1 className="giant-wordmark">VANTAMMAYILU</h1>
+
+        <div className="container mx-auto max-w-2xl text-center relative z-10 bg-[var(--bg-primary)]/80 backdrop-blur-md rounded-3xl p-8 lg:p-12 shadow-2xl border border-[var(--text-main)]/10 torn-edge">
+          <div className="masking-tape w-32 h-6 -top-3 left-1/2 -translate-x-1/2 rotate-[-2deg]" />
+          <div className="absolute -top-12 -left-12 lg:-left-16 w-32 h-32 coffee-ring opacity-50 rotate-[45deg]" />
+          <div className="absolute -bottom-8 -right-8 stamp rotate-[12deg] opacity-70 scale-90 bg-[var(--bg-primary)]">LONG-TBL</div>
+          
+          <span className="text-[var(--accent-primary)] font-body tracking-[0.25em] uppercase text-xs mb-6 block font-bold mt-4">
+            LONG TABLE SOCIETY
+          </span>
+          <h1 className="text-6xl md:text-8xl lg:text-9xl font-heading leading-tight text-[var(--text-main)] mb-8">
+            A table that <br className="hidden md:inline" /> keeps growing.
+          </h1>
+          <div className="font-body text-xl md:text-2xl text-[var(--text-main)]/80 max-w-2xl mx-auto space-y-3 mb-12 relative z-10">
+            <p>Some people come once.</p>
+            <p>Some keep coming back.</p>
+            <p className="italic text-[var(--accent-primary)] relative inline-block">
+              Either way, they leave a little something behind.
+              <span className="handwritten-annotation absolute -bottom-8 -right-16 text-xl rotate-[-5deg] hidden lg:block">Even just a memory...</span>
+            </p>
+          </div>
+          
+          <Link 
+            to="/dinner" 
+            className="group relative inline-block bg-[#efe8db] text-[#2c2b29] border border-[#2c2b29]/5 shadow-sm hover:shadow-md transition-all duration-300 rounded-full px-10 py-5 font-body text-lg font-bold tracking-wide"
+          >
+            Join the next gathering
+          </Link>
         </div>
       </section>
 
-      <Footer />
-    </main>
+      {/* 2. YOU'LL PROBABLY FIT IN IF... (LISTS / CARDS) */}
+      <section className="py-32 bg-[var(--bg-secondary)] relative overflow-hidden">
+        <div className="container mx-auto px-6 max-w-5xl">
+          <div className="text-center mb-20">
+            <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2 font-logo">Compatibility</span>
+            <h2 className="text-5xl md:text-6xl font-heading text-[var(--text-main)]">You'll probably fit in if...</h2>
+          </div>
+
+          {/* Staggered lists/cards layout */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {[
+              "You save restaurants months before your trip.",
+              "You ask people what they're reading.",
+              "You enjoy cooking for friends.",
+              "You stop to photograph interesting doors.",
+              "You think conversations are better without a clock.",
+              "You love discovering places through food."
+            ].map((trait, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ delay: idx * 0.08 }}
+                whileHover={{ scale: 1.02, rotate: idx % 2 === 0 ? -1 : 1 }}
+                className="bg-[#faf8f5] p-8 rounded-sm shadow-sm border border-[var(--text-main)]/10 min-h-[180px] flex flex-col justify-between relative torn-edge hover-lift"
+              >
+                <div className="masking-tape w-16 h-4 -top-2 left-1/2 -translate-x-1/2 rotate-1" />
+                
+                {/* Washi tape details on random cards */}
+                {idx % 2 === 0 && (
+                  <div className="absolute w-12 h-4 bg-[var(--accent-primary)]/10 backdrop-blur-[1px] border border-[var(--accent-primary)]/5 -top-2 left-6 rotate-12" />
+                )}
+                
+                <div className="flex items-center justify-between">
+                  <span className="font-heading text-sm text-[var(--accent-primary)]/40 font-bold">0{idx + 1}.</span>
+                  <span className="handwritten-annotation text-lg text-emerald-800 rotate-[-15deg] opacity-70 hidden md:block">✓</span>
+                </div>
+                <p className="font-body text-xl text-[var(--text-main)] leading-relaxed mt-4">
+                  "{trait}"
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 3. THINGS WE'VE FOUND AT THE TABLE (OBJECTS) */}
+      <section className="py-32 relative overflow-hidden">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <div className="text-center mb-20">
+            <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2 font-logo">Artifacts</span>
+            <h2 className="text-5xl md:text-6xl font-heading text-[var(--text-main)]">Things we've found at the table.</h2>
+            <p className="font-body text-lg text-[var(--text-main)]/65 mt-4">
+              Instead of explaining the community, let objects tell the story.
+            </p>
+          </div>
+
+          {/* Visual representations of table discoveries */}
+          <div className="flex flex-wrap justify-center gap-8 lg:gap-0 lg:-mx-8">
+            
+            {/* Postcard */}
+            <div className="bg-[#fcf8f0] w-full md:w-[45%] lg:w-[28%] p-6 border border-amber-800/20 shadow-xl rotate-[-2deg] flex flex-col justify-between h-64 relative hover-lift z-10">
+              <div className="absolute top-4 right-4 border border-dashed border-amber-800/40 w-12 h-14 flex items-center justify-center text-[8px] font-mono text-amber-800/60 uppercase tracking-widest rotate-6">
+                Stamp
+              </div>
+              <p className="font-logo text-xl text-amber-900/80 leading-relaxed mt-8">
+                "Pondicherry was warm, but this dinner felt warmer."
+              </p>
+              <div className="border-t border-dashed border-amber-800/20 pt-2 flex justify-between items-end">
+                <span className="font-body text-[10px] uppercase tracking-wider text-amber-800/60">Pondicherry Postcard</span>
+                <span className="font-body text-[10px] text-amber-800/60">Vol 02</span>
+              </div>
+            </div>
+
+            {/* Sketch of dessert */}
+            <div className="bg-[#fafafa] w-full md:w-[45%] lg:w-[28%] lg:-ml-8 lg:mt-12 p-6 border border-gray-300 shadow-xl rotate-[1deg] flex flex-col justify-between h-64 relative hover-lift-inverse torn-edge z-20">
+              <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.05)_1px,transparent_1px)] bg-[size:100%_20px]" />
+              <div className="relative z-10 flex flex-col h-full justify-between">
+                <div className="w-24 h-16 border border-dashed border-gray-300 mx-auto rounded flex items-center justify-center text-gray-300 text-xs">
+                  [ sketch ]
+                </div>
+                <p className="font-body italic text-center text-gray-600 mt-4">
+                  A rough pencil sketch of the banana coconut soup.
+                </p>
+                <span className="font-mono text-[9px] uppercase text-gray-400 text-right">Sketchbook torn leaf</span>
+              </div>
+            </div>
+
+            {/* Recipe card */}
+            <div className="bg-yellow-50/80 w-full md:w-[45%] lg:w-[28%] lg:-ml-8 lg:-mt-8 p-6 border border-yellow-200 shadow-xl rotate-[-1deg] flex flex-col justify-between h-64 relative hover-lift paper-texture z-30">
+              <div className="w-full h-2 bg-red-400/20 absolute top-0 left-0" />
+              <div className="mt-4">
+                <span className="block font-heading text-xs text-amber-800/50 uppercase tracking-wider mb-2">Recipe Card</span>
+                <p className="font-mono text-sm text-amber-900/90 leading-relaxed">
+                  Ginger syrup:<br/>
+                  • A big hand of ginger<br/>
+                  • Palm sugar (by eye)<br/>
+                  • Simmer until sticky.
+                </p>
+              </div>
+              <span className="font-body text-[10px] text-amber-700/60 italic text-right">"No measurements."</span>
+            </div>
+
+            {/* Cassette Tape (Playlist) */}
+            <div className="bg-zinc-800 text-zinc-100 w-full md:w-[45%] lg:w-[28%] lg:-ml-8 lg:mt-8 p-6 border-2 border-zinc-700 shadow-xl rotate-[4deg] flex flex-col justify-between h-64 relative rounded-md hover-lift-inverse z-40">
+              <div className="flex justify-between items-center">
+                <div className="flex gap-1">
+                  <span className="w-3 h-3 rounded-full bg-zinc-600" />
+                  <span className="w-3 h-3 rounded-full bg-zinc-600" />
+                </div>
+                <span className="text-[10px] font-mono tracking-widest text-zinc-400">SIDE A</span>
+              </div>
+              <div className="bg-zinc-700 p-3 rounded text-center">
+                <p className="font-logo text-lg text-[var(--accent-primary)] tracking-wide truncate">Rainy Evenings</p>
+                <p className="font-body text-[9px] text-zinc-400 uppercase mt-1">Curated at Vantammayilu</p>
+              </div>
+              <div className="flex justify-between items-center text-[9px] font-mono text-zinc-500">
+                <span>90 MIN</span>
+                <span>VOL. IV</span>
+              </div>
+            </div>
+
+            {/* Film camera */}
+            <div className="bg-[#f0ece2] w-full md:w-[45%] lg:w-[28%] lg:mt-16 p-5 border border-zinc-300 shadow-xl rotate-[-2deg] flex flex-col justify-between h-64 relative hover-lift z-10">
+              <div className="w-full h-36 bg-zinc-900 rounded flex items-center justify-center relative overflow-hidden shadow-inner">
+                <div className="w-16 h-16 rounded-full border-4 border-zinc-800 bg-zinc-950 flex items-center justify-center">
+                  <div className="w-6 h-6 rounded-full bg-blue-900/40" />
+                </div>
+              </div>
+              <p className="font-body text-xs text-zinc-500 text-center italic mt-2">
+                An old Olympus Trip 35, left on the side board.
+              </p>
+            </div>
+
+            {/* Travel itinerary */}
+            <div className="bg-[#eef2f7] w-full md:w-[45%] lg:w-[28%] lg:-ml-8 lg:mt-8 p-6 border border-blue-200 shadow-xl rotate-[1deg] flex flex-col justify-between h-64 relative hover-lift-inverse ticket-edge z-20">
+              <div className="absolute top-2 left-2 w-4 h-4 rounded-full border border-blue-300/40" />
+              <div>
+                <span className="font-mono text-[9px] uppercase tracking-widest text-blue-500 block mb-2">Boarding Pass Stub</span>
+                <h4 className="font-heading text-lg text-blue-900 leading-tight">VIZAG → HANOI</h4>
+                <p className="font-body text-xs text-blue-800/70 mt-2">
+                  "Let's see if we can find that noodle alley..." (scribbled in margins)
+                </p>
+              </div>
+              <span className="font-body text-[9px] text-blue-400 text-right">Unfinished itinerary</span>
+            </div>
+
+            {/* Bookmark */}
+            <div className="bg-[#fcfcfc] w-full md:w-[45%] lg:w-[28%] lg:-ml-8 lg:-mt-4 p-4 border border-zinc-200 shadow-xl rotate-[-3deg] flex flex-col justify-between h-64 relative mx-auto hover-lift z-30">
+              <div className="w-1.5 h-1.5 rounded-full bg-red-400 mx-auto" />
+              <div className="border-l border-r border-zinc-200 py-6 px-2 text-center">
+                <p className="font-heading text-xl text-zinc-700 italic leading-snug">
+                  "A book is a device to ignite the imagination."
+                </p>
+              </div>
+              <span className="font-body text-[9px] text-zinc-400 text-center uppercase">Found in page 142</span>
+            </div>
+
+            {/* Pressed flower */}
+            <div className="bg-[#faf7f2] w-full md:w-[45%] lg:w-[28%] lg:-ml-8 lg:mt-4 p-6 border border-zinc-200 shadow-xl rotate-[3deg] flex flex-col justify-between h-64 relative hover-lift-inverse z-40">
+              <div className="masking-tape w-12 h-4 top-2 left-1/2 -translate-x-1/2 rotate-2 opacity-50" />
+              <div className="flex-grow flex items-center justify-center opacity-20">
+                {/* Simulated flower/leaf shape */}
+                <svg className="w-20 h-20 text-emerald-800" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17 8C8 10 12 22 12 22S16 10 17 8zM7 8C16 10 12 22 12 22S8 10 7 8zM12 2C12 2 10 5 12 8C14 5 12 2 12 2z"/>
+                </svg>
+              </div>
+              <p className="font-body text-xs text-zinc-600 text-center italic mt-2 relative z-10">
+                A single jasmine bud pressed flat between parchment.
+              </p>
+              <span className="font-mono text-[9px] text-zinc-400 text-right uppercase">Pressed Flower</span>
+            </div>
+
+          </div>
+
+          <div className="text-center mt-20">
+            <p className="font-heading text-3xl md:text-4xl text-[var(--accent-primary)] -rotate-1 italic">
+              "Maybe you'll leave something too."
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. CONVERSATIONS WE'VE OVERHEARD (QUOTES) */}
+      <section className="py-32 bg-[var(--text-main)] text-[var(--bg-secondary)] relative overflow-hidden">
+        {/* Subtle SVG overlay */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml;utf8,%3Csvg viewBox=\'0 0 400 400\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'1.8\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")' }} />
+
+        <div className="container mx-auto px-6 max-w-5xl relative z-10">
+          <div className="text-center mb-20">
+            <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2 font-logo">Snippet Echoes</span>
+            <h2 className="text-5xl md:text-6xl font-heading text-[var(--bg-secondary)]">Conversations we've overheard.</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+            {[
+              { quote: "You have to visit Kyoto in autumn.", rot: "-rotate-1", alignment: "items-start" },
+              { quote: "Can you send me that playlist?", rot: "rotate-2", alignment: "items-end" },
+              { quote: "My grandmother makes it differently.", rot: "-rotate-2", alignment: "items-start" },
+              { quote: "Let's plan that trip.", rot: "rotate-1", alignment: "items-end" },
+              { quote: "I've never told anyone this before.", rot: "-rotate-3", alignment: "items-start", highlight: true },
+              { quote: "Same time next month?", rot: "rotate-2", alignment: "items-end" }
+            ].map((item, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.08 }}
+                className={`flex flex-col ${item.alignment} group`}
+              >
+                <div className={`p-8 rounded-md bg-[var(--bg-secondary)] text-[var(--text-main)] max-w-md shadow-lg border border-white/5 relative ${item.rot} ${item.highlight ? 'border-[var(--accent-primary)]/40 shadow-[var(--accent-primary)]/5' : ''} torn-edge`}>
+                  <Quote className="absolute top-4 right-4 w-6 h-6 text-[var(--text-main)]/10" />
+                  
+                  {/* Subtle scribble/star that appears on hover */}
+                  <div className="absolute -top-4 -left-4 text-xl text-[var(--accent-primary)] font-logo opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rotate-[-15deg]">
+                    ✨
+                  </div>
+
+                  <p className={`font-body text-xl md:text-2xl leading-relaxed ${item.highlight ? 'text-[var(--accent-primary)] font-heading italic text-2xl md:text-3xl' : 'text-[var(--text-main)]'}`}>
+                    "{item.quote}"
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 5. BY THE END OF THE NIGHT... (OBSERVATIONS) */}
+      <section className="py-36 bg-[var(--bg-secondary)] relative overflow-hidden">
+        <div className="container mx-auto px-6 max-w-4xl text-center">
+          <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-6 font-logo">The Transition</span>
+          <h2 className="text-5xl md:text-6xl font-heading text-[var(--text-main)] mb-20">By the end of the night...</h2>
+
+          <div className="flex flex-col items-center justify-center space-y-12 max-w-xl mx-auto relative">
+            {/* Dashed vertical connector line */}
+            <div className="absolute top-0 bottom-0 left-1/2 w-0.5 border-l border-dashed border-[var(--text-main)]/15 pointer-events-none z-0" />
+
+            {[
+              { text: "Names become stories.", size: "text-2xl md:text-3xl", color: "text-[var(--text-main)]/70" },
+              { text: "Stories become memories.", size: "text-3xl md:text-4xl", color: "text-[var(--text-main)]/90 font-semibold" },
+              { text: "Memories become reasons to come back.", size: "text-4xl md:text-5xl", color: "text-[var(--accent-primary)] font-heading" },
+              { text: "No one asks to leave early.", size: "text-5xl md:text-6xl", color: "text-[var(--text-main)] font-heading leading-tight" }
+            ].map((step, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.2 }}
+                className={`relative z-10 bg-[var(--bg-secondary)] px-8 py-3 rounded-full border border-[var(--text-main)]/5 shadow-sm inline-block ${step.size} ${step.color}`}
+              >
+                {step.text}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 6. THE GUESTBOOK (TESTIMONIALS / INTERACTIVE) */}
+      <section className="py-32 relative overflow-hidden">
+        <div className="container mx-auto px-6 max-w-5xl">
+          <div className="text-center mb-16">
+            <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2 font-logo">Signatures</span>
+            <h2 className="text-5xl md:text-6xl font-heading text-[var(--text-main)]">The Guestbook</h2>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            
+            {/* Input Form Column */}
+            <div className="lg:col-span-5 bg-[var(--bg-secondary)] p-8 rounded-3xl shadow-xl border border-[var(--text-main)]/10 relative">
+              <div className="masking-tape w-24 h-6 -top-3 left-1/2 -translate-x-1/2 rotate-1" />
+              <h3 className="font-heading text-3xl text-[var(--text-main)] mb-2">Leave your mark</h3>
+              <p className="font-body text-sm text-[var(--text-main)]/60 mb-6">
+                Add a little reflection about your supper club experience. Choose a sticker stamp to seal it.
+              </p>
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label className="block font-body text-xs uppercase tracking-widest text-[var(--text-main)]/60 mb-2">Your Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="e.g. Maya S. or Anonymous"
+                    className="w-full bg-transparent border-b border-[var(--text-main)]/30 pb-2 font-heading text-xl focus:outline-none focus:border-[var(--accent-primary)] text-[var(--text-main)]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-body text-xs uppercase tracking-widest text-[var(--text-main)]/60 mb-2">Your reflection</label>
+                  <textarea
+                    required
+                    rows={3}
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    placeholder="e.g. Came alone. Didn't leave that way..."
+                    className="w-full bg-transparent border-b border-[var(--text-main)]/30 pb-2 font-body text-lg focus:outline-none focus:border-[var(--accent-primary)] text-[var(--text-main)] resize-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-body text-xs uppercase tracking-widest text-[var(--text-main)]/60 mb-3">Choose a Stamp Sticker</label>
+                  <div className="flex flex-wrap gap-3">
+                    {stickers.map((st) => (
+                      <button
+                        key={st}
+                        type="button"
+                        onClick={() => setSelectedSticker(st)}
+                        className={`w-10 h-10 rounded-full flex items-center justify-center text-xl border ${selectedSticker === st ? 'bg-[var(--accent-primary)] border-[var(--accent-primary)] text-white' : 'border-[var(--text-main)]/10 hover:bg-[var(--text-main)]/5'}`}
+                      >
+                        {st}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full btn-paper bg-[var(--text-main)] text-[var(--bg-primary)] hover:bg-[var(--accent-primary)] hover:border-[var(--accent-primary)] py-4 flex items-center justify-center gap-2 text-lg"
+                >
+                  <Send size={18} />
+                  Sign the Guestbook
+                </button>
+              </form>
+            </div>
+
+            {/* Guestbook List Column */}
+            <div className="lg:col-span-7 space-y-6 max-h-[600px] overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-[var(--accent-primary)]/20 p-4 bg-[#faf8f5] rounded-xl border border-[var(--text-main)]/5 paper-texture shadow-inner">
+              <AnimatePresence>
+                {guestbook.map((entry, idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, y: 15, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className={`p-6 bg-[var(--bg-primary)] border-b border-[var(--text-main)]/10 relative flex flex-col justify-between rotate-${idx % 2 === 0 ? '[-1deg]' : '[1deg]'}`}
+                  >
+                    {/* Sticker stamp positioning */}
+                    <div className="absolute -top-3 -right-3 w-12 h-12 rounded-full bg-[var(--bg-primary)] border border-[var(--text-main)]/15 shadow-md flex items-center justify-center text-2xl rotate-12 select-none">
+                      {entry.sticker}
+                    </div>
+
+                    <div className="pr-8">
+                      <p className="font-heading text-2xl leading-relaxed text-[var(--text-main)]">
+                        "{entry.text}"
+                      </p>
+                    </div>
+
+                    <div className="flex justify-between items-center mt-6 border-[var(--text-main)]/10 pt-4">
+                      <span className="font-body text-sm font-bold text-[var(--accent-primary)] handwritten-note">— {entry.name}</span>
+                      <span className="font-mono text-[10px] text-[var(--text-main)]/40 uppercase">{entry.date}</span>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* 7. THE TABLE IS ALWAYS CHANGING (CTA) */}
+      <section className="py-32 relative text-center overflow-hidden bg-[var(--bg-secondary)] border-t border-[var(--text-main)]/10 flex flex-col items-center justify-center">
+        {/* Soft background accents */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--accent-primary)]/5 rounded-full filter blur-3xl pointer-events-none" />
+
+        <div className="container mx-auto px-6 max-w-3xl relative z-10">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-5xl md:text-7xl font-heading text-[var(--text-main)] mb-6 leading-tight"
+          >
+            The table is <br className="md:hidden" /> always changing.
+          </motion.h2>
+
+          <div className="font-body text-xl md:text-2xl text-[var(--text-main)]/80 max-w-md mx-auto space-y-2 mb-12 italic">
+            <p>Different cuisine.</p>
+            <p>Different people.</p>
+            <p className="font-heading text-[var(--accent-primary)] not-italic">Same feeling.</p>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+          >
+            <Link
+              to="/dinner"
+              className="btn-paper bg-[var(--accent-primary)] text-[var(--bg-primary)] border-[var(--accent-primary)] hover:bg-[var(--text-main)] hover:border-[var(--text-main)] px-10 py-5 text-xl tracking-[0.1em]"
+            >
+              Find your seat
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+    </div>
   );
 }

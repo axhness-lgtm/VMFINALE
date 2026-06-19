@@ -1,6 +1,6 @@
 /* Home.css */
 .home-page {
-  @apply relative min-h-screen bg-[#f4ebd9] overflow-hidden pt-24 pb-16; /* Offset for header */
+  @apply relative min-h-screen bg-[#f3dbbd] overflow-hidden pt-24 pb-16; /* Offset for header */
 }
 
 /* Wavy borders responsive visibility */
@@ -88,7 +88,7 @@
 }
 
 .home-polaroid-container {
-  background: #ffffff;
+  background: #efe9e1;
   border: 1.5px solid #002fa7;
   padding: 10px 10px 18px 10px;
   display: flex;
@@ -102,7 +102,7 @@
   width: 100%;
   aspect-ratio: 1.05;
   overflow: hidden;
-  background: #d0c8be;
+  background: #efe9e1;
   border: 1px solid rgba(0, 47, 167, 0.15);
 }
 
@@ -193,7 +193,7 @@
 }
 
 .home-ticket-stub {
-  background: #fcf7ed; /* unbleached sand card */
+  background: #efe9e1; /* archival off-white */
   border: 1.5px solid #002fa7;
   padding: 20px 20px 24px 20px;
   display: flex;
@@ -232,7 +232,7 @@
   top: -7px;
   width: 12px;
   height: 12px;
-  background-color: #f4ebd9; /* matches --bg-cream */
+  background-color: #f3dbbd; /* matches --bg-cream */
   border: 1.5px solid #002fa7;
   border-radius: 50%;
   box-sizing: border-box;
@@ -337,7 +337,7 @@
 
 .ticket-cta:hover {
   background-color: #002fa7;
-  color: #f4ebd9;
+  color: #f3dbbd;
   transform: translate(-1px, -1px);
   box-shadow: 3px 3px 0px rgba(0, 47, 167, 0.25);
 }

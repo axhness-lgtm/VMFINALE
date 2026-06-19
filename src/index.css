@@ -1,321 +1,309 @@
-@import url('https://fonts.googleapis.com/css2?family=League+Gothic&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @font-face {
-  font-family: 'Mistrully';
-  src: url('/fonts/Mistrully.ttf') format('truetype');
+  font-family: 'The Seasons';
+  src: url('/fonts/SeasonSerif-TRIAL-Regular.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'Apricot';
+  src: url('/fonts/Apricot-BF650c4a6357ce1.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Sunday';
+  src: url('/fonts/Sunday-Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Hibernate';
+  src: url('/fonts/Hibernate.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
 
 :root {
-  --bg-cream: #f4ebd9;       /* The base warm paper tone */
-  --ink-black: #1a1a1a;      /* Soft, organic black charcoal */
-  --puffy-orange: #e86321;   /* The warm brand signature color */
-  --font-editorial: 'EB Garamond', serif;
-  --font-journal: 'Architects Daughter', cursive;
-  --font-typewriter: 'Special Elite', monospace;
-
-  --cream: var(--bg-cream);
-  --orange: var(--puffy-orange);
-  --blue: #002fa7;
+  --bg-primary: #f3dbbd;   /* Warm parchment cream */
+  --bg-secondary: #efe9e1; /* Archival off-white */
   
-  --font-serif: var(--font-editorial), Georgia, serif;
-  --font-mono: 'Mistrully', cursive;
-  --font-script: 'Mistrully', cursive;
-
-  /* Soften the geometric blow slightly */
-  --card-radius: 20px; /* Highly rounded cards */
-  --handwritten-font: 'Mistrully', cursive;
-  --typewriter-font: 'Mistrully', cursive;
-  --patina: #2e7d82; /* earthy oxidized copper patina blue */
-  --burnt-char: #8e4a23; /* deep char-burnt orange-brown */
-}
-
-@layer base {
-  body {
-    background-color: var(--bg-cream);
-    color: var(--blue);
-    font-family: var(--font-serif);
-    line-height: 1.7;
-    letter-spacing: 0.02em;
-    overflow-x: hidden;
-    position: relative;
-    -webkit-font-smoothing: none;
-    -moz-osx-font-smoothing: grayscale;
-    
-    /* Notebook paper grid background lines */
-    background-image: 
-      linear-gradient(rgba(0, 47, 167, 0.035) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 47, 167, 0.035) 1px, transparent 1px);
-    background-size: 30px 30px;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-serif font-bold tracking-tight text-blue;
-    line-height: 1;
-    text-transform: uppercase;
-  }
-}
-
-@layer components {
-  /* Brutalist Components */
-  .bracket-btn {
-    @apply font-mono text-sm md:text-base cursor-pointer transition-all duration-300 inline-flex items-center bg-transparent border-brutal border-blue py-3 px-6 text-blue uppercase tracking-widest hover:translate-x-1 hover:translate-y-1 hover:shadow-none active:bg-blue active:text-cream font-bold;
-    border-radius: var(--card-radius);
-    box-shadow: 4px 4px 0px rgba(0, 47, 167, 0.12);
-  }
+  --accent-primary: #e86321;   /* Signature orange */
+  --accent-secondary: #e45d0b; /* Rust orange */
   
-  .brutal-card {
-    @apply bg-cream border-brutal border-blue p-8 md:p-12;
-    border-radius: var(--card-radius);
-    box-shadow: 4px 4px 0px rgba(0, 47, 167, 0.08);
-  }
+  --text-main: #3b2b24; /* Deep Espresso */
   
-  .brutal-input {
-    @apply bg-transparent border-brutal border-blue p-4 font-mono text-sm w-full outline-none transition-all placeholder:text-blue/40;
-    border-radius: var(--card-radius);
-  }
-  .brutal-input:focus {
-    box-shadow: 4px 4px 0px rgba(0, 47, 167, 0.08);
-  }
+  --olive: #66713d;  /* Forest Olive */
+  --indigo: #4b5f8c; /* Dusty Indigo */
+
+  --font-heading: 'The Seasons', serif;
+  --font-logo: 'Apricot', cursive;
+  --font-body: 'The Seasons', serif;
 }
 
-/* Handwritten / Typewriter Helpers */
-.font-handwritten {
-  font-family: var(--handwritten-font), cursive !important;
-  text-transform: none !important;
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  /* Global very fine, barely noticeable grain texture */
+  background-image: url("data:image/svg+xml;utf8,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.06'/%3E%3C/svg%3E");
+  background-attachment: fixed;
 }
 
-.font-typewriter {
-  font-family: var(--typewriter-font), monospace !important;
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: normal;
 }
 
-/* Distressed Rubber Stamp Core */
-.distressed-stamp {
-  font-family: var(--typewriter-font), monospace;
-  color: var(--burnt-char);
-  border: 3px double var(--burnt-char);
-  padding: 6px 12px;
-  text-transform: uppercase;
-  font-weight: 900;
-  display: inline-block;
-  opacity: 0;
-  transform: scale(3) rotate(-12deg);
-  background-color: transparent;
+p {
+  font-family: var(--font-body);
+}
+
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+.font-logo {
+  font-family: var(--font-logo);
+}
+
+/* Base button styling */
+.btn-paper {
+  background-color: var(--bg-secondary);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  padding: 0.75rem 2rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(59, 43, 36, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  font-size: 1.1rem;
 }
 
-/* Texture effect for distressed stamp */
-.distressed-stamp::after {
-  content: "";
+.btn-paper:hover {
+  background-color: var(--accent-primary);
+  color: var(--bg-primary);
+  border-color: var(--accent-primary);
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.05);
+}
+
+.btn-paper:active {
+  transform: translateY(3px);
+  box-shadow: none;
+}
+
+/* Torn Edge Class using CSS mask */
+.torn-edge {
+  mask-image: url("data:image/svg+xml,%3Csvg preserveAspectRatio='none' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,0 L100,0 L100,100 L0,100 C2,98 0,95 2,90 C0,85 3,80 1,75 C4,70 0,65 3,60 C1,55 4,50 0,45 C3,40 1,35 4,30 C0,25 2,20 0,15 C3,10 0,5 0,0 Z' fill='black'/%3E%3C/svg%3E");
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg preserveAspectRatio='none' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,0 L100,0 L100,100 L0,100 C2,98 0,95 2,90 C0,85 3,80 1,75 C4,70 0,65 3,60 C1,55 4,50 0,45 C3,40 1,35 4,30 C0,25 2,20 0,15 C3,10 0,5 0,0 Z' fill='black'/%3E%3C/svg%3E");
+  -webkit-mask-size: 100% 100%;
+}
+
+/* Utility to add slight rotation to images for the scrapbook feel */
+.scrap-img {
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.scrap-img:hover {
+  transform: rotate(1deg) scale(1.02);
+  z-index: 10;
+}
+
+/* Tape effect */
+.masking-tape {
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="4" stitchTiles="stitch"/><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 15 -7"/></filter><rect width="100%" height="100%" filter="url(%23rough)" fill="white"/></svg>');
-  mix-blend-mode: screen;
-  pointer-events: none;
-  opacity: 0.7;
+  background-color: rgba(239, 233, 225, 0.7);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  backdrop-filter: blur(2px);
+  z-index: 20;
 }
 
-/* The Physics-Based Slam Animation */
-.stamp-slam-active {
-  animation: stamp-slam-crunch 0.22s cubic-bezier(0.12, 0, 0.39, 0) forwards;
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary); 
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(59, 43, 36, 0.2); 
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 43, 36, 0.4); 
 }
 
-@keyframes stamp-slam-crunch {
-  0% {
-    opacity: 0;
-    transform: scale(3) rotate(-25deg);
-  }
-  75% {
-    opacity: 0.85;
-    transform: scale(1.05) rotate(-10deg);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) rotate(-8deg);
-  }
+/* ------------------------------------- */
+/* CREATIVE ENHANCEMENT UTILITIES        */
+/* ------------------------------------- */
+
+/* Polaroid Style */
+.polaroid {
+  background: #fdfcfb;
+  padding: 10px 10px 40px 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08), 0 2px 5px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  position: relative;
+  z-index: 10;
+}
+.polaroid-frame {
+  background: #fcfbf9;
+  padding: 12px 12px 48px 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
-/* Global Effects: Unbleached Paper Texture */
-.texture-overlay {
-  @apply fixed inset-0 pointer-events-none z-[9999] opacity-[0.16] mix-blend-multiply;
-  background-image: url('https://grainy-gradients.vercel.app/noise.svg');
+/* Postage / Ink Stamp */
+.stamp {
+  font-family: monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border: 2px dashed rgba(232, 99, 33, 0.4);
+  color: rgba(232, 99, 33, 0.7);
+  padding: 4px 8px;
+  transform: rotate(-5deg);
+  display: inline-block;
 }
 
-.paper-texture {
-  @apply fixed inset-0 pointer-events-none z-[-1] opacity-[0.28] mix-blend-multiply;
-  background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+/* Handwritten Note Annotation */
+.handwritten-note, .handwritten-annotation {
+  font-family: var(--font-heading);
+  color: #2b395e; /* Navy/blue ink color */
+  font-size: 1.4rem;
+  line-height: 1.2;
+  transform: rotate(-2deg);
+  display: inline-block;
+  opacity: 0.9;
 }
 
-/* Fix 3: System Noise Texture */
-.noise-bg {
+/* Stitched Border */
+.stitched-border {
   position: relative;
 }
-
-.noise-bg::after {
-  content: "";
+.stitched-border::before {
+  content: '';
   position: absolute;
-  inset: 0;
-  opacity: 0.035;
+  top: 6px; bottom: 6px; left: 6px; right: 6px;
+  border: 1px dashed rgba(193, 110, 79, 0.4);
   pointer-events: none;
-  background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" /></filter><rect width="100%" height="100%" filter="url(%23noise)"/></svg>');
-  z-index: 999;
+  border-radius: inherit;
 }
 
-/* Fix 5: The "System Ready" HUD */
-.system-hud {
-  position: fixed;
-  top: 15px;
-  right: 24px;
-  z-index: 9999;
-  background-color: #efe9e1;
-  border: 1.5px solid #002fa7;
-  border-radius: var(--card-radius);
-  padding: 6px 12px;
-  font-family: var(--handwritten-font), cursive;
-  font-size: 11px;
-  font-weight: bold;
-  color: #002fa7;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 3px 3px 0px rgba(0, 47, 167, 0.08);
+/* Notebook Paper */
+.notebook-paper {
+  background-color: #fdfaf5;
+  background-image: repeating-linear-gradient(transparent, transparent 31px, rgba(162, 194, 224, 0.3) 31px, rgba(162, 194, 224, 0.3) 32px);
+  position: relative;
+}
+.notebook-paper::before {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0; left: 32px;
+  width: 2px;
+  background: rgba(224, 162, 162, 0.3);
 }
 
-.status-light {
-  width: 6px;
-  height: 6px;
-  background-color: #e45a0b;
+/* Coffee Ring Overlay */
+.coffee-ring {
+  position: absolute;
   border-radius: 50%;
-  animation: status-blink 2s step-end infinite;
-}
-
-@keyframes status-blink {
-  0%, 100% { opacity: 0; }
-  50% { opacity: 1; }
-}
-
-/* Fix 6: Mechanical "Clunk" Animation */
-.latch-engage {
-  animation: latch-engage-anim 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-@keyframes latch-engage-anim {
-  0% { transform: scale(1); }
-  50% { transform: scale(0.95); }
-  100% { transform: scale(1); }
-}
-
-/* Fix 2: Snappy Transition Utility */
-.snappy-transition {
-  transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-}
-
-/* Mistrully adjustments for readability and normal mixed case type */
-*[class*="mono"], *[class*="Courier"], *[class*="monospace"], .monospace-tag, .monospace-sub, .live-hud-ticker, .system-hud, .ledger-title, .log-row, .placeholder-text, .ticker-caps, .sprout-tag-text, .compact-row-title, .sys-data-tag, .card-top-bar, .card-text, .framework-text, .cta-mechanical-button, .bm-label, .bm-input, .bm-otp-box, .bm-confirmed-row, .bm-confirmed-note, .bm-btn-primary, .bm-btn-ghost, .bm-error, .bm-divider, .font-mono, pre, code, kbd, samp, input, textarea, select, button {
-  text-transform: none !important;
-  font-weight: 300 !important;
-  letter-spacing: 0.05em !important;
-}
-
-/* Specific button letter-spacing fixes */
-.bracket-btn {
-  text-transform: none !important;
-  letter-spacing: 0.08em !important;
-}
-
-/* --- SCRAPBOOK DESIGN ENGINE STYLES --- */
-
-/* The Global Texture Overlay */
-body::after, .scrapbook-canvas-container {
-  content: "";
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
+  border: 3px solid rgba(92, 64, 51, 0.15);
+  box-shadow: inset 0 0 10px rgba(92, 64, 51, 0.05), 0 0 5px rgba(92, 64, 51, 0.05);
   pointer-events: none;
-  background-image: url('/assets/textures/fibrous-paper-grain.webp');
-  background-repeat: repeat;
-  opacity: 0.14; /* Keep it subtle but distinct */
-  mix-blend-mode: multiply; /* Crucial: blends directly into colors underneath */
-  z-index: 9999; /* Always sits on top */
+  filter: blur(0.5px);
+  z-index: 5;
 }
 
-/* Asset Pipeline & Edge Masking Protocol */
-.scrapbook-card {
-  background: #ffffff;
-  padding: 12px 12px 24px 12px;
-  /* Use a drop-shadow filter so the shadow conforms to the irregular shape */
-  filter: drop-shadow(6px 8px 0px rgba(26, 26, 26, 0.12));
-  transform: rotate(2deg);
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+/* Subtle Hover Lift Interaction */
+.hover-lift {
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-4px) rotate(1deg);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  z-index: 30;
 }
 
-.scrapbook-card img {
-  width: 100%;
-  height: auto;
-  /* Applies an irregular torn paper edge format using an alpha mask */
-  mask-image: url('/assets/vectors/torn-paper-edge.svg');
-  mask-size: 100% 100%;
+/* Subtle Hover Lift Inverse Interaction */
+.hover-lift-inverse {
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease;
+}
+.hover-lift-inverse:hover {
+  transform: translateY(-4px) rotate(-1.5deg);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  z-index: 30;
+}
+
+/* Paper Texture */
+.paper-texture {
+  background-image: 
+    linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Ticket Edge Mask */
+.ticket-edge {
+  mask-image: radial-gradient(circle at 100% 50%, transparent 10px, black 11px),
+              radial-gradient(circle at 0% 50%, transparent 10px, black 11px);
+  mask-size: 51% 100%;
   mask-repeat: no-repeat;
-  -webkit-mask-image: url('/assets/vectors/torn-paper-edge.svg');
-  -webkit-mask-size: 100% 100%;
+  mask-position: right, left;
+  -webkit-mask-image: radial-gradient(circle at 100% 50%, transparent 10px, black 11px),
+                      radial-gradient(circle at 0% 50%, transparent 10px, black 11px);
+  -webkit-mask-size: 51% 100%;
   -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: right, left;
 }
 
-/* Tactile Micro-Interactions & The Stamp Engine */
-.interactive-sticker {
-  cursor: pointer;
-  will-change: transform, filter;
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.32), 
-              filter 0.4s ease;
-}
-
-.interactive-sticker:hover {
-  /* Elevates the object and adjusts its tilt dynamically */
-  transform: scale(1.06) rotate(4deg) translateY(-4px);
-  /* Deepens the shadow to reinforce the feeling of physical lifting */
-  filter: drop-shadow(12px 16px 8px rgba(26, 26, 26, 0.18));
-}
-
-/* Ink Stamp Slam Animation Engine for Completed States */
-.ink-stamp-active {
-  animation: stamp-slam-crunch 0.25s cubic-bezier(0.11, 0, 0, 1) forwards;
-}
-
-@keyframes stamp-slam-crunch {
-  0% {
-    opacity: 0;
-    transform: scale(2.5) rotate(-35deg);
-  }
-  85% {
-    opacity: 0.9;
-    transform: scale(1.05) rotate(-12deg);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) rotate(-15deg);
-  }
-}
-
-/* Washi Tape Accent Overlay */
-.washi-tape {
+/* Bookmark Ribbon */
+.bookmark-ribbon {
   position: absolute;
-  background: rgba(232, 215, 185, 0.48); /* semi-transparent unbleached masking tape */
-  box-shadow: 1px 1px 2px rgba(26, 26, 26, 0.06);
-  backdrop-filter: blur(0.5px);
-  z-index: 50;
-  pointer-events: none;
-  /* Torn edge vector mask */
-  mask-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 100 20' xmlns='http://www.w3.org/2000/svg'><path d='M0,2 Q5,0 10,2 T20,1 T30,3 T40,1 T50,2 T60,1 T70,3 T80,1 T90,2 T100,1 L100,19 Q95,20 90,18 T80,19 T70,17 T60,19 T50,18 T40,19 T30,17 T20,19 T10,18 T0,19 Z' fill='black'/></svg>");
-  mask-size: 100% 100%;
-  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 100 20' xmlns='http://www.w3.org/2000/svg'><path d='M0,2 Q5,0 10,2 T20,1 T30,3 T40,1 T50,2 T60,1 T70,3 T80,1 T90,2 T100,1 L100,19 Q95,20 90,18 T80,19 T70,17 T60,19 T50,18 T40,19 T30,17 T20,19 T10,18 T0,19 Z' fill='black'/></svg>");
-  -webkit-mask-size: 100% 100%;
+  top: -8px;
+  right: 20px;
+  width: 20px;
+  height: 40px;
+  background: var(--accent-primary);
+  opacity: 0.8;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+  z-index: 10;
 }
 
-
+/* Push Pin */
+.push-pin {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle at 30% 30%, #ef4444, #991b1b);
+  border-radius: 50%;
+  box-shadow: 2px 5px 5px rgba(0,0,0,0.2), inset -2px -2px 4px rgba(0,0,0,0.3);
+  z-index: 25;
+}
+.push-pin::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 4px;
+  height: 4px;
+  background: rgba(255,255,255,0.4);
+  border-radius: 50%;
+}

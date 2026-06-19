@@ -334,7 +334,7 @@ export default function BookingModal({ isOpen, onClose, dinner, initialSeats = 1
       const rzp = new window.Razorpay(options);
       rzpRef.current = rzp;
       rzp.on('payment.failed', () => {
-        setError('Payment failed. Your seat lock is still active — try again.');
+        setError("Let's try that again. Your chair hasn't gone anywhere.");
         setLoading(false);
       });
       rzp.open();
@@ -475,7 +475,7 @@ export default function BookingModal({ isOpen, onClose, dinner, initialSeats = 1
           {/* ── STEP 1: Identify ── */}
           {step === 'identify' && (
             <form className="bm-step" onSubmit={handleIdentify}>
-              <div className="bm-step-tag font-handwritten">Step 01 — Identify</div>
+              <div className="bm-step-tag font-body italicwritten">Step 01 — Identify</div>
               <h2 className="bm-title">Who's coming?</h2>
               <p className="bm-subtitle">We'll check if you've dined with us before.</p>
               <div className="bm-field-group">
@@ -509,7 +509,7 @@ export default function BookingModal({ isOpen, onClose, dinner, initialSeats = 1
           {/* ── STEP 2: Seats ── */}
           {step === 'seats' && (
             <div className="bm-step">
-              <div className="bm-step-tag font-handwritten">Step 02 — Select seats</div>
+              <div className="bm-step-tag font-body italicwritten">Step 02 — Select seats</div>
               <h2 className="bm-title">How many seats?</h2>
               <p className="bm-subtitle">Maximum 2 seats per booking.</p>
 
@@ -542,7 +542,7 @@ export default function BookingModal({ isOpen, onClose, dinner, initialSeats = 1
               </div>
               {error && <div className="bm-error">{error}</div>}
               <button className="bm-btn-primary" onClick={handleSeatsNext} disabled={loading}>
-                {loading ? 'Sending code...' : 'Continue to verify →'}
+                {loading ? 'Preparing the kitchen...' : 'Continue to verify →'}
               </button>
               <button className="bm-btn-ghost" onClick={() => goStep('identify')}>← Back</button>
             </div>
@@ -551,7 +551,7 @@ export default function BookingModal({ isOpen, onClose, dinner, initialSeats = 1
           {/* ── STEP 3: OTP ── */}
           {step === 'otp' && (
             <div className="bm-step">
-              <div className="bm-step-tag font-handwritten">Step 03 — Verify phone</div>
+              <div className="bm-step-tag font-body italicwritten">Step 03 — Verify phone</div>
               <h2 className="bm-title">Enter code</h2>
               <div className="bm-info-summary">
                 <div className="bm-info-block">
@@ -560,7 +560,7 @@ export default function BookingModal({ isOpen, onClose, dinner, initialSeats = 1
                 </div>
               </div>
               {otp.join('').length === 6 && (
-                <div style={{ fontSize: '18px', color: '#e45a0b', opacity: 0.85, marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                <div style={{ fontSize: '18px', color: '#e86321', opacity: 0.85, marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                   Code auto-filled — click verify to continue
                 </div>
               )}
@@ -583,7 +583,7 @@ export default function BookingModal({ isOpen, onClose, dinner, initialSeats = 1
               </div>
               {error && <div className="bm-error">{error}</div>}
               <button className="bm-btn-primary" onClick={handleVerifyOtp} disabled={loading}>
-                {loading ? 'Verifying...' : 'Verify & lock seat →'}
+                {loading ? 'Setting the table...' : 'Verify & lock seat →'}
               </button>
               <button
                 className="bm-btn-ghost"
@@ -598,7 +598,7 @@ export default function BookingModal({ isOpen, onClose, dinner, initialSeats = 1
           {/* ── STEP 4: Lock (countdown + pay CTA) ── */}
           {step === 'lock' && (
             <div className="bm-step bm-lock-step">
-              <div className="bm-step-tag font-handwritten">Step 04 — Seat locked</div>
+              <div className="bm-step-tag font-body italicwritten">Step 04 — Seat locked</div>
               <div className={`bm-countdown ${countdown < 60 ? 'urgent' : ''}`}>
                 {fmtTime(countdown)}
               </div>
@@ -626,7 +626,7 @@ export default function BookingModal({ isOpen, onClose, dinner, initialSeats = 1
 
               <button className="bm-btn-primary bm-btn-orange" onClick={handleProceedToPayment} disabled={loading}>
                 {loading
-                  ? 'Opening gateway...'
+                  ? 'Keeping your chair aside...'
                   : IS_DEV_MODE
                     ? 'Simulate payment (dev mode)'
                     : 'Pay now — secure your seat'
@@ -637,7 +637,7 @@ export default function BookingModal({ isOpen, onClose, dinner, initialSeats = 1
                 <button
                   type="button"
                   className="bm-btn-ghost"
-                  style={{ marginTop: '12px', color: '#e45a0b', borderColor: '#e45a0b' }}
+                  style={{ marginTop: '12px', color: '#e86321', borderColor: '#e86321' }}
                   onClick={handleSimulatePayment}
                   disabled={loading}
                 >
@@ -650,7 +650,7 @@ export default function BookingModal({ isOpen, onClose, dinner, initialSeats = 1
           {/* ── LOCKOUT screen ── */}
           {step === 'lockout' && (
             <div className="bm-step bm-lockout-step">
-              <div className="bm-step-tag font-handwritten">System — Lockout</div>
+              <div className="bm-step-tag font-body italicwritten">System — Lockout</div>
               <div className="bm-lockout-icon">✕</div>
               <h2 className="bm-title">Seat Released.</h2>
               <p className="bm-subtitle">
@@ -667,7 +667,7 @@ export default function BookingModal({ isOpen, onClose, dinner, initialSeats = 1
           {/* ── STEP 5: Post-payment details ── */}
           {step === 'details' && (
             <form className="bm-step" onSubmit={handleDetailsSubmit}>
-              <div className="bm-step-tag font-handwritten">Step 05 — Guest details</div>
+              <div className="bm-step-tag font-body italicwritten">Step 05 — Guest details</div>
               <h2 className="bm-title">Almost there.</h2>
               <p className="bm-subtitle">A few quick details for a smooth experience.</p>
 
@@ -738,7 +738,7 @@ export default function BookingModal({ isOpen, onClose, dinner, initialSeats = 1
 
               {error && <div className="bm-error">{error}</div>}
               <button className="bm-btn-primary" type="submit" disabled={loading}>
-                {loading ? 'Saving...' : 'Finalise booking →'}
+                {loading ? 'Almost ready...' : 'Finalise booking →'}
               </button>
             </form>
           )}
@@ -749,11 +749,12 @@ export default function BookingModal({ isOpen, onClose, dinner, initialSeats = 1
               <div className="bm-confirmed-stamp distressed-stamp stamp-slam-active">
                 [ SEAT SECURED ]
               </div>
-              <div className="bm-step-tag font-handwritten">Booking — Confirmed</div>
-              <h2 className="bm-title">Seat secured.</h2>
+              <div className="bm-step-tag font-body italicwritten">Booking — Confirmed</div>
+              <h2 className="bm-title">You're coming.</h2>
               <p className="bm-subtitle">
-                Check your email{IS_DEV_MODE ? '' : ' and WhatsApp'} for confirmation.<br />
-                We'll send reminders 48hrs and 12hrs before the dinner.
+                We'll send you everything you need to know.<br /><br />
+                Until then... Think about a place you love. <br />
+                You might end up talking about it.
               </p>
               <div className="bm-info-summary" style={{ width: '100%', textAlign: 'left', marginBottom: '16px' }}>
                 <div className="bm-info-block">
@@ -777,11 +778,10 @@ export default function BookingModal({ isOpen, onClose, dinner, initialSeats = 1
                   <span className="bm-info-value" style={{ fontSize: '18px', opacity: 0.75 }}>Shared 24hrs before event</span>
                 </div>
               </div>
-              <p className="bm-confirmed-note">
-                Phones off. Conversations on.<br />
-                Doors close at exactly 7:30 PM.
+              <p className="bm-confirmed-note italic mt-8 text-lg text-[var(--accent-primary)] font-body">
+                We'll see you soon.
               </p>
-              <button className="bm-btn-primary" onClick={onClose}>Close</button>
+              <button className="bm-btn-primary mt-4" onClick={onClose}>Close</button>
             </div>
           )}
 

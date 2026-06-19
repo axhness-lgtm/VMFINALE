@@ -61,7 +61,7 @@ const LongTableScene = () => {
             <circleGeometry args={[0.8, 32]} />
             <meshStandardMaterial color="#0f0904" roughness={0.7} />
           </mesh>
-          <pointLight position={[0, 0.5, 0]} color="#e45a0b" intensity={0.5} distance={3} />
+          <pointLight position={[0, 0.5, 0]} color="#e86321" intensity={0.5} distance={3} />
         </group>
       ))}
     </group>
@@ -139,7 +139,7 @@ const CinematicScene = () => {
       <Float speed={1} rotationIntensity={0.5} floatIntensity={1}>
         <FloatingArtifact position={[-2, 1, -2]} rotation={[0.1, 0.2, 0.1]} scale={1.5} color="#ffffff" speed={0.8} index={1} />
         <FloatingArtifact position={[2.5, -0.5, -3]} rotation={[-0.2, -0.4, 0.1]} scale={1.2} color="#f5efe7" speed={0.6} index={2} />
-        <FloatingArtifact position={[-1.5, -2, -1]} rotation={[0.5, 0.1, 0.2]} scale={0.8} color="#e45a0b" speed={1.2} index={3} />
+        <FloatingArtifact position={[-1.5, -2, -1]} rotation={[0.5, 0.1, 0.2]} scale={0.8} color="#e86321" speed={1.2} index={3} />
         <FloatingArtifact position={[3, 2, -4]} rotation={[0, 0.5, -0.2]} scale={2} color="#13368d" speed={0.5} index={4} />
       </Float>
 
@@ -148,7 +148,7 @@ const CinematicScene = () => {
       <InvitationCard />
 
       <pointLight position={[-5, 5, 5]} intensity={0.5} color="#13368d" />
-      <pointLight position={[5, -5, -5]} intensity={0.5} color="#e45a0b" />
+      <pointLight position={[5, -5, -5]} intensity={0.5} color="#e86321" />
 
       {/* Atmospheric Fog */}
       <fog attach="fog" args={['#efe9e1', 5, 15]} />

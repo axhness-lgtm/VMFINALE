@@ -18,7 +18,7 @@ function DustParticles({ count = 200 }) {
     <Points positions={points} stride={3} frustumCulled={false}>
       <PointMaterial
         transparent
-        color="#e45a0b"
+        color="#e86321"
         size={0.02}
         sizeAttenuation={true}
         depthWrite={false}
@@ -78,7 +78,7 @@ export default function HomeHero3D() {
         <pointLight 
           position={[-5, -5, 2]} 
           intensity={150} 
-          color="#e45a0b" 
+          color="#e86321" 
           castShadow 
           shadow-mapSize={[1024, 1024]}
         />

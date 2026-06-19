@@ -21,7 +21,7 @@
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: bold;
-  color: #e45a0b; /* High-impact Orange */
+  color: #e86321; /* High-impact Orange */
   letter-spacing: 0.15em;
   text-transform: uppercase;
 }
@@ -70,8 +70,8 @@
     box-shadow: 16px 16px 0px 0px #002fa7;
   }
   50% {
-    border-color: #e45a0b;
-    box-shadow: 16px 16px 0px 0px #e45a0b;
+    border-color: #e86321;
+    box-shadow: 16px 16px 0px 0px #e86321;
     background-color: rgba(228, 90, 11, 0.08);
   }
 }
@@ -204,7 +204,7 @@
 }
 
 .fill-orange {
-  fill: #e45a0b;
+  fill: #e86321;
 }
 
 .sprout-animation-blue {
@@ -254,7 +254,7 @@
 .blink-cursor-block {
   width: 24px;
   height: 24px;
-  background-color: #e45a0b;
+  background-color: #e86321;
   margin: 0 auto 16px auto;
   animation: blink-square 0.8s step-end infinite;
 }
@@ -283,7 +283,7 @@
 }
 
 .game-start-btn {
-  background-color: #e45a0b;
+  background-color: #e86321;
   color: #efe9e1;
   border: 2px solid #002fa7;
   font-family: var(--font-mono);
@@ -340,7 +340,7 @@
 }
 
 .tab-strip-btn:hover {
-  background-color: #e45a0b;
+  background-color: #e86321;
   color: #efe9e1;
 }
 
@@ -496,7 +496,7 @@
 }
 
 .event-log-row.status-mismatch {
-  color: #e45a0b;
+  color: #e86321;
 }
 
 .log-item-name {
@@ -556,7 +556,7 @@
 .print-sec-header {
   font-size: 8px;
   font-weight: bold;
-  color: #e45a0b;
+  color: #e86321;
   margin-top: 5px;
   text-transform: uppercase;
   border-bottom: 1px solid rgba(0, 47, 167, 0.15);
@@ -628,7 +628,7 @@
 
 .manifest-close:hover {
   opacity: 1;
-  color: #e45a0b;
+  color: #e86321;
 }
 
 .manifest-body {
@@ -679,8 +679,8 @@
 
 .manifest-row.highlight {
   background-color: rgba(228, 90, 11, 0.08);
-  color: #e45a0b;
-  border-bottom: 2px solid #e45a0b;
+  color: #e86321;
+  border-bottom: 2px solid #e86321;
   font-size: 12px;
 }
 
@@ -703,7 +703,7 @@
   letter-spacing: 0.08em;
   padding: 14px 20px;
   cursor: pointer;
-  box-shadow: 4px 4px 0px 0px #e45a0b;
+  box-shadow: 4px 4px 0px 0px #e86321;
   transition: all 0.15s ease;
 }
 
@@ -711,12 +711,12 @@
   background-color: #efe9e1;
   color: #002fa7;
   transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px 0px #e45a0b;
+  box-shadow: 6px 6px 0px 0px #e86321;
 }
 
 .manifest-btn:active {
   transform: translate(0, 0);
-  box-shadow: 0px 0px 0px 0px #e45a0b;
+  box-shadow: 0px 0px 0px 0px #e86321;
 }
 
 /* RESPONSIVE LAYOUT RULES */

@@ -10,7 +10,7 @@ const Host = () => {
           <div className="w-full lg:w-[40%] flex justify-center lg:justify-end">
             <div 
               className="relative overflow-hidden border border-white/5"
-              style={{ width: '300px', height: '400px', background: 'linear-gradient(135deg, #e45a0b 0%, #1a0e05 100%)' }}
+              style={{ width: '300px', height: '400px', background: 'linear-gradient(135deg, #e86321 0%, #1a0e05 100%)' }}
             >
               <div className="absolute inset-0 pointer-events-none opacity-20 bg-grain"></div>
               {/* Torn paper edge effect matching the dark background */}
@@ -24,7 +24,7 @@ const Host = () => {
           <div className="w-full lg:w-[60%] flex flex-col items-center lg:items-start text-center lg:text-left">
             <div className="flex flex-col" style={{ maxWidth: '560px' }}>
               <h2 
-                className="font-serif italic font-light text-center"
+                className="font-heading italic font-light text-center"
                 style={{ fontSize: '28px', color: '#efe9e1', lineHeight: '1.4', maxWidth: '560px', margin: '0 auto' }}
               >
                 "I built this because I was hungry for more than food — I was hungry for the kind of conversation that makes you forget the time."
@@ -45,14 +45,14 @@ const Host = () => {
               </div>
               
               <div className="pt-10 text-center lg:text-left">
-                <span className="font-cursive text-[#e45a0b] block" style={{ fontSize: '48px', lineHeight: '1' }}>Hyndavi</span>
+                <span className="font-cursive text-[#e86321] block" style={{ fontSize: '48px', lineHeight: '1' }}>Hyndavi</span>
                 <p className="font-mono text-[10px] uppercase tracking-[0.2em] mt-4 text-white/40">
                   Founder · Host · Vantammayilu
                 </p>
               </div>
               
               <p 
-                className="font-serif italic text-center lg:text-left"
+                className="font-heading italic text-center lg:text-left"
                 style={{ paddingTop: '3rem', color: 'rgba(239,233,225,0.55)', fontSize: '16px' }}
               >
                 If this feels like something you've been looking for, you're already welcome.

@@ -36,12 +36,12 @@ const HomeEditorial = () => {
           variants={staggerContainer}
         >
           <motion.div className="hero-annotation mb-8" variants={fadeInUp}>
-            <span className="font-script text-[#e45a0b] opacity-60 text-lg italic">
+            <span className="font-script text-[#e86321] opacity-60 text-lg italic">
               — A signal from a living house at night.
             </span>
           </motion.div>
 
-          <motion.h1 className="hero-headline font-serif" variants={fadeInUp}>
+          <motion.h1 className="hero-headline font-heading" variants={fadeInUp}>
             <span className="text-drift" style={{ '--drift-rotation': '-1deg' }}>A table</span> <br />
             <span className="text-drift" style={{ '--drift-rotation': '0.5deg', '--drift-y': '-10px' }}>for strangers.</span>
           </motion.h1>
@@ -82,7 +82,7 @@ const HomeEditorial = () => {
           }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
         >
-          <div className="font-script text-2xl text-[#e45a0b] rotate-[-12deg]">
+          <div className="font-script text-2xl text-[#e86321] rotate-[-12deg]">
             “The steam still <br /> rises from the bowls.”
           </div>
         </motion.div>
@@ -94,20 +94,20 @@ const HomeEditorial = () => {
       <section className="editorial-section classification-wall-section py-32 bg-[#efe9e1]">
         <div className="container">
           <div className="wall-header mb-16">
-            <span className="section-label text-[#e45a0b]">/ CLASSIFICATION OF THE TEMPORARY</span>
+            <span className="section-label text-[#e86321]">/ CLASSIFICATION OF THE TEMPORARY</span>
             <h2 className="section-title mt-4">Notes on a world <br /> that disappears by midnight.</h2>
           </div>
 
           <div className="classification-grid">
             {/* LARGE FRAGMENT */}
-            <div className="classification-item fragment-large col-span-7 bg-white/20 p-12 border-l border-[#e45a0b]/10 group relative">
+            <div className="classification-item fragment-large col-span-7 bg-white/20 p-12 border-l border-[#e86321]/10 group relative">
               <span className="fragment-tag text-xs tracking-widest opacity-40">ITEM #01 — THE INTENTION</span>
               <p className="section-body text-3xl leading-relaxed mt-8">
                 Vantammayilu began with a simple idea: <br />
-                that people still crave <span className="text-[#e45a0b] italic">slower</span> forms of discovery. 
+                that people still crave <span className="text-[#e86321] italic">slower</span> forms of discovery. 
               </p>
               {/* Hand-drawn arrow */}
-              <svg className="absolute -bottom-12 right-12 w-24 h-24 text-[#e45a0b]/30" viewBox="0 0 100 100">
+              <svg className="absolute -bottom-12 right-12 w-24 h-24 text-[#e86321]/30" viewBox="0 0 100 100">
                 <path d="M10,50 Q40,10 90,50 M90,50 L70,40 M90,50 L70,60" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
               </svg>
               <div className="discovered-note bottom-8 right-8">“Written on a napkin in 2023.”</div>
@@ -117,14 +117,14 @@ const HomeEditorial = () => {
             <div className="classification-item col-span-5 flex flex-col gap-12">
               <div className="scrap-paper p-8 bg-[#fdfaf6] shadow-sm rotate-[1deg] border border-black/5 group">
                 <span className="text-xs opacity-30">OBSERVATION #22</span>
-                <p className="mt-4 font-serif text-xl italic">“Someone brought a poem last Thursday. Nobody asked what anyone did for work.”</p>
+                <p className="mt-4 font-heading text-xl italic">“Someone brought a poem last Thursday. Nobody asked what anyone did for work.”</p>
                 <div className="discovered-note top-4 right-4">A rare occurrence.</div>
               </div>
 
               <div className="scrap-paper p-8 bg-[#fdfaf6] shadow-sm rotate-[-1.5deg] border border-black/5 group self-end max-w-sm">
                 <p className="font-sans text-sm tracking-wide leading-loose">
                   One guest stayed back helping clean plates because the evening felt too nice to end. 
-                  <span className="block mt-4 text-[#e45a0b]">— MARGINALIA</span>
+                  <span className="block mt-4 text-[#e86321]">— MARGINALIA</span>
                 </p>
               </div>
             </div>
@@ -132,7 +132,7 @@ const HomeEditorial = () => {
             {/* SMALL LABELS */}
             <div className="classification-item col-span-4 mt-12">
               <div className="museum-tag border border-[#13368d]/10 p-6 flex flex-col gap-2 hover:bg-white/40 transition-colors cursor-help group">
-                <span className="text-[10px] uppercase tracking-widest text-[#e45a0b]">Temporary World</span>
+                <span className="text-[10px] uppercase tracking-widest text-[#e86321]">Temporary World</span>
                 <p className="text-sm opacity-60">Everything here is built for one night. It leaves no residue but memory.</p>
                 <div className="discovered-note bottom-full mb-2 italic">“That disappears by midnight.”</div>
               </div>
@@ -151,7 +151,7 @@ const HomeEditorial = () => {
             <span className="section-label">/ CINEMATIC RECONSTRUCTION</span>
             <h2 className="section-title">The anatomy of <br /> a lingering evening.</h2>
             {/* Hand-drawn circle around 'lingering' */}
-            <svg className="absolute top-1/2 left-48 w-64 h-24 text-[#e45a0b]/20 pointer-events-none" viewBox="0 0 200 100">
+            <svg className="absolute top-1/2 left-48 w-64 h-24 text-[#e86321]/20 pointer-events-none" viewBox="0 0 200 100">
                <ellipse cx="100" cy="50" rx="90" ry="40" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="500" strokeDashoffset="500">
                  <animate attributeName="stroke-dashoffset" from="500" to="0" dur="3s" fill="freeze" />
                </ellipse>
@@ -204,11 +204,11 @@ const HomeEditorial = () => {
               >
                 <div className="memory-img-frame relative overflow-hidden shadow-2xl transition-transform duration-[2000ms] group-hover:scale-[1.02]">
                    <img src={item.img} alt={item.label} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-1000" />
-                   <div className="absolute inset-0 bg-[#e45a0b]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 mix-blend-overlay"></div>
+                   <div className="absolute inset-0 bg-[#e86321]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 mix-blend-overlay"></div>
                 </div>
                 <div className="memory-caption mt-6 opacity-40 group-hover:opacity-100 transition-all duration-1000 translate-y-2 group-hover:translate-y-0">
                   <span className="text-[10px] tracking-[0.3em] uppercase block mb-2">{item.label}</span>
-                  <p className="font-serif text-lg leading-relaxed">{item.desc}</p>
+                  <p className="font-heading text-lg leading-relaxed">{item.desc}</p>
                 </div>
                 {/* DISCOVERED ANNOTATION */}
                 <div className="discovered-note bottom-full left-1/2 -translate-x-1/2 mb-4 whitespace-nowrap">
@@ -222,7 +222,7 @@ const HomeEditorial = () => {
                {[...Array(10)].map((_, i) => (
                  <motion.div 
                    key={i}
-                   className="absolute w-1 h-1 rounded-full bg-[#e45a0b]/20"
+                   className="absolute w-1 h-1 rounded-full bg-[#e86321]/20"
                    style={{ 
                      top: `${Math.random() * 100}%`, 
                      left: `${Math.random() * 100}%` 
@@ -291,14 +291,14 @@ const HomeEditorial = () => {
 
         <div className="container relative z-10 text-center">
           <motion.span 
-            className="preview-eyebrow uppercase tracking-[0.4em] text-[10px] text-[#e45a0b]"
+            className="preview-eyebrow uppercase tracking-[0.4em] text-[10px] text-[#e86321]"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
           >
             / THE NEXT ENVIRONMENT
           </motion.span>
           <motion.h2 
-            className="preview-theme font-serif text-7xl mt-8"
+            className="preview-theme font-heading text-7xl mt-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -358,8 +358,8 @@ const HomeEditorial = () => {
                       <div className="discovered-note bottom-4 left-4 text-xs">{item.note}</div>
                    </div>
                  ) : (
-                   <div className="scrap-note p-6 bg-[#fdfaf6] shadow-md border-l-2 border-[#e45a0b]/20 max-w-xs">
-                      <p className="font-serif italic text-lg opacity-80">{item.text}</p>
+                   <div className="scrap-note p-6 bg-[#fdfaf6] shadow-md border-l-2 border-[#e86321]/20 max-w-xs">
+                      <p className="font-heading italic text-lg opacity-80">{item.text}</p>
                    </div>
                  )}
                </motion.div>
@@ -381,11 +381,11 @@ const HomeEditorial = () => {
                  <img src="https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&q=80&w=800" className="w-full grayscale group-hover:grayscale-0 transition-all duration-[2000ms]" alt="Journal" />
                </div>
                <div className="w-1/2 pt-4">
-                 <h3 className="font-serif text-2xl group-hover:text-[#e45a0b] transition-colors duration-1000">The architecture of a conversation.</h3>
+                 <h3 className="font-heading text-2xl group-hover:text-[#e86321] transition-colors duration-1000">The architecture of a conversation.</h3>
                  <p className="mt-6 text-sm opacity-60 leading-loose">
                    We spent four hours talking about things that don't exist. The wine was cold, but the room was warm.
                  </p>
-                 <Link to="/journal" className="inline-block mt-8 text-xs uppercase tracking-widest border-b border-[#e45a0b]/40 pb-1 hover:border-[#e45a0b] transition-all">
+                 <Link to="/journal" className="inline-block mt-8 text-xs uppercase tracking-widest border-b border-[#e86321]/40 pb-1 hover:border-[#e86321] transition-all">
                    Read the Journal ↗
                  </Link>
                </div>
@@ -424,7 +424,7 @@ const HomeEditorial = () => {
         </div>
 
         {/* DISTANT BLUR LIGHTS */}
-        <div className="absolute bottom-20 left-1/4 w-32 h-32 bg-[#e45a0b]/10 blur-[100px] animate-pulse"></div>
+        <div className="absolute bottom-20 left-1/4 w-32 h-32 bg-[#e86321]/10 blur-[100px] animate-pulse"></div>
         <div className="absolute top-1/3 right-1/4 w-48 h-48 bg-[#13368d]/10 blur-[120px] animate-pulse"></div>
       </section>
 

@@ -1,140 +1,109 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import './Navigation.css';
+import { Link, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
+import { Menu, X } from 'lucide-react';
 
-const Navigation = () => {
+const navLinks = [
+  { name: 'Home', path: '/' },
+  { name: 'Dinners', path: '/dinner' },
+  { name: 'About', path: '/about' },
+  { name: 'Community', path: '/community' },
+  { name: 'Journal', path: '/journal' },
+];
+
+const RollingText = ({ text, active, hoverColorClass="text-[var(--accent-secondary)]" }) => (
+  <div className="relative overflow-hidden inline-block h-[1.2em]">
+    <div className={`transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] ${active ? '-translate-y-full' : 'group-hover:-translate-y-full'}`}>
+      <span className="block leading-[1.2em]">{text}</span>
+    </div>
+    <div className={`absolute top-0 left-0 w-full transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] ${active ? 'translate-y-0 text-[var(--accent-primary)] italic' : `translate-y-full group-hover:translate-y-0 ${hoverColorClass} italic`}`}>
+      <span className="block leading-[1.2em]">{text}</span>
+    </div>
+  </div>
+);
+
+export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
-
-  const toggleOpen = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const closeMenu = () => {
-    setIsOpen(false);
-  };
+  const location = useLocation();
 
   return (
-    <>
-      {/* PART 1: THE INITIAL FIXED HEADER (COLLAPSED STATE) */}
-      <div className="fixed top-0 left-0 w-full h-20 bg-transparent z-[100] flex items-center justify-between px-8 select-none pointer-events-none">
+    <div className="fixed top-4 left-0 w-full z-50 flex justify-center px-6 pointer-events-none">
+      <header className="pointer-events-auto bg-cream/90 backdrop-blur-md border border-[#3b2b24]/10 shadow-lg rounded-2xl px-4 py-2 w-full max-w-6xl flex justify-between items-center transition-all duration-300">
         
-        {/* Left Side: Capsule Navigation Buttons */}
-        <div className="flex items-center gap-2 pointer-events-auto">
-          {/* Circular Logo Link */}
-          <Link to="/" className="flex items-center justify-center w-10 h-10 rounded-full border-2 border-[#002fa7] overflow-hidden bg-[#efe9e1] shadow-[2px_2px_0px_rgba(0,47,167,0.1)] hover:scale-105 transition-all mr-1">
-            <img src="/assets/logo.jpg" alt="Logo" className="w-full h-full object-cover" />
-          </Link>
+        {/* Logo */}
+        <Link to="/" className="relative z-50 flex-shrink-0 hover:opacity-80 transition-opacity duration-300 flex items-center">
+          <span className="text-xl md:text-2xl text-[var(--accent-primary)] font-logo leading-none tracking-wide">
+            Vantammayilu
+          </span>
+        </Link>
 
-          <Link to="/" className="nav-capsule active font-mono text-[11px] font-bold tracking-widest px-4 py-2 border-2 border-[#002fa7] rounded-full bg-[#e45a0b] text-[#efe9e1] hover:bg-[#efe9e1] hover:text-[#002fa7] transition-all">
-            Home
-          </Link>
-          <Link to="/founder" className="nav-capsule font-mono text-[11px] font-bold tracking-widest px-4 py-2 border-2 border-[#002fa7] rounded-full bg-[#efe9e1] text-[#002fa7] hover:bg-[#002fa7] hover:text-[#efe9e1] transition-all">
-            About Us
-          </Link>
-          <Link to="/substack" className="nav-capsule font-mono text-[11px] font-bold tracking-widest px-4 py-2 border-2 border-[#002fa7] rounded-full bg-[#efe9e1] text-[#002fa7] hover:bg-[#002fa7] hover:text-[#efe9e1] transition-all">
-            Journal
-          </Link>
-          <Link to="/dinner" className="nav-capsule font-mono text-[11px] font-bold tracking-widest px-4 py-2 border-2 border-[#002fa7] rounded-full bg-[#efe9e1] text-[#002fa7] hover:bg-[#002fa7] hover:text-[#efe9e1] transition-all">
-            Dinners
-          </Link>
-          <Link to="/community" className="nav-capsule font-mono text-[11px] font-bold tracking-widest px-4 py-2 border-2 border-[#002fa7] rounded-full bg-[#efe9e1] text-[#002fa7] hover:bg-[#002fa7] hover:text-[#efe9e1] transition-all">
-            Community
-          </Link>
-        </div>
-
-        {/* Right Side: Search Bar & Hamburger Icon */}
-        <div className="flex items-center gap-3 pointer-events-auto">
-          {/* Search Capsule */}
-          <div className="flex items-center gap-2 border-2 border-[#002fa7] rounded-full px-4 py-2 bg-[#efe9e1] shadow-[2px_2px_0px_rgba(0,47,167,0.1)]">
-            <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-[#002fa7]" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            <input 
-              type="text" 
-              placeholder="search memories" 
-              className="bg-transparent outline-none font-mono text-[11px] placeholder:text-[#002fa7]/50 text-[#002fa7] w-32"
-            />
-          </div>
-
-          {/* Menu circle toggle button */}
-          <button 
-            onClick={toggleOpen}
-            className="w-10 h-10 rounded-full border-2 border-[#002fa7] bg-[#efe9e1] text-[#002fa7] flex items-center justify-center font-bold hover:bg-[#e45a0b] hover:text-[#efe9e1] transition-all shadow-[2px_2px_0px_rgba(0,47,167,0.1)]"
-          >
-            {isOpen ? '✕' : '☰'}
-          </button>
-        </div>
-      </div>
-
-      {/* PART 2: THE EXPANDED OVERLAY (ACTIVE DIRECTORY STATE) */}
-      <div 
-        className={`fixed left-0 w-full bg-[#efe9e1] z-[90] transition-all duration-300 ease-out overflow-hidden flex flex-col ${
-          isOpen ? 'top-12 h-[calc(100vh-48px)] opacity-100' : 'top-12 h-0 opacity-0 pointer-events-none'
-        }`}
-      >
-        <div className="grid grid-cols-2 grid-rows-2 w-full h-full border-t border-[#002fa7] relative">
+        {/* Desktop Links */}
+        <nav className="hidden md:flex gap-5 items-center">
+          {navLinks.map((link) => (
+            <Link 
+              key={link.name}
+              to={link.path}
+              className="group relative"
+            >
+              <span className={`text-[10px] font-body uppercase tracking-[0.1em] block ${
+                location.pathname === link.path ? 'text-[var(--accent-primary)]' : 'text-[var(--text-main)]'
+              }`}>
+                <RollingText text={link.name} active={location.pathname === link.path} />
+              </span>
+              {/* Subtle animated underline */}
+              <span className={`absolute -bottom-1 left-0 h-[1px] bg-[var(--accent-primary)] transition-all duration-300 ${
+                location.pathname === link.path ? 'w-full' : 'w-0 group-hover:w-full'
+              }`} />
+            </Link>
+          ))}
           
-          {/* Quadrant 1 (Top-Left): 01 // THE DINNER */}
-          <Link 
-            to="/dinner" 
-            onClick={closeMenu}
-            className="border-r-2 border-b-2 border-[#002fa7] flex flex-col items-center justify-center bg-[#efe9e1] hover:bg-[#e45a0b] text-[#002fa7] hover:text-[#efe9e1] transition-all duration-300 group relative p-4"
-          >
-            <span className="font-serif text-2xl sm:text-4xl md:text-6xl lg:text-[4.5vw] font-black uppercase tracking-tight text-center leading-none transition-transform duration-300 group-hover:scale-105">
-              01 // THE DINNER
-            </span>
-            <span className="absolute bottom-6 right-8 opacity-0 group-hover:opacity-100 transition-opacity duration-200 font-mono text-[9px] md:text-xs font-bold tracking-widest text-[#002fa7] group-hover:text-[#efe9e1]">
-              [ EXPLORE ROUTE → ]
-            </span>
+          <Link to="/dinner" className="btn-paper ml-4 font-body uppercase tracking-[0.1em] text-[7px] !px-2.5 !py-1 group flex items-center justify-center">
+            <RollingText text="Reserve" active={false} hoverColorClass="text-[color:var(--bg-primary)]" />
           </Link>
+        </nav>
 
-          {/* Quadrant 2 (Top-Right): 02 // SOCIETY */}
-          <Link 
-            to="/community" 
-            onClick={closeMenu}
-            className="border-b-2 border-[#002fa7] flex flex-col items-center justify-center bg-[#efe9e1] hover:bg-[#e45a0b] text-[#002fa7] hover:text-[#efe9e1] transition-all duration-300 group relative p-4"
-          >
-            <span className="font-serif text-2xl sm:text-4xl md:text-6xl lg:text-[4.5vw] font-black uppercase tracking-tight text-center leading-none transition-transform duration-300 group-hover:scale-105">
-              02 // SOCIETY
-            </span>
-            <span className="absolute bottom-6 right-8 opacity-0 group-hover:opacity-100 transition-opacity duration-200 font-mono text-[9px] md:text-xs font-bold tracking-widest text-[#002fa7] group-hover:text-[#efe9e1]">
-              [ EXPLORE ROUTE → ]
-            </span>
-          </Link>
+        {/* Mobile Navigation Toggle */}
+        <button 
+          className="md:hidden relative z-50 text-[var(--text-main)] p-2 hover:text-[var(--accent-primary)] transition-colors pointer-events-auto"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {isOpen ? <X size={16} /> : <Menu size={16} />}
+        </button>
 
-          {/* Quadrant 3 (Bottom-Left): 03 // JOURNAL */}
-          <Link 
-            to="/substack" 
-            onClick={closeMenu}
-            className="border-r-2 border-[#002fa7] flex flex-col items-center justify-center bg-[#efe9e1] hover:bg-[#e45a0b] text-[#002fa7] hover:text-[#efe9e1] transition-all duration-300 group relative p-4"
-          >
-            <span className="font-serif text-2xl sm:text-4xl md:text-6xl lg:text-[4.5vw] font-black uppercase tracking-tight text-center leading-none transition-transform duration-300 group-hover:scale-105">
-              03 // JOURNAL
-            </span>
-            <span className="absolute bottom-6 right-8 opacity-0 group-hover:opacity-100 transition-opacity duration-200 font-mono text-[9px] md:text-xs font-bold tracking-widest text-[#002fa7] group-hover:text-[#efe9e1]">
-              [ EXPLORE ROUTE → ]
-            </span>
-          </Link>
-
-          {/* Quadrant 4 (Bottom-Right): 04 // ABOUT US */}
-          <Link 
-            to="/founder" 
-            onClick={closeMenu}
-            className="flex flex-col items-center justify-center bg-[#efe9e1] hover:bg-[#e45a0b] text-[#002fa7] hover:text-[#efe9e1] transition-all duration-300 group relative p-4"
-          >
-            <span className="font-serif text-2xl sm:text-4xl md:text-6xl lg:text-[4.5vw] font-black uppercase tracking-tight text-center leading-none transition-transform duration-300 group-hover:scale-105">
-              04 // ABOUT US
-            </span>
-            <span className="absolute bottom-6 right-8 opacity-0 group-hover:opacity-100 transition-opacity duration-200 font-mono text-[9px] md:text-xs font-bold tracking-widest text-[#002fa7] group-hover:text-[#efe9e1]">
-              [ EXPLORE ROUTE → ]
-            </span>
-          </Link>
-
-        </div>
-      </div>
-    </>
+        {/* Mobile Menu Overlay */}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: -10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -10 }}
+              transition={{ duration: 0.3 }}
+              className="absolute top-full left-0 right-0 mt-4 mx-6 bg-[var(--bg-secondary)] border border-[var(--text-main)]/10 shadow-2xl rounded-2xl p-8 z-40 flex flex-col pointer-events-auto"
+            >
+              <div className="flex flex-col gap-6 relative z-10 w-full">
+                {navLinks.map((link, i) => (
+                  <motion.div
+                    key={link.name}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                  >
+                    <Link 
+                      to={link.path}
+                      onClick={() => setIsOpen(false)}
+                      className={`text-2xl font-body uppercase tracking-[0.1em] transition-colors ${
+                        location.pathname === link.path ? 'text-[var(--accent-primary)]' : 'text-[var(--text-main)] hover:text-[var(--accent-secondary)]'
+                      }`}
+                    >
+                      {link.name}
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </header>
+    </div>
   );
-};
-
-export default Navigation;
+}

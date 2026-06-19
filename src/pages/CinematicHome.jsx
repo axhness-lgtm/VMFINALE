@@ -21,7 +21,7 @@ const CinematicHome = () => {
           >
             <color attach="background" args={['#ff8811']} />
             <ambientLight intensity={0.5} />
-            <directionalLight position={[10, 10, 5]} intensity={1} color="#e45a0b" />
+            <directionalLight position={[10, 10, 5]} intensity={1} color="#e86321" />
             <directionalLight position={[-10, -10, -5]} intensity={0.5} color="#13368d" />
             
             <CinematicScene />

@@ -1,410 +1,467 @@
-import React, { useRef, useState } from 'react';
+import { motion } from 'framer-motion';
+import { ArrowRight, BookOpen, Music, Film, Compass, Disc, MapPin, Coffee, Utensils } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import Footer from '../components/Footer';
-import './Journal.css';
 
-// ── FADE-IN WRAPPER ───────────────────────────────────────────────────
-
-const FadeIn = ({ children, delay = 0, y = 30, className = '' }) => (
-  <motion.div
-    className={className}
-    initial={{ opacity: 0, y }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, margin: '-80px' }}
-    transition={{ duration: 2, delay, ease: [0.23, 1, 0.32, 1] }}
-  >
-    {children}
-  </motion.div>
-);
-
-// ── AMBIENT ORB ───────────────────────────────────────────────────────
-
-const GlowOrb = ({ x, y, size = 250, color = 'rgba(196,98,10,0.07)', dur = 16, ox = '15px', oy = '-10px', ox2 = '-10px', oy2 = '8px' }) => (
-  <div
-    className="j-glow-orb"
-    style={{ left: x, top: y, width: size, height: size, background: color, '--od': `${dur}s`, '--ox': ox, '--oy': oy, '--ox2': ox2, '--oy2': oy2 }}
-  />
-);
-
-// ── HERO ──────────────────────────────────────────────────────────────
-
-const JournalHero = () => {
-  const microcopy = [
-    { text: 'Found somewhere between dessert and midnight.', x: '52%', y: '20%', r: '-1.5deg', d: '13s', dy: '-8px' },
-    { text: 'Some stories needed a second life.',            x: '58%', y: '42%', r:  '2deg',   d: '11s', dy: '-6px' },
-    { text: 'Documented before they disappeared.',          x: '55%', y: '62%', r: '-1deg',   d: '16s', dy: '-10px' },
-    { text: 'Things overheard at the table.',               x: '62%', y: '78%', r:  '1.5deg', d: '9s',  dy: '-7px' },
-    { text: 'Nobody planned to remember this much.',        x: '48%', y: '88%', r: '-2deg',   d: '14s', dy: '-9px' },
-  ];
-
-  return (
-    <section className="j-hero j-section">
-      {/* Ambient warmth */}
-      <GlowOrb x="60%" y="30%" size={350} color="rgba(196,98,10,0.07)" dur={18} ox="20px" oy="-15px" ox2="-15px" oy2="10px" />
-      <GlowOrb x="5%"  y="60%" size={250} color="rgba(196,98,10,0.05)" dur={12} ox="12px" oy="-8px"  ox2="-8px"  oy2="12px" />
-
-      {/* Floating microcopy */}
-      {microcopy.map((m, i) => (
-        <span
-          key={i}
-          className="j-microcopy"
-          style={{ left: m.x, top: m.y, '--r': m.r, '--d': m.d, '--dy': m.dy }}
-        >
-          {m.text}
-        </span>
-      ))}
-
-      {/* Tape mark decorations */}
-      <div className="tape-mark" style={{ width: '4rem', height: '1.2rem', top: '12%', left: '48%', '--tr': '-3deg' }} />
-      <div className="tape-mark" style={{ width: '3rem', height: '1rem', bottom: '25%', right: '35%', '--tr': '2deg' }} />
-
-      <div style={{ maxWidth: '52rem', position: 'relative', zIndex: 2 }}>
-        <motion.span
-          className="j-hero-eyebrow"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.5, ease: [0.23, 1, 0.32, 1] }}
-        >
-          Vantammayilu Journal
-        </motion.span>
-
-        <motion.h1
-          className="j-hero-headline"
-          initial={{ opacity: 0, y: 60 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 2.2, delay: 0.2, ease: [0.23, 1, 0.32, 1] }}
-        >
-          FRAGMENTS<br />THAT STAYED<br />BEHIND.
-        </motion.h1>
-
-        <motion.p
-          className="j-hero-body"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 2, delay: 0.8 }}
-        >
-          {"Recipes.\nDinner memories.\nPlaces we keep thinking about.\nConversations nobody expected to have.\nMusic that lingered after guests left.\n\nSome evenings end slowly.\n\nSome never fully leave."}
-        </motion.p>
-      </div>
-    </section>
-  );
-};
-
-// ── FEATURED STORY ────────────────────────────────────────────────────
-
-const FeaturedStory = () => (
-  <section className="j-featured j-section">
-    <GlowOrb x="70%" y="20%" size={300} color="rgba(196,98,10,0.08)" dur={14} ox="-18px" oy="12px" ox2="14px" oy2="-9px" />
-
-    <FadeIn className="j-featured-inner">
-      {/* Image */}
-      <div className="j-featured-img-wrap">
-        <img
-          src="https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&q=80&w=900"
-          className="j-featured-img"
-          alt=""
-        />
-        <div className="j-featured-overlay" />
-        <span className="j-featured-annotation">"People speak more softly after dessert."</span>
-      </div>
-
-      {/* Text */}
-      <div>
-        <span className="j-featured-label">/ Featured Fragment</span>
-        <h2 className="j-featured-headline">
-          WHY EVERYBODY<br />OPENS UP<br />DURING DESSERT.
-        </h2>
-        <p className="j-featured-body">
-          {"Somewhere around the final course, the room changes.\n\nPeople stop introducing themselves carefully.\nConversations lose their edges.\nCities get mentioned more softly.\n\nMaybe sweetness lowers defenses.\n\nOr maybe people just feel less alone by then."}
-        </p>
-        <button className="j-read-btn">Read Story →</button>
-      </div>
-    </FadeIn>
-  </section>
-);
-
-// ── CATEGORY SHELVES ──────────────────────────────────────────────────
-
-const categories = [
+const editorialCards = [
   {
-    stamp: 'Archive 01',
-    title: 'Things People Said',
-    desc: 'Small observations, funny lines, accidental philosophy, overheard conversations, beautiful fragments from the table.',
-    layout: 'wide',
+    num: "01",
+    title: "The conversations that only happen after dessert",
+    desc: "Sometimes all a table needs is enough time.",
+    category: "Reflections",
+    img: "/herofordinner.jpeg",
+    rot: "-rotate-1"
   },
   {
-    stamp: 'Archive 02',
-    title: 'Places That Inspired Dinners',
-    desc: 'Cities, cafés, train stations, markets, oceans, kitchens, street corners, hotels, films, and memories that eventually became evenings.',
-    layout: 'mid',
+    num: "02",
+    title: "A recipe we keep coming back to",
+    desc: "Because some dishes deserve another evening.",
+    category: "Recipes",
+    img: "/sushi_platter.jpg",
+    rot: "rotate-2"
   },
   {
-    stamp: 'Archive 03',
-    title: 'Recipes We Keep Returning To',
-    desc: 'Not perfect recipes.\n\nThe emotional versions.\n\nThe ones with stains, approximations, substitutions, and stories attached.',
-    layout: 'half',
+    num: "03",
+    title: "The city that inspired this month's dinner",
+    desc: "A place that stayed with us long after we left.",
+    category: "Travel",
+    img: "/italy_pasta_table.png",
+    rot: "-rotate-2"
   },
   {
-    stamp: 'Archive 04',
-    title: 'After The Guests Left',
-    desc: 'The strange calm after the evening ends.\n\nHalf-empty glasses.\nMusic still playing.\nThe feeling nobody wants to disturb.',
-    layout: 'half',
-  },
-  {
-    stamp: 'Archive 05',
-    title: 'Things Left Behind',
-    desc: 'Polaroids.\nNotes.\nLighters.\nPoems.\nDrawings.\nForgotten scarves.\n\nTiny evidence that people were here.',
-    layout: 'full',
-  },
+    num: "04",
+    title: "Things guests left behind",
+    desc: "Not everything fits into a bag when you leave.",
+    category: "Observations",
+    img: "/hero-collage.png",
+    rot: "rotate-1"
+  }
 ];
 
-const CategoryShelves = () => (
-  <section className="j-categories j-section">
-    <FadeIn>
-      <p className="j-cat-headline">
-        "Everything is filed, eventually."
-      </p>
-    </FadeIn>
-
-    <div className="j-cat-grid">
-      {categories.map((cat, i) => (
-        <motion.div
-          key={i}
-          className={`j-cat-item ${cat.layout}`}
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 1.8, delay: i * 0.1, ease: [0.23, 1, 0.32, 1] }}
-        >
-          <div className="j-cat-stamp">{cat.stamp}</div>
-          <h3 className="j-cat-title">{cat.title}</h3>
-          <p className="j-cat-desc" style={{ whiteSpace: 'pre-line' }}>{cat.desc}</p>
-          <div className="j-cat-glow" />
-        </motion.div>
-      ))}
-    </div>
-  </section>
-);
-
-// ── SCATTERED ENTRIES ──────────────────────────────────────────────────
-
-const entries = [
-  {
-    date: 'March 2026',
-    title: 'The Playlist That Lasted Longer Than Dinner',
-    preview: 'Nobody asked to change the music once.\n\nThat almost never happens.',
-    reveal: '"Still listening to it."',
-    col: 'j-entry-col-a',
-    rotate: '-0.8deg',
-  },
-  {
-    date: 'February 2026',
-    title: 'Some People Only Talk About Travel After Their Second Drink',
-    preview: "There's always one city someone almost moved to.",
-    reveal: '"Porto. It was always Porto."',
-    col: 'j-entry-col-b',
-    rotate: '1.2deg',
-  },
-  {
-    date: 'January 2026',
-    title: 'The Night Everybody Stayed Until 1:14 AM',
-    preview: 'Nobody noticed how late it got until the candles disappeared.',
-    reveal: '"We weren\'t ready for it to end."',
-    col: 'j-entry-col-c',
-    rotate: '-0.5deg',
-  },
-  {
-    date: 'December 2025',
-    title: 'How A Vietnamese Dinner Turned Into A Goa Group Trip',
-    preview: 'Certain evenings continue by accident.',
-    reveal: '"Three weeks later."',
-    col: 'j-entry-col-d',
-    rotate: '0.8deg',
-  },
+const tinyObservations = [
+  "People always ask for the playlist.",
+  "Someone always stays back to help clean up.",
+  "Every dinner has one unforgettable conversation.",
+  "The loudest laughter usually comes from strangers.",
+  "Recipes are rarely written exactly the same twice.",
+  "The candles always burn longer than expected."
 ];
-
-const ScatteredEntries = () => (
-  <section className="j-entries j-section">
-    <GlowOrb x="80%" y="10%" size={280} color="rgba(196,98,10,0.06)" dur={14} ox="-15px" oy="12px" ox2="12px" oy2="-8px" />
-
-    <FadeIn>
-      <p className="j-entries-headline">
-        Recent fragments from the archive.
-      </p>
-    </FadeIn>
-
-    <div className="j-entries-grid">
-      {entries.map((entry, i) => (
-        <motion.div
-          key={i}
-          className={`j-entry ${entry.col}`}
-          style={{ transform: `rotate(${entry.rotate})` }}
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 1.8, delay: i * 0.12, ease: [0.23, 1, 0.32, 1] }}
-        >
-          <div className="j-entry-date">{entry.date}</div>
-          <h3 className="j-entry-title">{entry.title}</h3>
-          <p className="j-entry-preview" style={{ whiteSpace: 'pre-line' }}>{entry.preview}</p>
-          <span className="j-entry-reveal">{entry.reveal}</span>
-        </motion.div>
-      ))}
-    </div>
-  </section>
-);
-
-// ── ARCHIVAL STRIP ────────────────────────────────────────────────────
-
-const artifacts = [
-  { src: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=400', w: 220, h: 280, caption: "The kitchen at 11:52 PM.", rotate: '-3deg', tape: '-1.5deg' },
-  { src: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=400', w: 280, h: 200, caption: "Steam before the guests arrived.", rotate:  '2deg',  tape:  '2deg'  },
-  { src: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&q=80&w=400', w: 200, h: 260, caption: "The last remaining dessert spoon.", rotate: '-1.5deg', tape: '-2.5deg' },
-  { src: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80&w=400', w: 260, h: 220, caption: "Film photos from the Morocco dinner.", rotate: '1deg', tape: '1.5deg' },
-  { src: 'https://images.unsplash.com/photo-1590779033100-9f60a05a013d?auto=format&fit=crop&q=80&w=400', w: 180, h: 240, caption: "Someone's unfinished sketch.", rotate: '-2deg', tape: '-1deg' },
-  { src: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=400', w: 240, h: 200, caption: "A recipe with no measurements.", rotate: '2.5deg', tape: '2deg' },
-];
-
-const ArchivalStrip = () => (
-  <section className="j-archive-strip j-section">
-    <FadeIn>
-      <h2 className="j-archive-headline">
-        SMALL EVIDENCE<br />OF GOOD EVENINGS.
-      </h2>
-    </FadeIn>
-
-    <div className="j-artifact-row">
-      {artifacts.map((art, i) => (
-        <motion.div
-          key={i}
-          className="j-artifact"
-          style={{ transform: `rotate(${art.rotate})` }}
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.5, delay: i * 0.1 }}
-        >
-          <div className="j-artifact-tape" style={{ '--tr': art.tape }} />
-          <img
-            src={art.src}
-            className="j-artifact-img"
-            width={art.w}
-            height={art.h}
-            alt=""
-          />
-          <p className="j-artifact-caption">{art.caption}</p>
-        </motion.div>
-      ))}
-    </div>
-  </section>
-);
-
-// ── FINAL CLOSE ───────────────────────────────────────────────────────
-
-const JournalFinal = () => {
-  const particles = Array.from({ length: 12 }, (_, i) => ({
-    size: 2 + Math.random() * 3,
-    left: `${10 + i * 7}%`,
-    top:  `${40 + (i % 3) * 20}%`,
-    dur:  `${15 + i * 2}s`,
-    delay: `${i * 1.2}s`,
-    px: `${(Math.random() - 0.5) * 60}px`,
-    py: `${-50 - Math.random() * 60}px`,
-  }));
-
-  return (
-    <section className="j-final j-section">
-      <div className="j-final-glow" />
-
-      {/* Drifting particles */}
-      {particles.map((p, i) => (
-        <div
-          key={i}
-          className="j-particle"
-          style={{
-            width: p.size, height: p.size,
-            left: p.left, top: p.top,
-            '--pd': p.dur,
-            '--px': p.px, '--py': p.py,
-            animationDelay: p.delay,
-          }}
-        />
-      ))}
-
-      {/* Drifting city names */}
-      {['Hanoi', 'Lisbon', 'Vizag', 'Oaxaca', 'Kyoto'].map((city, i) => (
-        <motion.span
-          key={i}
-          style={{
-            position: 'absolute',
-            fontFamily: 'var(--font-serif)',
-            fontStyle: 'italic',
-            fontSize: '0.75rem',
-            color: '#efe9e1',
-            opacity: 0,
-            left: `${15 + i * 15}%`,
-            top: `${25 + (i % 3) * 18}%`,
-            letterSpacing: '0.3em',
-            pointerEvents: 'none',
-          }}
-          animate={{ opacity: [0, 0.12, 0], y: [0, -40, -80] }}
-          transition={{ duration: 10, delay: i * 2, repeat: Infinity, ease: 'easeOut' }}
-        >
-          {city}
-        </motion.span>
-      ))}
-
-      <motion.h2
-        className="j-final-headline"
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 2.5, ease: [0.23, 1, 0.32, 1] }}
-      >
-        SOME EVENINGS<br />REFUSE TO END<br />PROPERLY.
-      </motion.h2>
-
-      <motion.p
-        className="j-final-body"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 2, delay: 0.6 }}
-      >
-        Maybe that's why we write them down.
-      </motion.p>
-
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1.5, delay: 1 }}
-      >
-        <Link to="/dinner" className="j-final-cta">
-          Return to the table
-        </Link>
-      </motion.div>
-    </section>
-  );
-};
-
-// ── MAIN ──────────────────────────────────────────────────────────────
 
 export default function Journal() {
   return (
-    <main className="journal-page">
-      <div className="texture-overlay" />
-      <div className="candle-flicker" />
+    <div className="w-full relative bg-[var(--bg-primary)]">
+      
+      {/* 1. HERO SECTION */}
+      <section className="relative min-h-screen w-full flex flex-col lg:flex-row items-center px-6 lg:px-16 overflow-hidden bg-[#f4ebd9] z-0 pt-24 pb-12 lg:py-0">
+        {/* Background Texture Overlay */}
+        <div className="absolute inset-0 paper-texture opacity-50 mix-blend-multiply pointer-events-none" />
+        
+        {/* Decorative background glow */}
+        <div className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[var(--accent-primary)]/5 rounded-full filter blur-3xl pointer-events-none" />
 
-      <JournalHero />
-      <FeaturedStory />
-      <CategoryShelves />
-      <ScatteredEntries />
-      <ArchivalStrip />
-      <JournalFinal />
+        <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 relative z-10 w-full">
+          
+          {/* LEFT COLUMN: TEXT & FLORALS */}
+          <div className="flex flex-col justify-center relative pt-12 lg:pt-0 max-w-xl">
+            {/* Date Stamp Overlay */}
+            <div className="absolute -top-8 left-4 md:-top-12 md:left-8 stamp rotate-[-8deg] opacity-70 border-dashed border-2 border-[#cc785c] text-[#cc785c] px-3 py-1 font-mono text-xs tracking-widest bg-transparent">
+              VOL 04 <br/> 2025
+            </div>
+            
+            <span className="text-[#c16e4f] font-body tracking-[0.2em] uppercase text-xs mb-4 block font-bold">
+              THE JOURNAL
+            </span>
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-body leading-[1.1] text-[#2c2b29] mb-8">
+              The evening doesn't end <br className="hidden md:inline" />
+              <span className="relative inline-block mt-2 md:mt-0">
+                when everyone leaves.
+                <svg className="absolute w-[90%] h-3 -bottom-3 left-[5%] text-[#c16e4f] opacity-80" viewBox="0 0 100 10" preserveAspectRatio="none">
+                  <path d="M5,5 Q40,8 95,5" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+                </svg>
+              </span>
+            </h1>
+            <p className="font-body text-xl md:text-[1.35rem] text-[#2c2b29] max-w-md leading-relaxed mb-10">
+              Stories, recipes, places, conversations and little things worth holding on to.
+            </p>
+            
+            <div>
+              <a 
+                href="#featured-essays" 
+                className="inline-block bg-[#efe8db] text-[#2c2b29] border border-[#2c2b29]/10 shadow-sm hover:shadow-md transition-all duration-300 rounded-full px-6 py-3 font-body text-[1.05rem]"
+              >
+                Read the latest entry
+              </a>
+            </div>
 
-      <Footer />
-    </main>
+            {/* Bottom Left Decoration (Flowers) */}
+            <motion.img 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 1 }}
+              src="/journal4.png" 
+              alt="Floral decoration" 
+              className="absolute -bottom-12 -left-8 lg:-bottom-20 lg:-left-12 w-24 md:w-32 lg:w-40 object-contain mix-blend-multiply opacity-90 pointer-events-none"
+            />
+            
+            {/* Bottom Right Decoration (Olive Branch) */}
+            <motion.img 
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4, duration: 1 }}
+              src="/journal3.png" 
+              alt="Olive branch" 
+              className="absolute -bottom-8 right-12 lg:-bottom-12 lg:right-4 w-16 md:w-24 lg:w-28 object-contain mix-blend-multiply opacity-90 pointer-events-none"
+            />
+          </div>
+
+          {/* RIGHT COLUMN: MAIN ILLUSTRATION */}
+          <div className="relative flex items-center justify-center min-h-[50vh] lg:min-h-0 w-full mt-12 lg:mt-0">
+            <motion.img 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
+              src="/journal1.png" 
+              alt="People at dinner table illustration" 
+              className="w-full lg:w-[110%] max-w-none object-contain mix-blend-multiply drop-shadow-sm -mr-0 lg:-mr-8 pointer-events-none"
+            />
+            
+            {/* Extra scattered elements around the main illustration */}
+            <motion.img 
+              initial={{ opacity: 0, rotate: -15 }}
+              animate={{ opacity: 1, rotate: 0 }}
+              transition={{ delay: 0.6, duration: 0.8 }}
+              src="/journal2.png" 
+              alt="Scrap note" 
+              className="absolute bottom-[5%] left-[20%] w-24 md:w-32 object-contain mix-blend-multiply pointer-events-none"
+            />
+            <motion.img 
+              initial={{ opacity: 0, rotate: 15 }}
+              animate={{ opacity: 1, rotate: 0 }}
+              transition={{ delay: 0.8, duration: 0.8 }}
+              src="/journal5.png" 
+              alt="Small decoration" 
+              className="absolute bottom-[10%] right-[15%] w-20 md:w-28 object-contain mix-blend-multiply pointer-events-none"
+            />
+          </div>
+
+        </div>
+      </section>
+
+      {/* 2. RECENTLY FROM THE TABLE (EDITORIAL CARDS) */}
+      <section className="sticky top-0 h-screen w-full flex flex-col justify-center bg-[var(--bg-secondary)] overflow-hidden z-10 shadow-2xl">
+        <div className="container mx-auto px-6 max-w-7xl">
+          <div className="text-center mb-24">
+            <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2">Recent Entries</span>
+            <h2 className="text-5xl md:text-6xl font-body text-[var(--text-main)]">Recently from the table</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {editorialCards.map((card, i) => (
+              <motion.article 
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ delay: i * 0.1 }}
+                className={`bg-[var(--bg-primary)] p-5 shadow-xl border border-[var(--text-main)]/5 flex flex-col justify-between scrap-img ${card.rot} hover-lift relative torn-edge group z-10 polaroid-frame`}
+              >
+                {/* Bookmark ribbon on alternating items */}
+                {i % 2 !== 0 && <div className="bookmark-ribbon" />}
+                
+                {/* Tape on alternating items */}
+                {i % 2 === 0 && <div className="masking-tape w-16 h-4 -top-2 left-1/2 -translate-x-1/2 rotate-1" />}
+
+                <div>
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="font-body text-xs uppercase tracking-widest text-[var(--accent-primary)] font-bold">{card.category}</span>
+                    <span className="font-mono text-xs text-[var(--text-main)]/30 border border-dashed border-[var(--text-main)]/20 p-1">No.{card.num}</span>
+                  </div>
+
+                  <div className="aspect-[4/3] overflow-hidden mb-6 shadow-inner torn-edge filter grayscale-[0.2] relative">
+                    <img src={card.img} alt={card.title} className="w-full h-full object-cover filter sepia-[0.15] group-hover:scale-105 transition-transform duration-700" />
+                    {i === 1 && <span className="handwritten-annotation absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl rotate-[-15deg] bg-white/80 px-2 py-1 shadow-sm hidden group-hover:block">Must read!</span>}
+                  </div>
+
+                  <h3 className="font-body text-xl font-bold text-[var(--text-main)] mb-3 leading-snug relative inline-block">
+                    {card.title}
+                    {/* Animated Underline */}
+                    <span className="absolute left-0 bottom-[-2px] w-0 h-[2px] bg-[var(--accent-primary)]/40 transition-all duration-500 group-hover:w-full"></span>
+                  </h3>
+                </div>
+                
+                <p className="font-body text-sm text-[var(--text-main)]/70 italic mt-4 border-t border-dashed border-[var(--text-main)]/15 pt-4">
+                  {card.desc}
+                </p>
+              </motion.article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 3. TINY OBSERVATIONS (PLAYFUL LIST) */}
+      <section className="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden bg-[var(--bg-primary)] z-20 shadow-2xl">
+        <div className="container mx-auto px-6 max-w-4xl">
+          <div className="text-center mb-20">
+            <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2">Gathered Thoughts</span>
+            <h2 className="text-5xl md:text-6xl font-body text-[var(--text-main)]">Tiny observations</h2>
+            <p className="font-body text-lg text-[var(--text-main)]/60 mt-4">One line. One thought.</p>
+          </div>
+
+          {/* Notebook Spiral Margin grid layout */}
+          <div className="bg-[#fdfaf5] rounded-r-xl border border-[var(--text-main)]/10 shadow-2xl p-8 md:p-12 relative max-w-3xl mx-auto notebook-paper torn-edge">
+            {/* Spiral binding rings */}
+            <div className="absolute top-0 bottom-0 left-0 w-8 flex flex-col justify-evenly py-4">
+              {[...Array(12)].map((_, i) => (
+                <div key={i} className="w-8 h-2 bg-zinc-400 rounded-full shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] relative -ml-2">
+                  <div className="absolute right-2 top-0 bottom-0 w-1 bg-zinc-800 opacity-30"></div>
+                </div>
+              ))}
+            </div>
+
+            {/* Hanging paper details (red margin lines) */}
+            <div className="absolute top-0 bottom-0 left-12 border-l-2 border-red-400/30 pointer-events-none" />
+            <div className="absolute top-0 bottom-0 left-14 border-l border-red-400/20 pointer-events-none" />
+
+            {/* Coffee Stain */}
+            <div className="absolute -top-10 -right-10 w-32 h-32 coffee-ring opacity-40 rotate-[120deg]" />
+
+            <ul className="space-y-8 pl-12 md:pl-20 relative z-10">
+              {tinyObservations.map((obs, idx) => (
+                <motion.li 
+                  key={idx}
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.08 }}
+                  className="font-body text-xl md:text-2xl text-[var(--text-main)] leading-relaxed flex items-start gap-4 relative group"
+                >
+                  <span className="text-[var(--accent-primary)] select-none mt-1 opacity-50">✦</span>
+                  <span className="border-b border-blue-900/10 pb-1">{obs}</span>
+                  
+                  {/* Handwritten arrows/doodles on specific items */}
+                  {idx === 2 && (
+                    <span className="absolute -right-12 top-0 handwritten-note rotate-12 opacity-0 group-hover:opacity-100 transition-opacity">
+                      ← true!
+                    </span>
+                  )}
+                  {idx === 5 && (
+                    <span className="absolute -bottom-6 left-12 handwritten-note rotate-[-5deg] text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                      (we need more candles)
+                    </span>
+                  )}
+                </motion.li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. FROM OUR NOTEBOOK (MIX OF VISUAL & WRITTEN) */}
+      <section className="sticky top-0 h-screen w-full flex flex-col justify-center bg-[var(--bg-secondary)] overflow-hidden z-30 shadow-2xl">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <div className="text-center mb-24">
+            <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2">Scrap Notes</span>
+            <h2 className="text-5xl md:text-6xl font-body text-[var(--text-main)]">From our notebook</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto">
+            
+            {/* Places we're thinking about */}
+            <div className="p-8 bg-[#fafafa] border border-[var(--text-main)]/10 shadow-md relative rotate-[-1deg] torn-edge hover-lift flex flex-col justify-between">
+              <div className="masking-tape w-20 h-6 -top-3 left-6 rotate-6" />
+              <div>
+                <div className="flex items-center justify-center text-[var(--accent-primary)] mb-4">
+                  <Compass size={22} />
+                </div>
+                <h3 className="font-heading text-center font-bold text-2xl text-[var(--text-main)] mb-2 uppercase tracking-widest border-y border-double border-[var(--text-main)]/20 py-2">Places</h3>
+                <ul className="space-y-3 font-body text-lg text-[var(--text-main)]/80 italic mt-6 columns-1">
+                  {["Lisbon.", "Oaxaca.", "Kyoto.", "George Town.", "Istanbul.", "Marrakech."].map((place, idx) => (
+                    <li key={idx} className="border-b border-dashed border-[var(--text-main)]/15 pb-1 text-center">
+                      {place}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Things we're cooking */}
+            <div className="p-8 bg-[#faf8f5] border border-amber-900/10 shadow-md relative rotate-[2deg] torn-edge hover-lift flex flex-col justify-between">
+              <div className="masking-tape w-20 h-6 -top-3 right-6 -rotate-3" />
+              <div>
+                <div className="flex items-center justify-center text-[var(--accent-primary)] mb-4">
+                  <Utensils size={22} />
+                </div>
+                <h3 className="font-heading text-center font-bold text-2xl text-[var(--text-main)] mb-2 uppercase tracking-widest border-y border-double border-[var(--text-main)]/20 py-2">Cooking</h3>
+                <ul className="space-y-3 font-body text-lg text-[var(--text-main)]/80 italic mt-6 columns-1">
+                  {["Fresh pasta.", "Pho.", "Bibimbap.", "Paella.", "Ratatouille."].map((dish, idx) => (
+                    <li key={idx} className="border-b border-dashed border-[var(--text-main)]/15 pb-1 text-center">
+                      {dish}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Things we're listening to */}
+            <div className="p-8 bg-zinc-50 border border-zinc-200 shadow-md relative rotate-[-2deg] torn-edge hover-lift flex flex-col justify-between">
+              <div className="masking-tape w-20 h-6 -top-3 left-1/2 -translate-x-1/2 rotate-1" />
+              <div>
+                <div className="flex items-center justify-center text-[var(--accent-primary)] mb-4">
+                  <Disc size={22} />
+                </div>
+                <h3 className="font-heading text-center font-bold text-2xl text-[var(--text-main)] mb-2 uppercase tracking-widest border-y border-double border-[var(--text-main)]/20 py-2">Listening</h3>
+                <ul className="space-y-3 font-body text-lg text-[var(--text-main)]/80 italic mt-6 columns-1 text-center">
+                  {[
+                    "Jazz while cooking.",
+                    "Vinyl on rainy evenings.",
+                    "Old Bollywood while cleaning up.",
+                    "Acoustic guitar after dessert."
+                  ].map((track, idx) => (
+                    <li key={idx} className="border-b border-dashed border-[var(--text-main)]/15 pb-1">
+                      {track}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* 5. WORTH SHARING (LONGER STORIES INTROS) */}
+      <section id="featured-essays" className="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden bg-[var(--bg-primary)] z-40 shadow-2xl">
+        <div className="container mx-auto px-6 max-w-4xl">
+          <div className="text-center mb-24">
+            <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2">Longer Reads</span>
+            <h2 className="text-5xl md:text-6xl font-body text-[var(--text-main)]">Worth sharing</h2>
+          </div>
+
+          <div className="space-y-16">
+            {[
+              {
+                title: "How food changes the way strangers meet",
+                desc: "Sometimes it's easier to talk when everyone is passing the same bowl."
+              },
+              {
+                title: "Hosting taught us to slow down",
+                desc: "The best evenings were never rushed."
+              },
+              {
+                title: "The best souvenir is a recipe",
+                desc: "Some places stay with you through what you cook."
+              }
+            ].map((story, idx) => (
+              <motion.div 
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                className="group border-b border-dashed border-[var(--text-main)]/20 pb-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-6"
+              >
+                <div className="max-w-2xl relative">
+                  {/* Subtle scribble marker on hover */}
+                  <span className="absolute -left-6 top-2 text-[var(--accent-primary)] font-logo text-xl opacity-0 group-hover:opacity-100 transition-opacity">
+                    *
+                  </span>
+                  <h3 className="font-body font-bold text-3xl md:text-4xl text-[var(--text-main)] group-hover:text-[var(--accent-primary)] transition-colors duration-300">
+                    {story.title}
+                  </h3>
+                  <p className="font-body text-lg text-[var(--text-main)]/70 mt-3">
+                    {story.desc}
+                  </p>
+                </div>
+                <button className="flex items-center gap-2 font-body text-xs uppercase tracking-widest text-[var(--text-main)]/60 hover:text-[var(--accent-primary)] font-bold transition-colors">
+                  Read story
+                  <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform" />
+                </button>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 6. CURRENTLY INSPIRING US (LIVING MOODBOARD) */}
+      <section className="sticky top-0 h-screen w-full flex flex-col justify-center bg-[var(--bg-secondary)] overflow-hidden z-50 shadow-2xl">
+        <div className="container mx-auto px-6 max-w-5xl">
+          <div className="text-center mb-20">
+            <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2">Moodboard</span>
+            <h2 className="text-5xl md:text-6xl font-body text-[var(--text-main)]">Currently inspiring us</h2>
+          </div>
+
+          {/* Living Moodboard tags scattered */}
+          <div className="flex flex-wrap justify-center gap-6 max-w-4xl mx-auto">
+            {[
+              { text: "Books", icon: <BookOpen size={16} />, rot: "rotate-2" },
+              { text: "Films", icon: <Film size={16} />, rot: "-rotate-2" },
+              { text: "Markets", icon: <Compass size={16} />, rot: "rotate-3" },
+              { text: "Restaurants", icon: <Coffee size={16} />, rot: "-rotate-1" },
+              { text: "Music", icon: <Music size={16} />, rot: "rotate-1" },
+              { text: "Travel", icon: <Compass size={16} />, rot: "-rotate-3" },
+              { text: "Art", icon: <BookOpen size={16} />, rot: "rotate-2" },
+              { text: "People", icon: <Coffee size={16} />, rot: "-rotate-2" }
+            ].map((tag, idx) => (
+              <motion.div
+                key={idx}
+                className={`relative px-8 py-5 bg-[#fafafa] border border-[var(--text-main)]/10 shadow-md font-body font-bold text-2xl text-[var(--text-main)] flex items-center gap-3 cursor-pointer ${tag.rot} hover-lift torn-edge`}
+              >
+                {/* Push Pin on specific items, Tape on others */}
+                {idx % 3 === 0 ? (
+                  <div className="push-pin" />
+                ) : (
+                  <div className="masking-tape w-10 h-3 -top-1 left-1/2 -translate-x-1/2 rotate-2 opacity-70" />
+                )}
+                
+                <span className="text-[var(--accent-primary)]">{tag.icon}</span>
+                <span>{tag.text}</span>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 7. UNTIL NEXT TIME (CTA) */}
+      <section className="sticky top-0 h-screen w-full flex flex-col justify-center items-center text-center overflow-hidden bg-[var(--bg-primary)] z-[60] shadow-2xl">
+        {/* Glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--accent-primary)]/5 rounded-full filter blur-3xl pointer-events-none" />
+
+        <div className="container mx-auto px-6 max-w-3xl relative z-10">
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-6xl md:text-8xl font-body text-[var(--text-main)] mb-10 leading-tight"
+          >
+            Until next time.
+          </motion.h2>
+
+          <div className="font-body text-xl md:text-2xl text-[var(--text-main)]/80 max-w-xl mx-auto space-y-4 mb-16 italic border-l-2 border-[var(--accent-primary)]/20 pl-6 md:pl-10 text-left">
+            <p>The table will be set again soon.</p>
+            <p className="not-italic text-[var(--text-main)] font-semibold mt-4">Until then,</p>
+            <p className="font-body font-bold text-3xl text-[var(--accent-primary)] not-italic mt-2">stay curious.</p>
+            <div className="space-y-1 text-sm md:text-base font-body uppercase tracking-widest text-[var(--text-main)]/60 not-italic pt-4">
+              <p>• Cook something new.</p>
+              <p>• Invite someone over.</p>
+              <p>• Take the longer route home.</p>
+            </div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+          >
+            <Link
+              to="/dinner"
+              className="btn-paper bg-[var(--accent-primary)] text-[var(--bg-primary)] border-[var(--accent-primary)] hover:bg-[var(--text-main)] hover:border-[var(--text-main)] px-10 py-5 text-xl tracking-[0.1em]"
+            >
+              See the next dinner
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+    </div>
   );
 }

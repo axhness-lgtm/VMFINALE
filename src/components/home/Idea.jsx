@@ -50,7 +50,7 @@ const MorphScene = () => {
 
       {/* Scene 2: 33% */}
       <group ref={group2} position={[10, 0, 0]}>
-        <mesh position={[0, 0, 0]}><boxGeometry args={[0.6, 0.8, 0.1]} /><meshStandardMaterial color="#e45a0b" /></mesh>
+        <mesh position={[0, 0, 0]}><boxGeometry args={[0.6, 0.8, 0.1]} /><meshStandardMaterial color="#e86321" /></mesh>
         {[...Array(5)].map((_, i) => (
           <mesh key={i} position={[(i - 2) * 0.12, 0.6, 0]} rotation={[0, 0, (i - 2) * 0.1]}><boxGeometry args={[0.08, 0.6, 0.08]} /><meshStandardMaterial color="#1c0e06" /></mesh>
         ))}
@@ -61,7 +61,7 @@ const MorphScene = () => {
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.5, 0]}><circleGeometry args={[3.5, 64]} /><meshStandardMaterial color="#1c0e06" roughness={0.9} /></mesh>
         {[...Array(8)].map((_, i) => {
           const angle = (i / 8) * Math.PI * 2;
-          return <mesh key={i} position={[Math.cos(angle) * 2, -0.4, Math.sin(angle) * 2]}><cylinderGeometry args={[0.4, 0.35, 0.05, 32]} /><meshStandardMaterial color="#e45a0b" /></mesh>
+          return <mesh key={i} position={[Math.cos(angle) * 2, -0.4, Math.sin(angle) * 2]}><cylinderGeometry args={[0.4, 0.35, 0.05, 32]} /><meshStandardMaterial color="#e86321" /></mesh>
         })}
       </group>
     </>
@@ -115,10 +115,10 @@ const Idea = () => {
       {/* Sticky Text Layer */}
       <div className="w-[60%] h-screen flex flex-col justify-center pl-[10%] pr-[5%] relative z-10">
         <div ref={textRef} className="flex flex-col relative w-full" style={{ gap: '120px' }}>
-          <h2 className="truth-line text-[52px] font-serif italic font-light leading-tight" style={{ opacity: 0 }}>This is not a restaurant.</h2>
-          <h2 className="truth-line text-[52px] font-serif italic font-light leading-tight" style={{ opacity: 0 }}>This is not an event.</h2>
+          <h2 className="truth-line text-[52px] font-heading italic font-light leading-tight" style={{ opacity: 0 }}>This is not a restaurant.</h2>
+          <h2 className="truth-line text-[52px] font-heading italic font-light leading-tight" style={{ opacity: 0 }}>This is not an event.</h2>
           <div>
-            <h2 className="truth-line text-[52px] font-serif italic font-light leading-tight text-[#e45a0b]" style={{ opacity: 0 }}>This is an invitation.</h2>
+            <h2 className="truth-line text-[52px] font-heading italic font-light leading-tight text-[#e86321]" style={{ opacity: 0 }}>This is an invitation.</h2>
             <p ref={monoRef} className="text-mono text-xs tracking-widest uppercase mt-8 text-[#888888]" style={{ opacity: 0 }}>
               Eight seats. One evening. Every time.
             </p>

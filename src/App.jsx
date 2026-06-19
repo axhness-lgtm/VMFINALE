@@ -1,41 +1,31 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ReactLenis } from '@studio-freight/react-lenis';
 import Navigation from './components/Navigation';
 import Home from './pages/Home';
+import About from './pages/About';
 import Community from './pages/Community';
-import Founder from './pages/Founder';
-import Substack from './pages/Substack';
 import Dinner from './pages/Dinner';
-import DinnerTrial from './pages/DinnerTrial';
-import TextureOverlay from './components/TextureOverlay';
-
-function CustomNavigation() {
-  const location = useLocation();
-  if (location.pathname === '/dinner-trial' || location.pathname === '/') return null;
-  return <Navigation />;
-}
+import Journal from './pages/Journal';
+import Footer from './components/Footer';
 
 function App() {
   return (
-    <ReactLenis root>
+    <ReactLenis root options={{ lerp: 0.05, duration: 1.5, smoothTouch: true }}>
       <Router>
-        <TextureOverlay />
-        <CustomNavigation />
-        <main>
+        <div className="relative min-h-screen">
+          <Navigation />
           <Routes>
-            <Route path="/" element={<DinnerTrial />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
             <Route path="/community" element={<Community />} />
-            <Route path="/founder" element={<Founder />} />
-            <Route path="/substack" element={<Substack />} />
             <Route path="/dinner" element={<Dinner />} />
-            <Route path="/dinner-trial" element={<DinnerTrial />} />
-            <Route path="*" element={<DinnerTrial />} />
+            <Route path="/journal" element={<Journal />} />
           </Routes>
-        </main>
+          <Footer />
+        </div>
       </Router>
     </ReactLenis>
   );
 }
 
 export default App;
-

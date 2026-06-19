@@ -38,8 +38,8 @@ const Plate = ({ position, seat, onHover }) => {
       {/* Ceramic plate */}
       <cylinderGeometry args={[0.35, 0.3, 0.05, 32]} />
       <meshStandardMaterial 
-        color={seat.isReserved ? "#e45a0b" : "#f5efe7"} 
-        emissive={seat.isReserved ? "#e45a0b" : "#000000"}
+        color={seat.isReserved ? "#e86321" : "#f5efe7"} 
+        emissive={seat.isReserved ? "#e86321" : "#000000"}
         emissiveIntensity={hovered ? 0.5 : 0.2}
         roughness={0.2}
         metalness={0.1}
@@ -47,7 +47,7 @@ const Plate = ({ position, seat, onHover }) => {
       {seat.isReserved && (
         <mesh position={[0, -0.05, 0]}>
           <ringGeometry args={[0.4, 0.45, 32]} />
-          <meshBasicMaterial color="#e45a0b" transparent opacity={0.5} />
+          <meshBasicMaterial color="#e86321" transparent opacity={0.5} />
         </mesh>
       )}
     </mesh>
@@ -91,13 +91,13 @@ const Gathering = () => {
       <div className="w-full flex flex-col items-center justify-center pt-24 z-10 pointer-events-none">
         <div ref={headlineRef} className="text-center">
           <h2 
-            className="text-[64px] font-serif italic font-light text-white leading-[1.2]"
+            className="text-[64px] font-heading italic font-light text-white leading-[1.2]"
             style={{ wordSpacing: '0.1em', letterSpacing: '0.02em' }}
           >
             You don't know<br />who you'll meet.
           </h2>
           <h2 
-            className="text-[64px] font-serif italic font-light text-[#e45a0b] leading-[1.2]"
+            className="text-[64px] font-heading italic font-light text-[#e86321] leading-[1.2]"
             style={{ paddingTop: '1rem', wordSpacing: '0.1em', letterSpacing: '0.02em' }}
           >
             That's the point.
@@ -127,7 +127,7 @@ const Gathering = () => {
 
         {activeSeat && (
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[150%] pointer-events-none bg-[#f5efe7] p-6 w-72 shadow-2xl z-20 animate-fade-in border border-black/10">
-            <span className="text-mono text-[8px] uppercase tracking-[0.25em] block mb-3 text-[#e45a0b]">Seat {activeSeat.id}</span>
+            <span className="text-mono text-[8px] uppercase tracking-[0.25em] block mb-3 text-[#e86321]">Seat {activeSeat.id}</span>
             <p className="text-serif italic font-light text-[18px] leading-relaxed text-[#1a0e05]">{activeSeat.story}</p>
           </div>
         )}
@@ -136,7 +136,7 @@ const Gathering = () => {
       <div className="absolute bottom-0 left-0 w-full bg-[#1a0e05] py-4 border-t border-white/5 overflow-hidden z-20 flex whitespace-nowrap">
         <div className="animate-marquee flex whitespace-nowrap">
           {[...Array(20)].map((_, i) => (
-            <span key={i} className="text-mono text-[10px] uppercase tracking-[0.2em] text-[#e45a0b] mx-8">
+            <span key={i} className="text-mono text-[10px] uppercase tracking-[0.2em] text-[#e86321] mx-8">
               warmth · curiosity · poetry · laughter · slow food · new friends · familiar strangers ·
             </span>
           ))}

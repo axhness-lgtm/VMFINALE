@@ -51,7 +51,7 @@ function CushionSeat({
   // Decide cushion color based on state
   let cushionColor = "#ffffff"; // default vacant
   if (isConfirmed || isSelected) {
-    cushionColor = "#e45a0b"; // brand orange
+    cushionColor = "#e86321"; // brand orange
   } else if (isLockedByOthers) {
     cushionColor = "#243b55"; // brand dark blue/grey
   }

@@ -1,1018 +1,557 @@
-import React, { useState, useRef, useEffect } from 'react';
-import Footer from '../components/Footer';
+import { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
+import { Check, Info, Clock, Users, MapPin, CreditCard, Sparkles } from 'lucide-react';
 import BookingModal from '../components/BookingModal';
-import { supabase } from '../supabase';
-import './Dinner.css';
 
-const SUPABASE_FN = import.meta.env.VITE_SUPABASE_URL
-  ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`
-  : '';
-const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-
-const callFn = async (name, body) => {
-  const res = await fetch(`${SUPABASE_FN}/${name}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'apikey': ANON_KEY,
-      'Authorization': `Bearer ${ANON_KEY}`,
-    },
-    body: JSON.stringify(body),
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Request failed');
-  return data;
+const CURRENT_DINNER = {
+  id: 'vietnam-dinner-01',
+  title: 'A night in Vietnam',
+  price_inr: 450000, // ₹4,500
+  event_date: '2026-07-25',
 };
 
-// ─── INLINE SVG ASSETS ───────────────────────────────────────────────────────
-
-// Section 1 Hero: Agave plant over charcoal hearth flame
-const AgaveHearth = () => (
-  <svg viewBox="0 0 320 360" className="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
-    {/* Hearth flame base */}
-    <ellipse cx="160" cy="310" rx="72" ry="18" stroke="#002fa7" strokeWidth="2.5" />
-    <path d="M118 310 Q100 280 112 250 Q120 230 110 208 Q125 235 122 255 Q135 230 130 200 Q148 232 140 258 Q152 228 150 195 Q165 230 158 260 Q170 228 168 195 Q182 230 175 258 Q186 232 185 205 Q195 230 188 255 Q197 235 205 210 Q196 232 202 252 Q214 232 202 310 Z"
-          stroke="#002fa7" strokeWidth="2" fill="none" strokeLinejoin="round"/>
-    {/* Agave central stalk */}
-    <line x1="160" y1="260" x2="160" y2="80" stroke="#002fa7" strokeWidth="3"/>
-    {/* Agave leaves - left spreading */}
-    <path d="M160 180 Q110 150 70 170 Q100 155 160 180" stroke="#002fa7" strokeWidth="2.5" fill="none"/>
-    <path d="M160 200 Q105 185 58 215 Q95 195 160 200" stroke="#002fa7" strokeWidth="2.5" fill="none"/>
-    <path d="M160 160 Q120 120 100 90 Q120 125 160 160" stroke="#002fa7" strokeWidth="2.5" fill="none"/>
-    {/* Agave leaves - right spreading */}
-    <path d="M160 180 Q210 150 250 170 Q220 155 160 180" stroke="#002fa7" strokeWidth="2.5" fill="none"/>
-    <path d="M160 200 Q215 185 262 215 Q225 195 160 200" stroke="#002fa7" strokeWidth="2.5" fill="none"/>
-    <path d="M160 160 Q200 120 220 90 Q200 125 160 160" stroke="#002fa7" strokeWidth="2.5" fill="none"/>
-    {/* Agave tip spikes */}
-    <circle cx="68" cy="172" r="3" fill="#002fa7"/>
-    <circle cx="57" cy="216" r="3" fill="#002fa7"/>
-    <circle cx="97" cy="87" r="3" fill="#002fa7"/>
-    <circle cx="252" cy="172" r="3" fill="#002fa7"/>
-    <circle cx="263" cy="216" r="3" fill="#002fa7"/>
-    <circle cx="223" cy="87" r="3" fill="#002fa7"/>
-    <circle cx="160" cy="78" r="4" fill="#002fa7"/>
-  </svg>
-);
-
-// Section 3 Platter Components
-const MoleBowl = () => (
-  <svg viewBox="0 0 100 80" fill="none" className="w-full h-full">
-    <ellipse cx="50" cy="55" rx="42" ry="14" stroke="#002fa7" strokeWidth="2"/>
-    <path d="M8 55 Q8 25 50 18 Q92 25 92 55" stroke="#002fa7" strokeWidth="2" fill="none"/>
-    <ellipse cx="50" cy="55" rx="28" ry="8" stroke="#002fa7" strokeWidth="1.5" strokeDasharray="3 2"/>
-    <path d="M38 45 Q50 35 62 45" stroke="#002fa7" strokeWidth="1.5" fill="none"/>
-  </svg>
-);
-
-const FoldedMasa = () => (
-  <svg viewBox="0 0 100 70" fill="none" className="w-full h-full">
-    <path d="M10 55 Q10 20 50 15 Q90 20 90 55 Q70 65 50 62 Q30 65 10 55Z" stroke="#002fa7" strokeWidth="2" fill="none"/>
-    <path d="M10 55 Q50 48 90 55" stroke="#002fa7" strokeWidth="1.5" strokeDasharray="4 2"/>
-    <path d="M28 35 Q50 28 72 35" stroke="#002fa7" strokeWidth="1.5" fill="none"/>
-    <circle cx="50" cy="40" r="4" stroke="#002fa7" strokeWidth="1.5"/>
-  </svg>
-);
-
-const RoastedPepper = () => (
-  <svg viewBox="0 0 70 100" fill="none" className="w-full h-full">
-    <path d="M35 8 Q38 5 42 8 L44 20 Q52 22 56 35 Q62 55 52 70 Q45 82 35 84 Q25 82 18 70 Q8 55 14 35 Q18 22 26 20 Z" stroke="#002fa7" strokeWidth="2" fill="none"/>
-    <path d="M35 8 Q32 5 28 8" stroke="#002fa7" strokeWidth="1.5" fill="none"/>
-    <path d="M24 50 Q35 45 46 50 Q35 58 24 50Z" stroke="#002fa7" strokeWidth="1.5" fill="none"/>
-    <circle cx="42" cy="10" r="2" fill="#002fa7"/>
-  </svg>
-);
-
-const IngredientPouch = () => (
-  <svg viewBox="0 0 90 90" fill="none" className="w-full h-full">
-    <rect x="15" y="25" width="60" height="52" rx="2" stroke="#002fa7" strokeWidth="2"/>
-    <path d="M25 25 Q35 10 45 8 Q55 10 65 25" stroke="#002fa7" strokeWidth="2" fill="none"/>
-    <path d="M15 42 L75 42" stroke="#002fa7" strokeWidth="1.5"/>
-    <line x1="35" y1="55" x2="35" y2="67" stroke="#002fa7" strokeWidth="1.5"/>
-    <line x1="45" y1="55" x2="45" y2="67" stroke="#002fa7" strokeWidth="1.5"/>
-    <line x1="55" y1="55" x2="55" y2="67" stroke="#002fa7" strokeWidth="1.5"/>
-  </svg>
-);
-
-// Arrow pointing right-down, drawn in blue
-const HandArrow = () => (
-  <svg viewBox="0 0 80 80" fill="none" className="w-12 h-12">
-    <path d="M10 20 Q40 10 60 50 L48 46 L60 50 L56 38" stroke="#efe9e1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-// ─── PLATTER DISH DATA ───────────────────────────────────────────────────────
-const PLATTER_ITEMS = [
-  {
-    id: 'mole',
-    label: 'ITEM A',
-    detail: '72-HOUR SMOKE // CHOCOLATE & HEIRLOOM CHILI',
-    // position inside the SVG-ring platter area (% from platter container)
-    top: '18%', left: '12%',
-    svg: <MoleBowl />,
-  },
-  {
-    id: 'masa',
-    label: 'ITEM B',
-    detail: 'HARVEST CORN // STONE METATE GROUND',
-    top: '14%', left: '58%',
-    svg: <FoldedMasa />,
-  },
-  {
-    id: 'pepper',
-    label: 'ITEM C',
-    detail: 'COASTAL CHILE // SLOW-CHAR & SMOKED OIL',
-    top: '62%', left: '68%',
-    svg: <RoastedPepper />,
-  },
-  {
-    id: 'pouch',
-    label: 'ITEM D',
-    detail: 'SEASONAL SPICE ARCHIVE // HAND-WRAPPED',
-    top: '62%', left: '8%',
-    svg: <IngredientPouch />,
-  },
+const menuItems = [
+  { course: "First", title: "A bright beginning.", desc: "Fresh. Crisp. Unexpected.", dish: "Gỏi Cuốn — Fresh summer rolls with herbs & peanut dipping sauce" },
+  { course: "Second", title: "Comfort in a bowl.", desc: "Fragrant star anise broth.", dish: "Phở Chay — A comforting, slow-simmered herb noodle soup" },
+  { course: "Third", title: "The heart of the evening.", desc: "Bold, rich flavor pairings.", dish: "Bánh Xèo — Sizzling crispy rice pancakes with savory mushroom filling" },
+  { course: "Fourth", title: "Made for sharing.", desc: "Smoky claypot eggplant.", dish: "Cà Tím Nướng — Grilled eggplant with scallion oil & garlic soy" },
+  { course: "Fifth", title: "A sweet ending...", desc: "Banana coconut soup.", dish: "Chè Chuối — Warm banana coconut sweet soup with toasted sesame" }
 ];
 
-// ─── SECTION 2 ACCORDION ROWS ────────────────────────────────────────────────
-const LOGISTICS_ROWS = [
+const faqs = [
   {
-    id: 'atm',
-    index: '01',
-    label: 'The Atmosphere',
-    value: '5 Seasonal Courses. 8 Strangers. 1 Long Table.',
-    expanded: 'Built on the premise that intimacy is a dish best served without ceremony. Every seat faces every seat.',
-    coords: null,
+    q: "Can I come alone?",
+    a: "Yes! In fact, most of our guests sign up alone. The table is designed for strangers to meet and leave as friends."
   },
   {
-    id: 'loc',
-    index: '02',
-    label: 'The Location',
-    value: 'A quiet, coastal terrace in Kirlampudi, Visakhapatnam.',
-    expanded: '17.7142° N, 83.3232° E — An unmarked coastal address shared only with confirmed guests.',
-    coords: '17.7142° N, 83.3232° E',
+    q: "What does the contribution include?",
+    a: "The contribution is ₹4,500 per guest. This includes the full five-course curated tasting menu, custom mocktails, and the entire table experience."
   },
   {
-    id: 'clk',
-    index: '03',
-    label: 'The Clock',
-    value: 'Saturday, May 30th | Doors close at exactly 7:30 PM.',
-    expanded: 'The table is set at 19:30 hrs sharp. Latecomer protocol: the seat becomes the archive.',
-    coords: null,
+    q: "What is the cancellation/refund policy?",
+    a: "Because we only have eight seats, all bookings are final and non-refundable. However, you can transfer your seat to a friend if you cannot make it."
   },
   {
-    id: 'bnd',
-    index: '04',
-    label: 'The Boundary',
-    value: 'Phones off. Conversations on. We leave when the candles go cold.',
-    expanded: 'The Vantammayilu Porch Protocol — all devices stay pocketed. Voice is the only interface.',
-    coords: null,
+    q: "Is the menu vegetarian-friendly?",
+    a: "Yes, we accommodate vegetarian requests. Please let us know your dietary preferences during the checkout details screen."
   },
+  {
+    q: "How is the secret location shared?",
+    a: "The exact home address in Visakhapatnam will be sent via email and WhatsApp exactly 24 hours prior to the dinner."
+  }
 ];
 
-const PLATTER_TAGS = [
-  { key: 'sweet_start', label: 'SWEET_START', subLabel: '[ DESSERT_POP ]', tx: 35, ty: 250, dx: 175, dy: 300, color: 'orange' },
-  { key: 'crunch_layer', label: 'CRUNCH_LAYER', subLabel: '[ FRY_STACK ]', tx: 300, ty: 120, dx: 340, dy: 290, color: 'orange' },
-  { key: 'greens', label: 'GREENS', subLabel: '[ CELERY ]', tx: 470, ty: 120, dx: 475, dy: 280, color: 'blue' },
-  { key: 'heat_zone', label: 'HEAT_ZONE', subLabel: '[ WINGS ]', tx: 570, ty: 120, dx: 570, dy: 280, color: 'orange', hot: true },
-  { key: 'protein_unit', label: 'PROTEIN_UNIT', subLabel: '[ BONELESS ]', tx: 690, ty: 120, dx: 690, dy: 280, color: 'blue' },
-  { key: 'coolant', label: 'COOLANT', subLabel: '[ DIP_RANCH ]', tx: 790, ty: 120, dx: 790, dy: 280, color: 'orange' },
-  { key: 'bread_stack', label: 'BREAD_STACK', subLabel: '[ NAAN_CUT ]', tx: 890, ty: 120, dx: 890, dy: 280, color: 'orange' },
-  { key: 'dip_node_01', label: 'DIP_NODE_01', subLabel: '[ HUMMUS ]', tx: 210, ty: 450, dx: 370, dy: 520, color: 'blue' },
-  { key: 'dip_node_02', label: 'DIP_NODE_02', subLabel: '[ CHEESE_SAUCE ]', tx: 220, ty: 755, dx: 290, dy: 600, color: 'orange' },
-  { key: 'dip_node_03', label: 'DIP_NODE_03', subLabel: '[ YOGURT_DILL ]', tx: 380, ty: 825, dx: 450, dy: 600, color: 'blue' },
-  { key: 'dip_node_04', label: 'DIP_NODE_04', subLabel: '[ SALSA_VERDE ]', tx: 570, ty: 755, dx: 370, dy: 680, color: 'orange' },
-  { key: 'dip_node_05', label: 'DIP_NODE_05', subLabel: '[ SALSA_ROJA ]', tx: 590, ty: 505, dx: 430, dy: 590, color: 'orange' },
-  { key: 'sweet_block', label: 'SWEET_BLOCK', subLabel: '[ MARSHMALLOW ]', tx: 660, ty: 450, dx: 660, dy: 550, color: 'orange' },
-  { key: 'heat_core', label: 'HEAT_CORE', subLabel: '[ TOASTED ]', tx: 760, ty: 450, dx: 750, dy: 560, color: 'orange', hot: true },
-  { key: 'fruit_unit', label: 'FRUIT_UNIT', subLabel: '[ STRAWBERRY ]', tx: 870, ty: 450, dx: 860, dy: 560, color: 'orange' },
-  { key: 'spread_node', label: 'SPREAD_NODE', subLabel: '[ CHOCOLATE ]', tx: 955, ty: 370, dx: 870, dy: 600, color: 'blue' },
-  { key: 'crunch_unit', label: 'CRUNCH_UNIT', subLabel: '[ GRAHAM_CRACKER ]', tx: 665, ty: 760, dx: 660, dy: 640, color: 'blue' },
-  { key: 'dark_layer', label: 'DARK_LAYER', subLabel: '[ COOKIE_STACK ]', tx: 775, ty: 760, dx: 750, dy: 640, color: 'orange' },
-  { key: 'sweet_bar', label: 'SWEET_BAR', subLabel: '[ CHOCOLATE_BAR ]', tx: 885, ty: 760, dx: 840, dy: 640, color: 'orange' }
-];
 
-// ─── CHABUDAI PILLOWS METADATA ───────────────────────────────────────────────
-const CHABUDAI_PILLOWS = [
-  { id: 1, gx: 240, gy: 300, label: "CHAIR_01 // NISHI" },
-  { id: 2, gx: 510, gy: 185, label: "CHAIR_02 // HIGASHI-KITA" },
-  { id: 3, gx: 560, gy: 300, label: "CHAIR_03 // HIGASHI" },
-  { id: 4, gx: 510, gy: 415, label: "CHAIR_04 // HIGASHI-MINAMI" },
-  { id: 5, gx: 400, gy: 460, label: "CHAIR_05 // MINAMI" },
-  { id: 6, gx: 290, gy: 415, label: "CHAIR_06 // NISHI-MINAMI" },
-  { id: 7, gx: 400, gy: 140, label: "CHAIR_07 // KITA" },
-  { id: 8, gx: 290, gy: 185, label: "CHAIR_08 // NISHI-KITA" }
-];
 
-const TypewriterText = ({ text }) => {
-  const [displayText, setDisplayText] = useState('');
-  const [isDone, setIsDone] = useState(false);
+const DinnerSequence = () => {
+  const containerRef = useRef(null);
+  const imgRef = useRef(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
 
   useEffect(() => {
-    let index = 0;
-    setDisplayText('');
-    setIsDone(false);
+    // Preload images for smoother scrubbing
+    for (let i = 1; i <= 27; i++) {
+      const img = new Image();
+      const num = i.toString().padStart(3, '0');
+      img.src = `/dinneranimate/ezgif-frame-${num}.jpg`;
+    }
+  }, []);
 
-    let timeoutId;
-    const type = () => {
-      if (index < text.length) {
-        setDisplayText(text.slice(0, index + 1));
-        index++;
-        const delay = 40 + Math.random() * 40;
-        timeoutId = setTimeout(type, delay);
-      } else {
-        setIsDone(true);
-      }
-    };
-
-    type();
-    return () => clearTimeout(timeoutId);
-  }, [text]);
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    if (!imgRef.current) return;
+    const frame = Math.max(1, Math.min(27, Math.round(latest * 26) + 1));
+    const num = frame.toString().padStart(3, '0');
+    imgRef.current.src = `/dinneranimate/ezgif-frame-${num}.jpg`;
+  });
 
   return (
-    <>
-      {displayText}
-      <tspan className="typewriter-cursor">█</tspan>
-    </>
+    <section ref={containerRef} className="h-[300vh] relative bg-[var(--bg-primary)]">
+      <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden border-t border-[var(--text-main)]/10">
+        
+        {/* Sequence Image Background */}
+        <img 
+          ref={imgRef}
+          src="/dinneranimate/ezgif-frame-001.jpg" 
+          alt="Dinner Table Assembly Sequence" 
+          className="absolute inset-0 w-full h-full object-cover opacity-90 mx-auto"
+        />
+
+        {/* Overlay Text */}
+        <div className="relative z-10 container mx-auto px-6 max-w-4xl text-center flex flex-col items-center pointer-events-none">
+          <span className="font-logo text-5xl md:text-6xl text-[var(--accent-primary)] block mb-4 transform -rotate-2 drop-shadow-sm">
+            Reserve your seat
+          </span>
+          <h2 className="text-6xl md:text-[5.5rem] font-heading text-[var(--text-main)] mb-12 tracking-tight drop-shadow-md bg-[var(--bg-primary)]/70 backdrop-blur-md rounded-full px-12 py-4 shadow-2xl border border-[var(--text-main)]/5">
+            The table is almost ready.
+          </h2>
+        </div>
+
+      </div>
+    </section>
   );
 };
 
-const projectPoint = (x, y, h = 0) => {
-  const cx = 400;
-  const cy = 300;
-  const scale = 1.35;
-  const dx = (x - cx) * scale;
-  const dy = (y - cy) * scale;
-  const px = Math.round(cx + 0.7071 * dx + 0.7071 * dy);
-  const py = Math.round(cy - 0.3535 * dx + 0.3535 * dy - (h * scale));
-  return { x: px, y: py };
-};
-
-// ─── MAIN COMPONENT ──────────────────────────────────────────────────────────
 export default function Dinner() {
-  const [openRow, setOpenRow] = useState(null);
-  const [hoveredDish, setHoveredDish] = useState(null);
-  const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
-  const [selectedSeats, setSelectedSeats] = useState([1]);
-  const [hoveredSeat, setHoveredSeat] = useState(null);
-  const [ctaHovered, setCtaHovered] = useState(false);
-  const [waitlistEmail, setWaitlistEmail] = useState('');
-  const [waitlistSubmitted, setWaitlistSubmitted] = useState(false);
-  const [pulses, setPulses] = useState([]);
-  const platterRef = useRef(null);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [optionState, setOptionState] = useState('A'); // 'A' (3 seats), 'B' (1 seat), 'C' (Sold Out)
+  const [revealedItems, setRevealedItems] = useState({});
+  const [openFaq, setOpenFaq] = useState(null);
+  const [clickedSeats, setClickedSeats] = useState({});
 
-  // ── Booking modal state ───────────────────────────────────────────────────
-  const [bookingOpen, setBookingOpen] = useState(false);
-  const [dinner, setDinner]           = useState(null);
-  const [availableSeats, setAvailableSeats] = useState(8);
-
-  // Fetch active dinner + subscribe to real-time seat count changes
-  useEffect(() => {
-    let channel;
-    const load = async () => {
-      const { data } = await supabase
-        .from('dinners')
-        .select('*')
-        .eq('is_active', true)
-        .single()
-        .catch(() => ({ data: null }));
-      if (data) {
-        setDinner(data);
-        setAvailableSeats(data.total_seats - data.confirmed_seats);
-      }
-    };
-    load();
-
-    channel = supabase
-      .channel('dinner-seats')
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'dinners' }, (payload) => {
-        const d = payload.new;
-        if (d) setAvailableSeats(d.total_seats - d.confirmed_seats);
-      })
-      .subscribe();
-
-    return () => { if (channel) supabase.removeChannel(channel); };
-  }, []);
-
-  const capacityZero = availableSeats <= 0;
-
-  const toggleSeat = (index) => {
-    const isAdding = !selectedSeats.includes(index);
-    setSelectedSeats((prev) =>
-      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
-    );
-
-    if (isAdding) {
-      const pillow = CHABUDAI_PILLOWS.find(p => p.id === index);
-      if (pillow) {
-        const proj = projectPoint(pillow.gx, pillow.gy);
-        const newPulse = {
-          id: Date.now() + Math.random(),
-          x: proj.x,
-          y: proj.y
-        };
-        setPulses(prev => [...prev, newPulse]);
-        setTimeout(() => {
-          setPulses(prev => prev.filter(p => p.id !== newPulse.id));
-        }, 1200);
-      }
-    }
+  const handleSeatClick = (idx) => {
+    setClickedSeats(prev => ({
+      ...prev,
+      [idx]: true // Set to true to switch to trans.png permanently, or toggle with !prev[idx] if desired
+    }));
   };
 
+  // --- CUSHION COORDINATES ---
+  // Adjust these percentages to perfectly align the clickable 5.png cushions over the dinnertable.png base image.
+  const cushionPositions = [
+    // Top Table - Left side
+    { top: '8%', left: '14%', width: '18%', height: '18%' },
+    { top: '8%', left: '34%', width: '18%', height: '18%' },
+    // Top Table - Right side
+    { top: '8%', left: '55%', width: '18%', height: '18%' },
+    { top: '8%', left: '76%', width: '18%', height: '18%' },
+    // Bottom Table - Left side
+    { top: '67%', left: '13%', width: '18%', height: '18%' },
+    { top: '67%', left: '34%', width: '18%', height: '18%' },
+    // Bottom Table - Right side
+    { top: '67%', left: '54.5%', width: '18%', height: '18%' },
+    { top: '67%', left: '76%', width: '18%', height: '18%' }
+  ];
 
-  // Mock data for the microscopic recipe lineage logs
-  const platterItems = {
-    mole: {
-      title: "ITEM A // MOLE NEGRO",
-      batch: "BATCH_REF // OAX-074",
-      lineage: "72-Hour continuous smoke. Black wild chilhuacle chilis flown from Canada-Oaxaca corridor. Ground on basalt stone metate with 70% dark heirloom cacao, sweet Mexican cinnamon, and slow-rendered raw lard."
-    },
-    masa: {
-      title: "ITEM B // MASA TETELA",
-      batch: "BATCH_REF // MILPA-02",
-      lineage: "Native organic Tuxpeño white corn, nixtamalized for 16 hours in culinary limestone wood ash water. Ground by hand to variable grain texture hours before service. Hand-pressed over open clay comal hearth flames."
-    },
-    agave: {
-      title: "ITEM C // CHARRED AGAVE",
-      batch: "BATCH_REF // ESP-V4",
-      lineage: "Mature Agave Espadín hearts cooked for 5 days in a subterranean stone pit over white oak charcoal embers. Sliced into thin structural wedges, caramelized on cast iron sheets, splashed with wild mezcal reduction."
-    },
-    pepper: {
-      title: "ITEM D // ROASTED PEPPER",
-      batch: "BATCH_REF // PASILLA-OAX",
-      lineage: "Rare, sun-dried Pasilla de Oaxaca chilis, smoke-cured over local hardwood during harvest. Rehydrated in salted spring water, stuffed with crushed wild mountain herbs and un-aged structural fresh cheese curds."
-    }
-  };
+  const timelineRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: timelineRef,
+    offset: ["start center", "end center"]
+  });
+  const doodleY = useTransform(scrollYProgress, [0, 1], ["0%", "95%"]);
 
-  // State engine to handle active item highlighting and log streaming
-  const [activeKey, setActiveKey] = useState(null);
+  // House Rules Scroll Tracker
+  const rulesRef = useRef(null);
+  const { scrollYProgress: rulesProgress } = useScroll({
+    target: rulesRef,
+    offset: ["start start", "end end"]
+  });
 
-  const handleWaitlistSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await callFn('join-waitlist', {
-        dinner_id: dinner?.id,
-        email: waitlistEmail,
-      });
-    } catch (err) {
-      // Ignore duplicate-email errors; still show success to user
-      console.warn('Waitlist submit:', err.message);
-    } finally {
-      setWaitlistSubmitted(true);
-    }
+  const toggleReveal = (idx) => {
+    setRevealedItems(prev => ({
+      ...prev,
+      [idx]: !prev[idx]
+    }));
   };
 
   return (
-    <main className="dinner-page noise-bg">
+    <div className="w-full relative bg-[var(--bg-primary)]">
 
-      {/* ── MASTER VECTOR LINE (runs full page, center axis) ─────────────── */}
-      <div className="master-vector-line" />
+      {/* 1. HERO SECTION */}
+      <section className="relative min-h-[90vh] flex items-center justify-center pt-24 pb-12 px-6 lg:px-16 overflow-hidden">
+        {/* Soft background glow */}
+        <div className="absolute top-1/3 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--accent-primary)]/5 rounded-full filter blur-3xl pointer-events-none" />
 
-      {/* ══════════════════════════════════════════════════════════════════
-          SECTION 1: THE CULINARY GRAPHIC POSTER (DASHBOARD FRAMEWORK)
-      ═══════════════════════════════════════════════════════════════════ */}
-      <div className="dinner-hero-dashboard">
-        {/* 4px Outer Blue Framing Rails */}
-        <div className="dashboard-rail-container">
-          
-          {/* HUD Corner Utility Anchors */}
-          <div className="hud-anchor top-left">VANTAMMAYILU // VOL. IV</div>
-          <div className="hud-anchor top-right font-handwritten">[ ACTIVE SEATS AVAILABLE: {availableSeats} / {dinner?.total_seats ?? 8} ]</div>
-          <div className="hud-anchor bottom-left">THEME // POSTCARDS FROM OAXACA</div>
-          <div className="hud-anchor bottom-right font-handwritten">[ UNLATCH ENTRY PROTOCOL ↙ ]</div>
+        <div className="container mx-auto max-w-7xl relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
 
-          {/* Central Cream Concrete Block Surface */}
-          <div className="concrete-center-block">
-            
-            {/* Left Column: Chapter Identifier */}
-            <div className="dashboard-col chapter-id-zone">
-              <h1 className="chapter-title">CHAPTER 04.</h1>
-              <div className="instruction-box">
-                <span className="mono-label font-handwritten">[ INTERACTION_MODE // ACTIVE ]</span>
-                <p className="mono-subtext">Hover over the layout elements on the central blueprint platter to stream micro-lineage logs to the ledger system.</p>
-              </div>
-            </div>
-
-            {/* Center Column: SVG Platter Map Engine */}
-            <div className="dashboard-col blueprint-platter-zone">
-              <div className="svg-wrapper">
-                <svg viewBox="0 0 400 400" className="platter-blueprint-svg">
-                  {/* Structural Outer Perimeter Anchor Ring */}
-                  <circle cx="200" cy="200" r="180" className="svg-axis-ring" />
-                  <circle cx="200" cy="200" r="174" className="svg-axis-ring dashed" />
-                  <line x1="200" y1="20" x2="200" y2="380" className="svg-grid-line" />
-                  <line x1="20" y1="200" x2="380" y2="200" className="svg-grid-line" />
-
-                  {/* ITEM A: Mole Bowl Silhouette (Top-Left Quadrant) */}
-                  <g 
-                    className={`interactive-group ${activeKey === 'mole' ? 'active' : ''}`}
-                    onMouseEnter={() => setActiveKey('mole')}
-                    onMouseLeave={() => setActiveKey(null)}
-                  >
-                    <circle cx="120" cy="120" r="45" className="platter-item-shape" />
-                    <circle cx="120" cy="120" r="35" className="svg-inner-contour" />
-                    <text x="120" y="124" className="svg-mono-tag">A</text>
-                    <path d="M 120,68 C 153,66 174,88 172,120 C 170,154 148,174 120,172 C 88,170 66,148 68,120 C 70,88 92,66 118,68 C 122,68 124,70 126,71" className="scribble-circle-path" />
-                  </g>
-
-                  {/* ITEM B: Masa Tetela Triangle (Top-Right Quadrant) */}
-                  <g 
-                    className={`interactive-group ${activeKey === 'masa' ? 'active' : ''}`}
-                    onMouseEnter={() => setActiveKey('masa')}
-                    onMouseLeave={() => setActiveKey(null)}
-                  >
-                    <polygon points="280,75 325,150 235,150" className="platter-item-shape" />
-                    <text x="280" y="130" className="svg-mono-tag">B</text>
-                    <path d="M 280,70 C 313,68 334,92 332,125 C 330,159 308,179 280,177 C 248,175 226,153 228,125 C 230,93 252,70 278,72 C 282,72 284,74 286,75" className="scribble-circle-path" />
-                  </g>
-
-                  {/* ITEM C: Charred Agave Wedge (Bottom-Left Quadrant) */}
-                  <g 
-                    className={`interactive-group ${activeKey === 'agave' ? 'active' : ''}`}
-                    onMouseEnter={() => setActiveKey('agave')}
-                    onMouseLeave={() => setActiveKey(null)}
-                  >
-                    <path d="M75,240 Q130,240 150,310 Q90,290 75,240 Z" className="platter-item-shape" />
-                    <text x="110" y="275" className="svg-mono-tag">C</text>
-                    <path d="M 112,222 C 145,220 166,242 164,275 Q 162,315 112,327 Q 62,315 64,275 C 66,242 84,220 110,222 C 114,222 116,224 118,225" className="scribble-circle-path" />
-                  </g>
-
-                  {/* ITEM D: Roasted Pepper Wedge (Bottom-Right Quadrant) */}
-                  <g 
-                    className={`interactive-group ${activeKey === 'pepper' ? 'active' : ''}`}
-                    onMouseEnter={() => setActiveKey('pepper')}
-                    onMouseLeave={() => setActiveKey(null)}
-                  >
-                    <rect x="240" y="240" width="75" height="45" rx="0" className="platter-item-shape" transform="rotate(15 277 262)" />
-                    <text x="275" y="268" className="svg-mono-tag">D</text>
-                    <path d="M 277,212 C 310,210 331,232 329,262 C 327,296 305,316 277,314 C 245,312 223,290 225,262 C 227,230 249,210 275,212 C 279,212 281,214 283,215" className="scribble-circle-path" />
-                  </g>
+          <div className="lg:col-span-6 flex flex-col justify-center relative z-20">
+            <span className="text-[#d87c53] font-body tracking-[0.2em] uppercase text-xs mb-6 block font-bold">
+              NEXT AT VANTAMMAYILU
+            </span>
+            <h1 className="text-6xl md:text-8xl lg:text-[7rem] font-heading leading-[1.05] text-[#2c2b29] mb-8 relative">
+              When in <br />Marrakech, <br />
+              <span className="relative inline-block mt-2">
+                Morocco.
+                {/* Thick Pink Painted Stroke */}
+                <svg className="absolute w-[110%] h-4 -bottom-1 -left-[5%] text-[#ea8591] opacity-90" viewBox="0 0 100 10" preserveAspectRatio="none">
+                  <path d="M2,5 Q50,7 98,4" stroke="currentColor" strokeWidth="4" fill="none" strokeLinecap="round" />
                 </svg>
-              </div>
-            </div>
+              </span>
+            </h1>
+            <p className="font-body text-xl text-[var(--text-main)]/80 mb-10 max-w-lg leading-relaxed">
+              Five courses inspired by Moroccan kitchens, shared with eight curious people around one table.
+            </p>
 
-            {/* Right Column: Microscopic Recipe Lineage Logs Sidebar */}
-            <div className="dashboard-col lineage-ledger-sidebar">
-              <div className="ledger-header-panel">
-                <span className="ledger-title font-handwritten">[ SYSTEM_LOG // METADATA_STREAM ]</span>
-              </div>
-              
-              <div className="ledger-dynamic-content relative">
-                {activeKey ? (
-                  <div className="log-entry animation-flash">
-                    <div className="log-row item-headline">{platterItems[activeKey].title}</div>
-                    <div className="log-row item-batch-code font-typewriter">{platterItems[activeKey].batch}</div>
-                    <div className="log-row-divider"></div>
-                    <p className="log-body-text font-typewriter">{platterItems[activeKey].lineage}</p>
-                    {/* Distressed Stamp Overlay */}
-                    <div className="absolute right-4 bottom-4 distressed-stamp stamp-slam-active font-handwritten" style={{ pointerEvents: 'none' }}>
-                      [ RECIPE_SECURED ]
-                    </div>
-                  </div>
-                ) : (
-                  <div className="log-placeholder">
-                    <div className="blink-cursor-block"></div>
-                    <p className="placeholder-text font-handwritten">AWAITING DATA PACKET INPUT... SCAN PLATTER BLUEPRINT QUADRANTS TO ACCESS SPECIMEN FILES.</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      {/* ══════════════════════════════════════════════════════════════════
-          SECTION 2: THE LOGISTICS GRID
-      ═══════════════════════════════════════════════════════════════════ */}
-      <section className="relative bg-[#efe9e1] w-full">
-        {/* Horizontal rule from master line */}
-        <div className="w-full h-[2px] bg-[#002fa7]" />
-
-        <div className="max-w-screen-xl mx-auto">
-          {LOGISTICS_ROWS.map((row, i) => (
-            <div key={row.id}>
+            <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center mt-6">
               <button
-                onClick={() => setOpenRow(openRow === row.id ? null : row.id)}
-                className="group w-full text-left flex items-start gap-6 px-6 md:px-16 py-6 md:py-8 hover:-translate-y-1 transition-transform duration-200 relative"
-                style={{ boxShadow: 'none' }}
+                onClick={() => setIsBookingOpen(true)}
+                className="group relative inline-block bg-[#efe8db] text-[#2c2b29] border border-[#2c2b29]/5 shadow-sm hover:shadow-md transition-all duration-300 rounded-full px-8 py-4 font-body text-sm font-bold tracking-wide flex items-center justify-center text-center leading-tight"
               >
-                {/* Hover shadow reveal */}
-                <div className="absolute bottom-0 left-0 w-full h-[4px] bg-[#002fa7] translate-y-full opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200" />
-
-                <span className="font-mono text-[10px] md:text-xs font-bold text-[#002fa7]/50 uppercase tracking-widest mt-1 shrink-0 w-8">
-                  {row.index}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-6">
-                    <span className="font-serif text-xl md:text-2xl font-black uppercase text-[#002fa7] tracking-tight shrink-0">
-                      {row.label}
-                    </span>
-                    <span className="hidden md:block flex-1 h-[1px] bg-[#002fa7]/20 self-center" />
-                    <span className="font-mono text-xs md:text-sm font-bold uppercase text-[#002fa7]/70 tracking-wide">
-                      {row.value}
-                    </span>
-                  </div>
-
-                  {/* Expanded drawer */}
-                  <div className={`overflow-hidden transition-all duration-300 ${openRow === row.id ? 'max-h-40 mt-5' : 'max-h-0'}`}>
-                    <div className="border-l-2 border-[#002fa7] pl-5 py-2">
-                      {row.coords && (
-                        <p className="font-mono text-sm font-black text-[#002fa7] tracking-widest mb-2 uppercase">
-                          {row.coords}
-                        </p>
-                      )}
-                      <p className="font-mono text-xs text-[#002fa7]/80 uppercase leading-relaxed">
-                        {row.expanded}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <span className="font-mono text-xs font-bold text-[#002fa7]/40 mt-1 shrink-0">
-                  {openRow === row.id ? '[ − ]' : '[ + ]'}
-                </span>
+                Reserve your<br/>seat
               </button>
-              {/* Divider rule */}
-              <div className="w-full h-[2px] bg-[#002fa7]" />
+              <a 
+                href="#menu" 
+                className="group relative inline-block bg-[#efe8db] text-[#2c2b29] border border-[#2c2b29]/5 shadow-sm hover:shadow-md transition-all duration-300 rounded-full px-8 py-4 font-body text-sm font-bold tracking-wide flex items-center justify-center text-center leading-tight"
+              >
+                Explore what's<br/>on the table
+              </a>
             </div>
-          ))}
+          </div>
+
+          {/* Hero Image / Collage */}
+          <div className="lg:col-span-6 relative w-full min-h-[50vh] flex items-center justify-center lg:justify-end mt-12 lg:mt-0 pointer-events-none">
+            <motion.img 
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
+              src="/dinnerheromix.png" 
+              alt="Morocco Dinner Experience" 
+              className="w-[110%] lg:w-[128%] max-w-none object-contain drop-shadow-sm -mr-16 lg:-mr-32 mix-blend-multiply z-0"
+            />
+          </div>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          SECTION 4: THE CHABUDAI FLOOR MATRIX (Japanese Short Leg Table & Pillows)
-      ═══════════════════════════════════════════════════════════════════ */}
-      <section className="chabudai-matrix-section relative">
-        {!capacityZero ? (
-          <>
-            <div className="matrix-header-block">
-              <span className="matrix-brand-label">Vantammayilu</span>
-            </div>
-
-            <div className="matrix-viewport-container">
-              {/* MASTER ARCHITECTURAL CANVAS SHEETS */}
-              <div className="isometric-projection-stage">
-                <svg viewBox="0 0 800 600" className="blueprint-svg-canvas">
-                  <defs>
-                    <radialGradient id="thermal-glow-hot" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stopColor="#e45a0b" stopOpacity="0.5" />
-                      <stop offset="100%" stopColor="#e45a0b" stopOpacity="0" />
-                    </radialGradient>
-                    <radialGradient id="thermal-glow-cold" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stopColor="#002fa7" stopOpacity="0.15" />
-                      <stop offset="100%" stopColor="#002fa7" stopOpacity="0" />
-                    </radialGradient>
-                  </defs>
-
-                  {/* ==========================================================================
-                     THE ISOMETRIC GROUND FLOOR MAP LAYER
-                     ========================================================================== */}
-                  {/* 1. Large blueprint grid mat rotated on the floor */}
-                  <g style={{ shapeRendering: 'crispEdges' }}>
-                    <polygon
-                      points={`${projectPoint(200, 100).x},${projectPoint(200, 100).y} ${projectPoint(600, 100).x},${projectPoint(600, 100).y} ${projectPoint(600, 500).x},${projectPoint(600, 500).y} ${projectPoint(200, 500).x},${projectPoint(200, 500).y}`}
-                      className="blueprint-mat-bg"
-                    />
-                    {/* Mat grid lines */}
-                    {Array.from({ length: 9 }).map((_, i) => {
-                      const x = 200 + i * 50;
-                      const pStart = projectPoint(x, 100);
-                      const pEnd = projectPoint(x, 500);
-                      return (
-                        <line
-                          key={`grid-x-${i}`}
-                          x1={pStart.x}
-                          y1={pStart.y}
-                          x2={pEnd.x}
-                          y2={pEnd.y}
-                          className="blueprint-mat-grid-line"
-                        />
-                      );
-                    })}
-                    {Array.from({ length: 9 }).map((_, i) => {
-                      const y = 100 + i * 50;
-                      const pStart = projectPoint(200, y);
-                      const pEnd = projectPoint(600, y);
-                      return (
-                        <line
-                          key={`grid-y-${i}`}
-                          x1={pStart.x}
-                          y1={pStart.y}
-                          x2={pEnd.x}
-                          y2={pEnd.y}
-                          className="blueprint-mat-grid-line"
-                        />
-                      );
-                    })}
-                  </g>
-
-                  {/* Thermal Layer (placed underneath shadows and pillows) */}
-                  <g className="thermal-layer" style={{ pointerEvents: 'none' }}>
-                    {/* Floor thermal glow nodes */}
-                    {CHABUDAI_PILLOWS.map((pillow) => {
-                      const isSelected = selectedSeats.includes(pillow.id);
-                      const proj = projectPoint(pillow.gx, pillow.gy);
-                      return (
-                        <ellipse
-                          key={`thermal-glow-${pillow.id}`}
-                          cx={proj.x}
-                          cy={proj.y}
-                          rx={50 * 1.35}
-                          ry={25 * 1.35}
-                          fill={isSelected ? "url(#thermal-glow-hot)" : "url(#thermal-glow-cold)"}
-                          style={{ transition: 'fill 0.4s ease' }}
-                        />
-                      );
-                    })}
-
-                    {/* Concentric pulsing energy ripples */}
-                    {pulses.map((pulse) => (
-                      <g key={pulse.id} transform={`translate(${pulse.x}, ${pulse.y})`}>
-                        <ellipse
-                          cx="0"
-                          cy="0"
-                          rx="100"
-                          ry="50"
-                          className="thermal-pulse-circle ripple-1"
-                        />
-                        <ellipse
-                          cx="0"
-                          cy="0"
-                          rx="100"
-                          ry="50"
-                          className="thermal-pulse-circle ripple-2"
-                          style={{ animationDelay: '0.2s' }}
-                        />
-                      </g>
-                    ))}
-                  </g>
-
-                  {/* 2. Table shadow footprint (on floor) */}
-                  <g style={{ shapeRendering: 'crispEdges' }}>
-                    <polygon
-                      points={`${projectPoint(330, 230).x},${projectPoint(330, 230).y} ${projectPoint(470, 230).x},${projectPoint(470, 230).y} ${projectPoint(470, 370).x},${projectPoint(470, 370).y} ${projectPoint(330, 370).x},${projectPoint(330, 370).y}`}
-                      className="table-footprint"
-                    />
-
-                    {/* 3. Pillow ground footprint shadows */}
-                    {CHABUDAI_PILLOWS.map((pillow) => {
-                      const isSelected = selectedSeats.includes(pillow.id);
-                      const proj = projectPoint(pillow.gx, pillow.gy);
-                      const w_shadow = (isSelected ? 17 : 20) * 1.35;
-                      const sx = 1.414 * w_shadow;
-                      const sy = 0.7071 * w_shadow;
-                      return (
-                        <polygon
-                          key={`shadow-${pillow.id}`}
-                          points={`${proj.x - sx},${proj.y} ${proj.x},${proj.y - sy} ${proj.x + sx},${proj.y} ${proj.x},${proj.y + sy}`}
-                          className={`pillow-ground-shadow ${isSelected ? 'selected' : ''}`}
-                        />
-                      );
-                    })}
-                  </g>
-
-                  {/* 4. Back Pillows (projected ground Y < 300) */}
-                  {CHABUDAI_PILLOWS.filter(pillow => {
-                    const proj = projectPoint(pillow.gx, pillow.gy);
-                    return proj.y < 300;
-                  }).map((pillow) => {
-                    const isHovered = hoveredSeat === pillow.id;
-                    const isSelected = selectedSeats.includes(pillow.id);
-                    const proj = projectPoint(pillow.gx, pillow.gy);
-                    const pillowClass = isSelected ? 'locked' : 'pillow-floating';
-                    return (
-                      <g
-                        key={`pillow-node-${pillow.id}`}
-                        className="tatami-pillow-node-wrapper"
-                        onMouseEnter={() => setHoveredSeat(pillow.id)}
-                        onMouseLeave={() => setHoveredSeat(null)}
-                        onClick={() => toggleSeat(pillow.id)}
-                        style={{
-                          cursor: 'pointer',
-                          transform: `translate(${proj.x}px, ${proj.y}px)`
-                        }}
-                      >
-                        {/* Dynamic clipPath for this pillow's conduit growth */}
-                        <clipPath id={`conduit-clip-${pillow.id}`}>
-                          <rect
-                            x="-20"
-                            y="0"
-                            width="40"
-                            height={isHovered && !isSelected ? 45 : 0}
-                            style={{ transition: 'height 0.25s cubic-bezier(0.1, 0.8, 0.3, 1)' }}
-                          />
-                        </clipPath>
-
-                        <g
-                          className={`tatami-pillow-group ${pillowClass} ${isHovered ? 'hovered' : ''}`}
-                          style={{
-                            animationDelay: `${pillow.id * 0.3}s`
-                          }}
-                        >
-                          {/* Neon-Blue Anchor Tether Wire Line */}
-                          {isHovered && !isSelected && (
-                            <line
-                              x1="0"
-                              y1="0"
-                              x2="0"
-                              y2="1"
-                              className="pillow-tether-wire"
-                              style={{
-                                animationDelay: `${pillow.id * 0.3}s`,
-                                clipPath: `url(#conduit-clip-${pillow.id})`
-                              }}
-                            />
-                          )}
-
-                          {/* Puffy tatami pillow elements scaled 1.35x inside transform group */}
-                          <g transform="scale(1.35)">
-                            {/* Pillow Top Face (Puffy) */}
-                            <path
-                              d="M -33.94,-6 Q -18,-18 0,-22.97 Q 18,-18 33.94,-6 Q 18,6 0,10.97 Q -18,6 -33.94,-6"
-                              className="pillow-top-face"
-                            />
-
-                            {/* Pillow Side Lip (Front-Left) */}
-                            <path
-                              d="M -33.94,-6 Q -18,6 0,10.97 L 0,16.97 Q -18,12 -33.94,0 Z"
-                              className="pillow-side-lip left"
-                            />
-
-                            {/* Pillow Side Lip (Front-Right) */}
-                            <path
-                              d="M 0,10.97 Q 18,6 33.94,-6 L 33.94,0 Q 18,12 0,16.97 Z"
-                              className="pillow-side-lip right"
-                            />
-                          </g>
-
-                          {/* Sprout Tag Group */}
-                          {isSelected && (
-                            <g className="sprout-tag-group" style={{ pointerEvents: 'none' }}>
-                              <line x1="0" y1="-8" x2="0" y2="-60" stroke="#002fa7" strokeWidth="1.5" />
-                              <g transform="translate(0, -60) rotate(-26.565)">
-                                <text x="5" y="4" className="sprout-tag-text" textAnchor="start">
-                                  <TypewriterText text={`[ WELCOME GUEST_0${pillow.id} ]`} />
-                                </text>
-                              </g>
-                            </g>
-                          )}
-                        </g>
-                      </g>
-                    );
-                  })}
-
-                  {/* 5. Traditional Chabudai Low Table (3D Extrusion) */}
-                  <g className="chabudai-low-table" style={{ shapeRendering: 'crispEdges' }}>
-                    {/* Table Leg Projection/Tether Lines */}
-                    <line
-                      x1={projectPoint(328, 228, 15).x}
-                      y1={projectPoint(328, 228, 15).y}
-                      x2={projectPoint(328, 228, 0).x}
-                      y2={projectPoint(328, 228, 0).y}
-                      className="table-leg-tether"
-                    />
-                    <line
-                      x1={projectPoint(472, 228, 15).x}
-                      y1={projectPoint(472, 228, 15).y}
-                      x2={projectPoint(472, 228, 0).x}
-                      y2={projectPoint(472, 228, 0).y}
-                      className="table-leg-tether"
-                    />
-                    <line
-                      x1={projectPoint(472, 372, 15).x}
-                      y1={projectPoint(472, 372, 15).y}
-                      x2={projectPoint(472, 372, 0).x}
-                      y2={projectPoint(472, 372, 0).y}
-                      className="table-leg-tether"
-                    />
-                    <line
-                      x1={projectPoint(328, 372, 15).x}
-                      y1={projectPoint(328, 372, 15).y}
-                      x2={projectPoint(328, 372, 0).x}
-                      y2={projectPoint(328, 372, 0).y}
-                      className="table-leg-tether"
-                    />
-
-                    {/* Leg 1: West/Left leg (x: 320-336, y: 220-236) */}
-                    <polygon
-                      points={`${projectPoint(320, 220, 15).x},${projectPoint(320, 220, 15).y} ${projectPoint(320, 220, 55).x},${projectPoint(320, 220, 55).y} ${projectPoint(320, 236, 55).x},${projectPoint(320, 236, 55).y} ${projectPoint(320, 236, 15).x},${projectPoint(320, 236, 15).y}`}
-                      className="table-leg-face left"
-                    />
-                    <polygon
-                      points={`${projectPoint(320, 236, 15).x},${projectPoint(320, 236, 15).y} ${projectPoint(320, 236, 55).x},${projectPoint(320, 236, 55).y} ${projectPoint(336, 236, 55).x},${projectPoint(336, 236, 55).y} ${projectPoint(336, 236, 15).x},${projectPoint(336, 236, 15).y}`}
-                      className="table-leg-face right"
-                    />
-
-                    {/* Leg 2: North/Top leg (x: 464-480, y: 220-236) */}
-                    <polygon
-                      points={`${projectPoint(464, 220, 15).x},${projectPoint(464, 220, 15).y} ${projectPoint(464, 220, 55).x},${projectPoint(464, 220, 55).y} ${projectPoint(464, 236, 55).x},${projectPoint(464, 236, 55).y} ${projectPoint(464, 236, 15).x},${projectPoint(464, 236, 15).y}`}
-                      className="table-leg-face left"
-                    />
-                    <polygon
-                      points={`${projectPoint(464, 236, 15).x},${projectPoint(464, 236, 15).y} ${projectPoint(464, 236, 55).x},${projectPoint(464, 236, 55).y} ${projectPoint(480, 236, 55).x},${projectPoint(480, 236, 55).y} ${projectPoint(480, 236, 15).x},${projectPoint(480, 236, 15).y}`}
-                      className="table-leg-face right"
-                    />
-
-                    {/* Leg 3: East/Right leg (x: 464-480, y: 364-380) */}
-                    <polygon
-                      points={`${projectPoint(464, 364, 15).x},${projectPoint(464, 364, 15).y} ${projectPoint(464, 364, 55).x},${projectPoint(464, 364, 55).y} ${projectPoint(464, 380, 55).x},${projectPoint(464, 380, 55).y} ${projectPoint(464, 380, 15).x},${projectPoint(464, 380, 15).y}`}
-                      className="table-leg-face left"
-                    />
-                    <polygon
-                      points={`${projectPoint(464, 380, 15).x},${projectPoint(464, 380, 15).y} ${projectPoint(464, 380, 55).x},${projectPoint(464, 380, 55).y} ${projectPoint(480, 380, 55).x},${projectPoint(480, 380, 55).y} ${projectPoint(480, 380, 15).x},${projectPoint(480, 380, 15).y}`}
-                      className="table-leg-face right"
-                    />
-
-                    {/* Leg 4: South/Bottom leg (x: 320-336, y: 364-380) */}
-                    <polygon
-                      points={`${projectPoint(320, 364, 15).x},${projectPoint(320, 364, 15).y} ${projectPoint(320, 364, 55).x},${projectPoint(320, 364, 55).y} ${projectPoint(320, 380, 55).x},${projectPoint(320, 380, 55).y} ${projectPoint(320, 380, 15).x},${projectPoint(320, 380, 15).y}`}
-                      className="table-leg-face left"
-                    />
-                    <polygon
-                      points={`${projectPoint(320, 380, 15).x},${projectPoint(320, 380, 15).y} ${projectPoint(320, 380, 55).x},${projectPoint(320, 380, 55).y} ${projectPoint(336, 380, 55).x},${projectPoint(336, 380, 55).y} ${projectPoint(336, 380, 15).x},${projectPoint(336, 380, 15).y}`}
-                      className="table-leg-face right"
-                    />
-
-                    {/* 3D Apron Rim (Front-Left) */}
-                    <polygon
-                      points={`${projectPoint(320, 220, 55).x},${projectPoint(320, 220, 55).y} ${projectPoint(320, 220, 65).x},${projectPoint(320, 220, 65).y} ${projectPoint(320, 380, 65).x},${projectPoint(320, 380, 65).y} ${projectPoint(320, 380, 55).x},${projectPoint(320, 380, 55).y}`}
-                      className="table-apron-face left"
-                    />
-
-                    {/* 3D Apron Rim (Front-Right) */}
-                    <polygon
-                      points={`${projectPoint(320, 380, 55).x},${projectPoint(320, 380, 55).y} ${projectPoint(320, 380, 65).x},${projectPoint(320, 380, 65).y} ${projectPoint(480, 380, 65).x},${projectPoint(480, 380, 65).y} ${projectPoint(480, 380, 55).x},${projectPoint(480, 380, 55).y}`}
-                      className="table-apron-face right"
-                    />
-
-                    {/* Elevated Table Top Slab */}
-                    <polygon
-                      points={`${projectPoint(320, 220, 65).x},${projectPoint(320, 220, 65).y} ${projectPoint(480, 220, 65).x},${projectPoint(480, 220, 65).y} ${projectPoint(480, 380, 65).x},${projectPoint(480, 380, 65).y} ${projectPoint(320, 380, 65).x},${projectPoint(320, 380, 65).y}`}
-                      className="table-top-surface"
-                    />
-                  </g>
-
-                  {/* 6. Front Pillows (projected ground Y >= 300) */}
-                  {CHABUDAI_PILLOWS.filter(pillow => {
-                    const proj = projectPoint(pillow.gx, pillow.gy);
-                    return proj.y >= 300;
-                  }).map((pillow) => {
-                    const isHovered = hoveredSeat === pillow.id;
-                    const isSelected = selectedSeats.includes(pillow.id);
-                    const proj = projectPoint(pillow.gx, pillow.gy);
-                    const pillowClass = isSelected ? 'locked' : 'pillow-floating';
-                    return (
-                      <g
-                        key={`pillow-node-${pillow.id}`}
-                        className="tatami-pillow-node-wrapper"
-                        onMouseEnter={() => setHoveredSeat(pillow.id)}
-                        onMouseLeave={() => setHoveredSeat(null)}
-                        onClick={() => toggleSeat(pillow.id)}
-                        style={{
-                          cursor: 'pointer',
-                          transform: `translate(${proj.x}px, ${proj.y}px)`
-                        }}
-                      >
-                        {/* Dynamic clipPath for this pillow's conduit growth */}
-                        <clipPath id={`conduit-clip-${pillow.id}`}>
-                          <rect
-                            x="-20"
-                            y="0"
-                            width="40"
-                            height={isHovered && !isSelected ? 45 : 0}
-                            style={{ transition: 'height 0.25s cubic-bezier(0.1, 0.8, 0.3, 1)' }}
-                          />
-                        </clipPath>
-
-                        <g
-                          className={`tatami-pillow-group ${pillowClass} ${isHovered ? 'hovered' : ''}`}
-                          style={{
-                            animationDelay: `${pillow.id * 0.3}s`
-                          }}
-                        >
-                          {/* Neon-Blue Anchor Tether Wire Line */}
-                          {isHovered && !isSelected && (
-                            <line
-                              x1="0"
-                              y1="0"
-                              x2="0"
-                              y2="1"
-                              className="pillow-tether-wire"
-                              style={{
-                                animationDelay: `${pillow.id * 0.3}s`,
-                                clipPath: `url(#conduit-clip-${pillow.id})`
-                              }}
-                            />
-                          )}
-
-                          {/* Puffy tatami pillow elements scaled 1.35x inside transform group */}
-                          <g transform="scale(1.35)">
-                            {/* Pillow Top Face (Puffy) */}
-                            <path
-                              d="M -33.94,-6 Q -18,-18 0,-22.97 Q 18,-18 33.94,-6 Q 18,6 0,10.97 Q -18,6 -33.94,-6"
-                              className="pillow-top-face"
-                            />
-
-                            {/* Pillow Side Lip (Front-Left) */}
-                            <path
-                              d="M -33.94,-6 Q -18,6 0,10.97 L 0,16.97 Q -18,12 -33.94,0 Z"
-                              className="pillow-side-lip left"
-                            />
-
-                            {/* Pillow Side Lip (Front-Right) */}
-                            <path
-                              d="M 0,10.97 Q 18,6 33.94,-6 L 33.94,0 Q 18,12 0,16.97 Z"
-                              className="pillow-side-lip right"
-                            />
-                          </g>
-
-                          {/* Sprout Tag Group */}
-                          {isSelected && (
-                            <g className="sprout-tag-group" style={{ pointerEvents: 'none' }}>
-                              <line x1="0" y1="-8" x2="0" y2="-60" stroke="#002fa7" strokeWidth="1.5" />
-                              <g transform="translate(0, -60) rotate(-26.565)">
-                                <text x="5" y="4" className="sprout-tag-text" textAnchor="start">
-                                  <TypewriterText text={`[ WELCOME GUEST_0${pillow.id} ]`} />
-                                </text>
-                              </g>
-                            </g>
-                          )}
-                        </g>
-                      </g>
-                    );
-                  })}
-                </svg>
-              </div>
-
-              {/* ==========================================================================
-                 CONVERSION CHECKOUT ACTION BUTTON CONSOLE AREA
-                 ========================================================================== */}
-              <div className="matrix-action-drawer">
-                <button 
-                  disabled={selectedSeats.length === 0}
-                  onClick={() => setBookingOpen(true)}
-                  className={`matrix-checkout-cta ${selectedSeats.length > 0 ? 'active-ready font-handwritten' : 'idle-disabled font-handwritten'}`}
-                >
-                  {selectedSeats.length === 0 
-                    ? "[ SELECT A PILLOW FROM THE MAT ABOVE ]" 
-                    : `[ COMMIT TO ${selectedSeats.length} COVERS AT THE CHABUDAI // RAZORPAY SECURE GATEWAY ]`
-                  }
-                </button>
-                <div className="matrix-footer-ticker">
-                  <span className="ticker-caps font-handwritten">
-                    {`// 0${8 - selectedSeats.length} COVERS VACANT // CHAPTER 04 // OAXACA MAT ARRANGEMENT`}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </>
-        ) : (
-          /* ── SECTION 5: CLOSED PORCH FLAG / WAITLIST ──────────────── */
-          <div className="absolute inset-0 bg-[#002fa7] flex items-center justify-center z-30 p-6">
-            <div className="bg-[#efe9e1] border-4 border-[#002fa7] shadow-[12px_12px_0px_0px_#e45a0b] w-full max-w-lg p-10 md:p-14 flex flex-col gap-8">
-              <h2 className="font-serif font-black uppercase text-[#002fa7] tracking-tighter leading-none"
-                  style={{ fontSize: 'clamp(3rem, 7vw, 5rem)' }}>
-                Table<br/>Full.
-              </h2>
-              <p className="font-handwritten text-xs font-bold uppercase tracking-widest text-[#002fa7]">
-                [ SUBMIT TO THE WAITING ROOM ARCHIVE ]
-              </p>
-              {waitlistSubmitted ? (
-                <div className="border-2 border-[#002fa7] bg-[#002fa7] text-[#efe9e1] p-4 font-handwritten text-xs font-bold uppercase text-center tracking-widest">
-                  [ ARCHIVED // WE'LL REACH OUT FIRST ]
-                </div>
-              ) : (
-                <form onSubmit={handleWaitlistSubmit} className="flex flex-col gap-4">
-                  <input
-                    type="email"
-                    required
-                    placeholder="name@server.com"
-                    value={waitlistEmail}
-                    onChange={(e) => setWaitlistEmail(e.target.value)}
-                    className="w-full bg-[#efe9e1] border-2 border-[#002fa7] font-mono text-sm p-4 outline-none focus:bg-[#002fa7]/5 text-[#002fa7]"
-                  />
-                  <button
-                    type="submit"
-                    className="w-full bg-[#e45a0b] text-[#efe9e1] border-2 border-[#002fa7] font-mono text-xs md:text-sm font-black uppercase tracking-widest py-4 px-6 shadow-[6px_6px_0px_0px_#002fa7] hover:bg-[#efe9e1] hover:text-[#002fa7] hover:translate-x-[6px] hover:translate-y-[6px] hover:shadow-none transition-all duration-150 cursor-pointer"
-                  >
-                    [ KEEP A SEAT WARM FOR ME ]
-                  </button>
-                </form>
-              )}
-            </div>
+      {/* 2. WHAT'S ON THE TABLE? (MENU) */}
+      <section id="menu" className="py-32 bg-[var(--bg-secondary)] relative overflow-hidden">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <div className="text-center mb-20 max-w-3xl mx-auto">
+            <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2 font-logo">The Menu</span>
+            <h2 className="text-5xl md:text-6xl font-heading text-[var(--text-main)]">What's on the table?</h2>
+            <p className="font-body text-lg text-[var(--text-main)]/60 mt-4">
+              Instead of revealing the entire menu, we prefer curiosity. Pull a card to the right to reveal its dish.
+            </p>
           </div>
-        )}
+
+          <div className="space-y-6 flex flex-col items-start">
+            {menuItems.map((item, idx) => (
+              <div
+                key={idx}
+                className={`relative bg-[var(--bg-primary)] p-6 md:p-8 rounded-2xl shadow-sm border border-[var(--text-main)]/10 overflow-hidden hover:shadow-md ${revealedItems[idx] ? 'w-full' : 'w-full md:w-1/2 lg:w-[40%]'} transition-[width] duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] origin-left min-h-[220px] md:min-h-[180px] flex items-center`}
+              >
+                {!revealedItems[idx] && (
+                  <motion.div
+                    drag="x"
+                    dragConstraints={{ left: 0, right: 100 }}
+                    dragElastic={0.1}
+                    onDragEnd={(e, { offset, velocity }) => {
+                      if (offset.x > 50 || velocity.x > 300) {
+                        toggleReveal(idx);
+                      }
+                    }}
+                    className="absolute top-0 right-0 bottom-0 w-24 z-20 cursor-grab active:cursor-grabbing flex items-center justify-end pr-6 bg-gradient-to-l from-[var(--bg-primary)] to-transparent"
+                  >
+                    <motion.div animate={{ x: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 1.5 }} className="text-[var(--accent-primary)] font-bold text-2xl">→</motion.div>
+                  </motion.div>
+                )}
+                <div className={`flex flex-col md:flex-row gap-6 items-center w-full h-full`}>
+
+                  {/* Left part (always visible) */}
+                  <div className={`flex flex-col justify-center h-full ${revealedItems[idx] ? 'md:w-1/3' : 'w-full'} transition-[width] duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]`}>
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="font-body text-xs uppercase tracking-widest text-[var(--accent-primary)] font-bold">Course</span>
+                      <span className="font-heading text-2xl text-[var(--text-main)]">{item.course}</span>
+                    </div>
+                    <h3 className="font-body text-2xl font-bold text-[var(--text-main)]">{item.title}</h3>
+
+                    <AnimatePresence>
+                      {!revealedItems[idx] && (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          className="mt-4 font-body text-xs uppercase tracking-widest text-[var(--text-main)]/40 flex items-center gap-2 absolute bottom-6 md:bottom-8"
+                        >
+                          <span>Pull right edge to reveal</span>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Revealed part */}
+                  <AnimatePresence>
+                    {revealedItems[idx] && (
+                      <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="flex-1 flex flex-col md:flex-row items-center w-full h-full"
+                      >
+                        {/* Center Dish Name */}
+                        <div className="flex-1 flex items-center justify-center text-center md:border-l md:border-r border-[var(--text-main)]/10 px-6 py-4 w-full h-full">
+                          <h4 className="font-heading text-3xl lg:text-4xl text-[var(--accent-primary)] leading-tight">{item.dish.split('—')[0]}</h4>
+                        </div>
+
+                        {/* Right Description */}
+                        <div className="flex-1 md:pl-8 flex flex-col justify-center text-center md:text-left mt-4 md:mt-0 w-full h-full">
+                          <p className="font-body text-lg text-[var(--text-main)]/80 italic">
+                            {item.dish.split('—')[1]}
+                          </p>
+                          <p className="font-body text-sm text-[var(--text-main)]/60 mt-2 uppercase tracking-widest font-bold">
+                            {item.desc}
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                </div>
+                {/* Background wash on hover */}
+                <div className="absolute inset-0 bg-[var(--accent-primary)]/5 opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
-      {/* ── BOOKING MODAL ─────────────────────────────────────────────── */}
-      <BookingModal
-        isOpen={bookingOpen}
-        onClose={() => setBookingOpen(false)}
-        dinner={dinner}
-        initialSeats={Math.min(selectedSeats.length, 2)}
-      />
+      {/* 3. THE EVENING, IN ORDER (TIMELINE) */}
+      <section className="py-32 relative overflow-hidden">
+        <div className="container mx-auto px-6 max-w-5xl relative" ref={timelineRef}>
+          <div className="text-center mb-32">
+            <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2 font-logo">Timeline</span>
+            <h2 className="text-5xl md:text-6xl font-heading text-[var(--text-main)]">The evening, in order.</h2>
+          </div>
 
-      <Footer />
-    </main>
+          <div className="relative flex flex-col items-center w-full">
+
+            {/* The Thicker Dotted Line */}
+            <div className="absolute top-0 bottom-0 left-6 md:left-1/2 md:-translate-x-1/2 w-1 border-l-[4px] border-dotted border-[var(--text-main)]/30 z-0" />
+
+            {/* Scroll-driven doodle on path */}
+            <motion.div
+              style={{ top: doodleY }}
+              className="absolute left-6 md:left-1/2 -translate-x-[36px] md:-translate-x-1/2 z-20 w-[102px] h-[102px] flex items-center justify-center bg-[var(--bg-primary)] rounded-full border border-[var(--text-main)]/10 shadow-sm"
+            >
+              <img src="/d1alt.png" alt="doodle tracker" className="w-[64px] h-[64px] object-contain drop-shadow-sm" />
+            </motion.div>
+
+            <div className="w-full space-y-28 md:space-y-40 z-10 pt-10">
+              {[
+                { time: "7:30 PM", title: "Doors open.", desc: "Music starts. Names become faces." },
+                { time: "8:00 PM", title: "First course.", desc: "The room is still getting to know itself." },
+                { time: "9:00 PM", title: "The conversations get louder.", desc: "Someone always mentions travel." },
+                { time: "10:00 PM", title: "Dessert arrives.", desc: "Nobody wants to check the time." },
+                { time: "Whenever it ends", title: "People leave slower...", desc: "Than they arrived.", highlight: true }
+              ].map((step, idx) => {
+                const isLeft = idx % 2 === 0;
+                // Add some random horizontal staggering for a wavy organic feel
+                const randomOffsets = ["md:-ml-4", "md:ml-8", "md:-ml-12", "md:ml-4", "md:-ml-8"];
+                const staggerClass = randomOffsets[idx % randomOffsets.length];
+
+                return (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className={`relative w-full flex pl-20 md:pl-0 ${isLeft ? 'md:justify-start' : 'md:justify-end'}`}
+                  >
+                    {/* Timeline Node */}
+                    <span className={`absolute left-[13px] md:left-1/2 top-4 -translate-x-1/2 w-8 h-8 rounded-full border-[3px] border-[var(--bg-primary)] flex items-center justify-center ${step.highlight ? 'bg-[var(--accent-primary)]' : 'bg-[var(--text-main)]'} z-10 shadow-sm`}>
+                      <span className="w-2.5 h-2.5 rounded-full bg-[var(--bg-primary)]" />
+                    </span>
+
+                    <div className={`md:w-1/2 ${isLeft ? 'md:pr-24 md:text-right' : 'md:pl-24 text-left'} text-left ${staggerClass}`}>
+                      <span className={`font-body text-3xl block ${step.highlight ? 'text-[var(--accent-primary)]' : 'text-[var(--text-main)]'}`}>
+                        {step.time}
+                      </span>
+                      <h3 className="font-logo text-4xl md:text-5xl mt-2 text-[var(--text-main)]">{step.title}</h3>
+                      <p className="font-body text-xl text-[var(--text-main)]/75 mt-1">{step.desc}</p>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. WHAT TO EXPECT (HOUSE RULES MARQUEES) */}
+      <section className="py-28 bg-[var(--bg-secondary)] relative overflow-hidden">
+        <div className="container mx-auto px-6 max-w-4xl mb-16">
+          <div className="text-center">
+            <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2 font-logo">House Rules</span>
+            <h2 className="text-5xl md:text-6xl font-heading text-[var(--text-main)]">What to expect</h2>
+          </div>
+        </div>
+
+        <div className="flex flex-col w-full relative">
+          {[
+            "Five curated courses",
+            "Eight guests",
+            "Shared table",
+            "Hosted at home",
+            "Vegetarian options available",
+            "Come alone or with one friend"
+          ].map((item, idx) => {
+            const isOdd = idx % 2 === 0; // 0, 2, 4 are 1st, 3rd, 5th
+            const bgInitial = isOdd ? 'bg-[var(--bg-secondary)]' : 'bg-[var(--accent-primary)]';
+            const textInitial = isOdd ? 'text-[var(--accent-primary)]' : 'text-[var(--bg-secondary)]';
+            const bgHover = isOdd ? 'hover:bg-[var(--accent-primary)]' : 'hover:bg-[var(--bg-secondary)]';
+            const textHover = isOdd ? 'hover:text-[var(--bg-secondary)]' : 'hover:text-[var(--accent-primary)]';
+
+            return (
+              <div
+                key={idx}
+                className={`group flex items-center w-full py-6 md:py-8 border-y border-[var(--text-main)]/10 -mt-[1px] transition-colors duration-500 cursor-default ${bgInitial} ${textInitial} ${bgHover} ${textHover}`}
+              >
+                <motion.div
+                  animate={{ x: [0, -1000] }}
+                  transition={{
+                    repeat: Infinity,
+                    ease: "linear",
+                    duration: 20 + (idx % 3) * 5
+                  }}
+                  className="flex items-center whitespace-nowrap"
+                >
+                  {[...Array(8)].map((_, i) => (
+                    <div key={i} className="flex items-center">
+                      <span className="font-body text-2xl md:text-3xl lg:text-4xl mx-8 tracking-widest leading-none drop-shadow-sm">
+                        {item}
+                      </span>
+                      <div className="w-12 h-12 flex items-center justify-center -rotate-12 group-hover:rotate-12 transition-transform duration-500">
+                        <Sparkles size={32} strokeWidth={2} />
+                      </div>
+                    </div>
+                  ))}
+                </motion.div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* 5. WHO'S THIS FOR? */}
+      <section className="py-32 relative overflow-hidden">
+        <div className="container mx-auto px-6 max-w-7xl">
+          <div className="text-center mb-20">
+            <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2 font-logo">- Alignment -</span>
+            <h2 className="text-5xl md:text-6xl font-heading text-[var(--text-main)]">Who's this for?</h2>
+            <p className="font-body text-xl italic text-[var(--text-main)]/60 mt-4">
+              Not everyone. And that's okay.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+            {[
+              { text: "People who enjoy trying new food.", img: "/people/11.png" },
+              { text: "People who love travelling.", img: "/people/12.png" },
+              { text: "People who ask questions.", img: "/people/13.png" },
+              { text: "People who stay for one more conversation.", img: "/people/14.png" },
+              { text: "People who believe strangers have stories worth hearing.", img: "/people/15.png" }
+            ].map((item, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1, duration: 0.8 }}
+                className="flex flex-col items-center text-center group"
+              >
+                <div className="w-full aspect-square mb-6 relative flex items-center justify-center">
+                  <img src={item.img} alt={`Guest ${idx + 1}`} className="w-full h-full object-contain grayscale group-hover:grayscale-0 transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] scale-[1.3] group-hover:scale-[1.4]" />
+                </div>
+                <span className="font-heading text-xl text-[var(--accent-primary)] mb-3">0{idx + 1}.</span>
+                <p className="font-body text-xl md:text-2xl text-[var(--text-main)]/85 leading-relaxed">
+                  {item.text}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 6. GOOD TO KNOW */}
+      <section className="py-28 bg-[var(--bg-secondary)] relative overflow-hidden">
+        <div className="container mx-auto px-6 max-w-4xl">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-heading text-[var(--text-main)]">Good to know</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            {[
+              { icon: <MapPin size={22} />, label: "Location", value: "Visakhapatnam", note: "Shared after booking.", doodle: "/d1alt.png" },
+              { icon: <Clock size={22} />, label: "Time", value: "7:30 PM onwards", note: "Be on time.", doodle: "/d2alt.png" },
+              { icon: <Users size={22} />, label: "Seats", value: "Only eight.", note: "Highly intimate.", doodle: "/1.png" },
+              { icon: <CreditCard size={22} />, label: "Bookings", value: "Confirmed after payment.", note: "Non-refundable lock.", doodle: "/2.png" },
+              { icon: <Info size={22} />, label: "Dietary requests", value: "Tell us beforehand.", note: "We'll always try our best.", doodle: "/3.png" }
+            ].map((item, idx) => (
+              <div
+                key={idx}
+                style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%, 50% 93%, 0 100%)' }}
+                className="relative pt-12 p-6 bg-[var(--bg-primary)] border border-t-0 border-[var(--text-main)]/10 shadow-sm flex flex-col justify-between h-[320px] hover:-translate-y-2 transition-transform duration-300 group"
+              >
+                {/* Decorative Doodle Pin */}
+                <div className="absolute top-3 left-1/2 -translate-x-1/2 w-10 h-10 opacity-70 group-hover:opacity-100 transition-opacity">
+                  <img src={item.doodle} alt="pin" className="w-full h-full object-contain drop-shadow-sm" />
+                </div>
+
+                <div className="flex justify-center items-center text-[var(--accent-primary)] mb-6 mt-4">
+                  {item.icon}
+                </div>
+                <div className="text-center flex-1 flex flex-col justify-center">
+                  <span className="block font-body text-xs uppercase tracking-widest text-[var(--text-main)]/50 mb-2">{item.label}</span>
+                  <span className="font-heading text-3xl text-[var(--text-main)] block leading-tight">{item.value}</span>
+                  <p className="font-body text-sm text-[var(--text-main)]/60 mt-3 italic">{item.note}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ SECTION */}
+      <section className="py-32 relative overflow-hidden bg-[var(--bg-primary)] border-t border-[var(--text-main)]/10">
+        <div className="container mx-auto px-6 max-w-4xl">
+          <div className="text-center mb-16">
+            <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2 font-logo">Questions</span>
+            <h2 className="text-5xl font-heading text-[var(--text-main)]">Frequently Asked Questions</h2>
+          </div>
+
+          <div className="space-y-4 max-w-3xl mx-auto">
+            {faqs.map((faq, idx) => (
+              <div
+                key={idx}
+                className="bg-[var(--bg-secondary)] rounded-2xl border border-[var(--text-main)]/10 overflow-hidden transition-all duration-300"
+              >
+                <button
+                  onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+                  className="w-full p-6 text-left flex justify-between items-center font-body text-2xl text-[var(--text-main)] hover:text-[var(--accent-primary)] transition-colors focus:outline-none"
+                >
+                  <span>{faq.q}</span>
+                  <span className="text-xl font-body ml-4 select-none">
+                    {openFaq === idx ? '−' : '+'}
+                  </span>
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {openFaq === idx && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: 'easeInOut' }}
+                    >
+                      <div className="px-6 pb-6 pt-2 border-t border-[var(--text-main)]/5 font-body text-lg text-[var(--text-main)]/85 leading-relaxed">
+                        {faq.a}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 7. THE TABLE IS ALMOST READY (SCROLL SEQUENCE) */}
+      <DinnerSequence />
+
+      {/* Shared Booking Modal Flow */}
+      <BookingModal
+        isOpen={isBookingOpen}
+        onClose={() => setIsBookingOpen(false)}
+        dinner={CURRENT_DINNER}
+        onBookingComplete={() => {
+          // Dynamic completion check, could optionally lock Option C
+          setOptionState('C');
+        }}
+      />
+    </div>
   );
 }

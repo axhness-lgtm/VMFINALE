@@ -13,9 +13,9 @@ const Footer = () => {
       </div>
 
       <nav className="mt-20 flex gap-12 text-mono text-[10px] uppercase tracking-[0.2em] text-white/60 z-10">
-        <a href="/dinner" className="hover:text-[#e45a0b] transition-colors">Upcoming Dinner</a>
-        <a href="/society" className="hover:text-[#e45a0b] transition-colors">Long Table Society</a>
-        <a href="/journal" className="hover:text-[#e45a0b] transition-colors">Journal</a>
+        <a href="/dinner" className="hover:text-[#e86321] transition-colors">Upcoming Dinner</a>
+        <a href="/society" className="hover:text-[#e86321] transition-colors">Long Table Society</a>
+        <a href="/journal" className="hover:text-[#e86321] transition-colors">Journal</a>
       </nav>
 
       <div className="mt-32 text-center z-10">
@@ -23,7 +23,7 @@ const Footer = () => {
         <p className="text-mono text-[9px] uppercase tracking-[0.3em] orange mt-4">You are welcome here</p>
       </div>
 
-      <div className="absolute bottom-0 left-0 w-full h-[1px] bg-[#e45a0b]"></div>
+      <div className="absolute bottom-0 left-0 w-full h-[1px] bg-[#e86321]"></div>
       <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-grain-footer"></div>
 
       <style>{`

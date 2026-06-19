@@ -18,7 +18,7 @@ function DriftingParticles() {
       <Points ref={ref} positions={sphere} stride={3} frustumCulled={false}>
         <PointMaterial
           transparent
-          color="#e45a0b" // Warm spice orange
+          color="#e86321" // Warm spice orange
           size={0.003}
           sizeAttenuation={true}
           depthWrite={false}

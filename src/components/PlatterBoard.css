@@ -87,7 +87,7 @@
 .status-indicator-dot {
   width: 8px;
   height: 8px;
-  background-color: #e45a0b; /* Orange blinker */
+  background-color: #e86321; /* Orange blinker */
   border-radius: 50%;
 }
 
@@ -110,7 +110,7 @@
 .telemetry-data {
   font-size: 11px;
   font-weight: 900;
-  color: #e45a0b;
+  color: #e86321;
 }
 
 /* Master Interactive Blueprint Workspace */
@@ -232,7 +232,7 @@
 
 /* Telemetry Badge - Hover Active State */
 .telemetry-badge.hot-state {
-  background-color: #e45a0b; /* Hot Orange */
+  background-color: #e86321; /* Hot Orange */
   color: #efe9e1; /* Cream Text */
   border-color: #002fa7;
   box-shadow: 3px 3px 0px rgba(0, 47, 167, 0.08);
@@ -293,12 +293,12 @@
 }
 
 .error-text {
-  color: #e45a0b;
+  color: #e86321;
 }
 
 /* Stamp Panel (Orange Inverted) */
 .footer-stamp-block.orange-invert {
-  background-color: #e45a0b;
+  background-color: #e86321;
   color: #efe9e1;
   display: flex;
   justify-content: space-between;
@@ -346,7 +346,7 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  background-color: #e45a0b;
+  background-color: #e86321;
   color: #efe9e1;
   font-size: 9px;
   font-weight: 900;

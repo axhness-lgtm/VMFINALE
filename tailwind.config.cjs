@@ -13,7 +13,7 @@ module.exports = {
       },
       colors: {
         cream: '#efe9e1',
-        orange: '#e45a0b',
+        orange: '#e86321',
         blue: '#002fa7',
       },
       boxShadow: {

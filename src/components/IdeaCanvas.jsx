@@ -56,7 +56,7 @@ function SceneContent({ scrollProgress }) {
             {visible && i % 3 === 0 && (
               <mesh position={[0, 0.5, 0]}>
                 <sphereGeometry args={[0.2, 16, 16]} />
-                <meshStandardMaterial color="#e45a0b" emissive="#e45a0b" emissiveIntensity={0.5} />
+                <meshStandardMaterial color="#e86321" emissive="#e86321" emissiveIntensity={0.5} />
               </mesh>
             )}
 
@@ -73,7 +73,7 @@ function SceneContent({ scrollProgress }) {
 
       {/* AMBIENT LIGHTING */}
       <ambientLight intensity={0.4} />
-      <spotLight position={[5, 10, 5]} angle={0.25} penumbra={1} intensity={2} color="#e45a0b" castShadow />
+      <spotLight position={[5, 10, 5]} angle={0.25} penumbra={1} intensity={2} color="#e86321" castShadow />
       <pointLight position={[-5, 5, -5]} intensity={0.5} color="#13368d" />
       
       <ContactShadows position={[0, -0.05, 0]} opacity={0.3} scale={15} blur={2.5} />

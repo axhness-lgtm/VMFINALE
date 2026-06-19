@@ -81,7 +81,7 @@ serve(async (req) => {
               html: `
                 <div style="font-family:monospace;background:#efe9e1;padding:48px;max-width:560px;margin:0 auto;border:4px solid #002fa7;">
                   <h1 style="font-family:sans-serif;color:#002fa7;font-size:28px;margin:0 0 8px;text-transform:uppercase;">You're Invited.</h1>
-                  <p style="color:#e45a0b;font-weight:bold;font-size:12px;letter-spacing:0.15em;margin:0 0 32px;">[ CHAPTER 04 // POSTCARDS FROM OAXACA ]</p>
+                  <p style="color:#e86321;font-weight:bold;font-size:12px;letter-spacing:0.15em;margin:0 0 32px;">[ CHAPTER 04 // POSTCARDS FROM OAXACA ]</p>
                   
                   <p style="color:#002fa7;font-size:13px;line-height:1.6;margin:0 0 24px;">
                     Hello ${recipient.name},<br/><br/>
@@ -91,11 +91,11 @@ serve(async (req) => {
                   <table style="width:100%;border-collapse:collapse;color:#002fa7;margin-bottom:32px;">
                     <tr><td style="padding:12px 0;border-top:1px solid rgba(0,47,167,0.2);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;">EVENT</td><td style="padding:12px 0;border-top:1px solid rgba(0,47,167,0.2);font-weight:900;">${dinner.title}</td></tr>
                     <tr><td style="padding:12px 0;border-top:1px solid rgba(0,47,167,0.2);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;">DATE & TIME</td><td style="padding:12px 0;border-top:1px solid rgba(0,47,167,0.2);font-weight:900;">${dateFormatted}</td></tr>
-                    <tr><td style="padding:12px 0;border-top:1px solid rgba(0,47,167,0.2);border-bottom:1px solid rgba(0,47,167,0.2);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;">PRICE</td><td style="padding:12px 0;border-top:1px solid rgba(0,47,167,0.2);border-bottom:1px solid rgba(0,47,167,0.2);font-weight:900;color:#e45a0b;">₹2,999 / seat</td></tr>
+                    <tr><td style="padding:12px 0;border-top:1px solid rgba(0,47,167,0.2);border-bottom:1px solid rgba(0,47,167,0.2);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;">PRICE</td><td style="padding:12px 0;border-top:1px solid rgba(0,47,167,0.2);border-bottom:1px solid rgba(0,47,167,0.2);font-weight:900;color:#e86321;">₹2,999 / seat</td></tr>
                   </table>
 
                   <div style="text-align:center;margin-bottom:32px;">
-                    <a href="${trialPageUrl}" style="background:#e45a0b;color:#efe9e1;padding:16px 24px;text-decoration:none;font-weight:bold;font-size:12px;letter-spacing:0.1em;border:2px solid #002fa7;display:inline-block;">[ SECURE SEATS ON BLUEPRINT MAP ]</a>
+                    <a href="${trialPageUrl}" style="background:#e86321;color:#efe9e1;padding:16px 24px;text-decoration:none;font-weight:bold;font-size:12px;letter-spacing:0.1em;border:2px solid #002fa7;display:inline-block;">[ SECURE SEATS ON BLUEPRINT MAP ]</a>
                   </div>
 
                   <p style="color:#002fa7;font-size:10px;opacity:0.6;text-transform:uppercase;letter-spacing:0.05em;">

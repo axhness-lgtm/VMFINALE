@@ -36,7 +36,7 @@ const NextEvening = () => {
           <div className="w-full">
             <div ref={cardRef} className="editorial-card lg:border-r border-[#000]/10 lg:pr-16">
               <span className="text-mono text-[11px] uppercase tracking-[0.2em] opacity-40">Upcoming Dinner · June 14</span>
-              <h2 className="text-[80px] font-serif font-light italic leading-tight my-6 text-black">Japanese Winter</h2>
+              <h2 className="text-[80px] font-heading font-light italic leading-tight my-6 text-black">Japanese Winter</h2>
               <p className="text-serif italic text-[24px] leading-relaxed text-black/70 max-w-[600px]">
                 A celebration of quiet warmth. Seven bowls of precision and memory, 
                 crafted to be shared by those who have never met. 
@@ -58,8 +58,8 @@ const NextEvening = () => {
                       className={`
                         w-[40px] h-[40px] rounded-full transition-all duration-500
                         ${seat.taken ? 'bg-[#c8b8a8] cursor-not-allowed' : 
-                          selectedSeat === seat.id ? 'bg-[#e45a0b] border border-[#e45a0b]' : 
-                          'bg-transparent border border-[#e45a0b] hover:bg-[#e45a0b]/10 pulse-available'}
+                          selectedSeat === seat.id ? 'bg-[#e86321] border border-[#e86321]' : 
+                          'bg-transparent border border-[#e86321] hover:bg-[#e86321]/10 pulse-available'}
                       `}
                     />
                     <span className="text-mono text-[7px] mt-3 uppercase tracking-widest text-black/40">
@@ -70,7 +70,7 @@ const NextEvening = () => {
               </div>
             </div>
 
-            <button className="group w-full max-w-[320px] py-6 border border-[#e45a0b] text-mono text-[9px] uppercase tracking-[0.3em] relative overflow-hidden transition-all duration-500 hover:bg-[#e45a0b] hover:text-white text-black block">
+            <button className="group w-full max-w-[320px] py-6 border border-[#e86321] text-mono text-[9px] uppercase tracking-[0.3em] relative overflow-hidden transition-all duration-500 hover:bg-[#e86321] hover:text-white text-black block">
               Reserve your place at the table →
             </button>
             
@@ -87,7 +87,7 @@ const NextEvening = () => {
 
       <style jsx>{`
         .bg-radial-warm {
-          background: radial-gradient(circle at center, #e45a0b 0%, transparent 70%);
+          background: radial-gradient(circle at center, #e86321 0%, transparent 70%);
         }
         @keyframes pulse-available {
           0% { box-shadow: 0 0 0 0 rgba(228, 90, 11, 0.4); }

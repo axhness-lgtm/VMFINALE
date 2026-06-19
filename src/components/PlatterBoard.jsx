@@ -51,15 +51,15 @@ export default function PlatterBoard() {
         <div className="header-center border-box">
           <span className="monospace-tag">SYSTEM_STATUS</span>
           <div className="status-row">
-            <span className="status-label font-handwritten">[ STABLE ]</span>
+            <span className="status-label font-body italicwritten">[ STABLE ]</span>
             <span className="status-indicator-dot pulsing"></span>
           </div>
           <span className="monospace-tag telemetry-data">TEMP: 37.2°C</span>
         </div>
         <div className="header-right border-box">
-          <span className="monospace-tag">BATCH_ID // <span className="font-handwritten">[ PLTR_2024_04 ]</span></span>
+          <span className="monospace-tag">BATCH_ID // <span className="font-body italicwritten">[ PLTR_2024_04 ]</span></span>
           <div className="status-row">
-            <span className="monospace-tag">SERVE_MODE // <span className="font-handwritten">[ FAMILY_STYLE ]</span></span>
+            <span className="monospace-tag">SERVE_MODE // <span className="font-body italicwritten">[ FAMILY_STYLE ]</span></span>
             <span className="status-indicator-square"></span>
           </div>
         </div>
@@ -119,7 +119,7 @@ export default function PlatterBoard() {
         <div className="footer-stamp-block border-box orange-invert">
           <div className="stamp-left">
             <span className="monospace-tag-label">ARCHIVE_STAMP</span>
-            <div className="manifest-header font-handwritten">[ PLATTER_VERIFIED ]</div>
+            <div className="manifest-header font-body italicwritten">[ PLATTER_VERIFIED ]</div>
             <div className="timestamp-data">DATE: 2024-03-11  TIME: {systemTime}</div>
             <div className="timestamp-data">BY: THE_SEAT // COMMUNITY_ARCHIVE</div>
           </div>

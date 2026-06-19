@@ -87,18 +87,18 @@
   position: relative;
   width: 100%;
   max-width: 420px;
-  background: #ffffff;
+  background: #efe9e1;
   padding: 12px 12px 28px 12px;
   box-shadow: none;
   border: 1px solid rgba(0, 47, 167, 0.15);
-  filter: drop-shadow(6px 8px 0px rgba(26, 26, 26, 0.12));
+  filter: drop-shadow(6px 8px 0px rgba(0, 47, 167, 0.12));
   transform: rotate(2.5deg);
   transition: transform 0.4s var(--slow-ease);
 }
 
 .manifesto-photo-frame:hover {
   transform: scale(1.04) rotate(1deg) translateY(-4px);
-  filter: drop-shadow(12px 16px 8px rgba(26, 26, 26, 0.16));
+  filter: drop-shadow(12px 16px 8px rgba(0, 47, 167, 0.16));
 }
 
 .manifesto-img {

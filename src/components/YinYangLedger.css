@@ -52,7 +52,7 @@
 
 /* Hovering over bottom half lights up the background slightly or shows focus */
 .ledger-bottom-half:hover {
-  background-color: #f7f3ed;
+  background-color: #f3dbbd;
 }
 
 /* Marquee Ribbons (Sandwiched exactly between the two halves) */

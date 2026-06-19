@@ -40,7 +40,7 @@ const Society = () => {
         <h3 className="text-[56px] italic leading-tight orange my-16">
           "You don't know who you'll meet. That's the point."
         </h3>
-        <a href="/society" className="inline-block text-mono text-[9px] uppercase tracking-[0.25em] border-b border-[#e45a0b] pb-2 hover:opacity-70 transition-opacity text-black">
+        <a href="/society" className="inline-block text-mono text-[9px] uppercase tracking-[0.25em] border-b border-[#e86321] pb-2 hover:opacity-70 transition-opacity text-black">
           Join the society →
         </a>
       </div>
@@ -48,10 +48,10 @@ const Society = () => {
       <div className="mt-32 w-full max-w-4xl px-8 z-10">
         <div className="aspect-[21/9] border border-black/5 relative overflow-hidden bg-[#e8e0d5]/30">
           <div className="absolute inset-0 bg-gradient-to-t from-[#e8e0d5] to-transparent"></div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[1px] bg-[#e45a0b]/20"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[1px] bg-[#e86321]/20"></div>
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] flex justify-between">
             {[...Array(12)].map((_, i) => (
-              <div key={i} className="w-1 h-1 bg-[#e45a0b]/30 rounded-full"></div>
+              <div key={i} className="w-1 h-1 bg-[#e86321]/30 rounded-full"></div>
             ))}
           </div>
         </div>

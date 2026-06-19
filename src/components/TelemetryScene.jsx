@@ -29,7 +29,7 @@ function BrutalistNode({ node, activeNode, nodeId, setActiveNode }) {
 
     // Apply real-time emissive hover glow
     useEffect(() => {
-      material.emissive = new THREE.Color(isHovered ? '#e45a0b' : '#000000');
+      material.emissive = new THREE.Color(isHovered ? '#e86321' : '#000000');
       material.emissiveIntensity = isHovered ? 0.35 : 0;
     }, [isHovered, material]);
 
@@ -150,7 +150,7 @@ export default function TelemetryScene({ activeNode, setActiveNode }) {
             {/* Dashed blueprint tether line, made solid and thicker when active */}
             <Line
               points={[lineStart, lineEnd]}
-              color={isActive ? "#e45a0b" : "#002fa7"}
+              color={isActive ? "#e86321" : "#002fa7"}
               lineWidth={isActive ? 2.5 : 1.5}
               dashed={!isActive}
               dashScale={4}
@@ -160,7 +160,7 @@ export default function TelemetryScene({ activeNode, setActiveNode }) {
             {/* Target Reticle Anchor Dot */}
             <mesh position={lineStart}>
               <sphereGeometry args={[0.08, 8, 8]} />
-              <meshBasicMaterial color={isActive ? "#e45a0b" : "#002fa7"} />
+              <meshBasicMaterial color={isActive ? "#e86321" : "#002fa7"} />
             </mesh>
           </group>
         );

@@ -55,7 +55,7 @@ const Card = ({ course, pos, index }) => {
 
           {/* Back of Card */}
           <div 
-            className="absolute inset-0 bg-[#e45a0b] border border-white/10 p-5 flex flex-col items-center justify-center text-center"
+            className="absolute inset-0 bg-[#e86321] border border-white/10 p-5 flex flex-col items-center justify-center text-center"
             style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
           >
             <p className="text-serif italic font-light text-[14px] text-white leading-relaxed whitespace-pre-line">
@@ -133,7 +133,7 @@ const Atmosphere = () => {
         {[...Array(30)].map((_, i) => (
           <div 
             key={i} 
-            className="absolute w-1 h-1 bg-[#e45a0b] rounded-full blur-[1px] animate-drift"
+            className="absolute w-1 h-1 bg-[#e86321] rounded-full blur-[1px] animate-drift"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -149,8 +149,8 @@ const Atmosphere = () => {
         {/* Left: Headline Typography */}
         <div ref={headlineRef} className="w-full lg:w-[40%] mb-20 lg:mb-0 pointer-events-auto">
           <div className="flex flex-col">
-            <h2 className="wipe-text text-[72px] font-serif italic font-light text-white leading-[1.1] m-0 p-0 block">Five courses.</h2>
-            <h2 className="wipe-text text-[72px] font-serif italic font-light text-white leading-[1.1] m-0 p-0 block">Five worlds.</h2>
+            <h2 className="wipe-text text-[72px] font-heading italic font-light text-white leading-[1.1] m-0 p-0 block">Five courses.</h2>
+            <h2 className="wipe-text text-[72px] font-heading italic font-light text-white leading-[1.1] m-0 p-0 block">Five worlds.</h2>
           </div>
           <p className="subline text-mono text-[11px] text-white/50 tracking-[0.15em] mt-10 uppercase leading-loose max-w-[280px]">
             Each evening, a different country. A different story. A different table.

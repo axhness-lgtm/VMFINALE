@@ -21,8 +21,8 @@ const JournalPreview = () => {
   return (
     <section className="bg-[#0d0804] py-32 overflow-hidden flex flex-col relative w-full">
       <div className="px-[5%] lg:px-[8%] mb-16 flex flex-col">
-        <span className="text-mono text-[10px] uppercase tracking-[0.3em] text-[#e45a0b] mb-4">The Archive</span>
-        <h2 className="text-[56px] font-serif font-light italic text-white leading-tight">Fragments from Past Evenings</h2>
+        <span className="text-mono text-[10px] uppercase tracking-[0.3em] text-[#e86321] mb-4">The Archive</span>
+        <h2 className="text-[56px] font-heading font-light italic text-white leading-tight">Fragments from Past Evenings</h2>
       </div>
 
       <div className="w-full">
@@ -66,7 +66,7 @@ const JournalPreview = () => {
             style={{
               width: '240px',
               minHeight: '320px',
-              background: '#e45a0b',
+              background: '#e86321',
               padding: '1.5rem',
               transform: 'rotate(-1.5deg)',
               transition: 'transform 0.4s ease',

@@ -630,9 +630,9 @@ const BatchSortGame = () => {
                   )}
 
                   <g transform={isDragged || isHovered ? "translate(0, -15)" : "translate(0, 0)"} style={{ transition: 'transform 0.15s ease' }}>
-                    <polygon points={`${px - 30},${py} ${px},${py + 15} ${px},${py + 25} ${px - 30},${py + 10}`} fill="#cdc7be" stroke={isDragged ? "#e45a0b" : "#002fa7"} strokeWidth="2" />
-                    <polygon points={`${px},${py + 15} ${px + 30},${py} ${px + 30},${py + 10} ${px},${py + 25}`} fill="#e4dfd7" stroke={isDragged ? "#e45a0b" : "#002fa7"} strokeWidth="2" />
-                    <polygon points={`${px},${py - 15} ${px + 30},${py} ${px},${py + 15} ${px - 30},${py}`} fill={isDragged ? "#e45a0b" : "#efe9e1"} stroke={isDragged ? "#e45a0b" : "#002fa7"} strokeWidth="2" />
+                    <polygon points={`${px - 30},${py} ${px},${py + 15} ${px},${py + 25} ${px - 30},${py + 10}`} fill="#cdc7be" stroke={isDragged ? "#e86321" : "#002fa7"} strokeWidth="2" />
+                    <polygon points={`${px},${py + 15} ${px + 30},${py} ${px + 30},${py + 10} ${px},${py + 25}`} fill="#e4dfd7" stroke={isDragged ? "#e86321" : "#002fa7"} strokeWidth="2" />
+                    <polygon points={`${px},${py - 15} ${px + 30},${py} ${px},${py + 15} ${px - 30},${py}`} fill={isDragged ? "#e86321" : "#efe9e1"} stroke={isDragged ? "#e86321" : "#002fa7"} strokeWidth="2" />
 
                     <g transform={`translate(${px}, ${py - 1}) scale(0.48, 0.28) rotate(-45)`} className={isDragged ? 'icon-dragged-active' : ''}>
                       <FoodIcon type={item.iconType} />
@@ -647,7 +647,7 @@ const BatchSortGame = () => {
               <g className="grabber-claw-group" style={{ pointerEvents: 'none', shapeRendering: 'crispEdges' }}>
                 <line x1={Math.round(grabberPos.x)} y1="0" x2={Math.round(grabberPos.x)} y2={Math.round(grabberPos.y - 35)} stroke="#002fa7" strokeWidth="2" strokeDasharray="4 2" />
                 <rect x={Math.round(grabberPos.x - 8)} y={Math.round(grabberPos.y - 45)} width="16" height="12" rx="1" fill="#efe9e1" stroke="#002fa7" strokeWidth="2" />
-                <circle cx={Math.round(grabberPos.x)} cy={Math.round(grabberPos.y - 39)} r="3" fill="#e45a0b" />
+                <circle cx={Math.round(grabberPos.x)} cy={Math.round(grabberPos.y - 39)} r="3" fill="#e86321" />
                 <path d={`M ${Math.round(grabberPos.x - 6)} ${Math.round(grabberPos.y - 35)} Q ${Math.round(grabberPos.x - 18)} ${Math.round(grabberPos.y - 25)} ${Math.round(grabberPos.x - 12)} ${Math.round(grabberPos.y - 12)}`} fill="none" stroke="#002fa7" strokeWidth="2.5" strokeLinecap="round" />
                 <path d={`M ${Math.round(grabberPos.x + 6)} ${Math.round(grabberPos.y - 35)} Q ${Math.round(grabberPos.x + 18)} ${Math.round(grabberPos.y - 25)} ${Math.round(grabberPos.x + 12)} ${Math.round(grabberPos.y - 12)}`} fill="none" stroke="#002fa7" strokeWidth="2.5" strokeLinecap="round" />
               </g>
@@ -660,23 +660,23 @@ const BatchSortGame = () => {
                 <path
                   d={`M ${Math.round(mismatchedPacket.startX)} ${Math.round(mismatchedPacket.startY)} Q ${Math.round((mismatchedPacket.startX + mismatchedPacket.x) / 2)} ${Math.round(mismatchedPacket.startY - 30)} ${Math.round(mismatchedPacket.x)} ${Math.round(mismatchedPacket.y)}`}
                   fill="none"
-                  stroke="#e45a0b"
+                  stroke="#e86321"
                   strokeWidth="2.5"
                   strokeDasharray="4 4"
                   className="rejection-trajectory-line"
                 />
                 
                 {/* Orange Red X above rejected item */}
-                <g transform={`translate(${Math.round(mismatchedPacket.x)}, ${Math.round(mismatchedPacket.y - 35)})`} stroke="#e45a0b" strokeWidth="3" strokeLinecap="round">
+                <g transform={`translate(${Math.round(mismatchedPacket.x)}, ${Math.round(mismatchedPacket.y - 35)})`} stroke="#e86321" strokeWidth="3" strokeLinecap="round">
                   <line x1="-8" y1="-8" x2="8" y2="8" />
                   <line x1="8" y1="-8" x2="-8" y2="8" />
                 </g>
 
                 {/* Packet falling on floor */}
                 <g transform={`translate(${Math.round(mismatchedPacket.x)}, ${Math.round(mismatchedPacket.y)})`}>
-                  <polygon points="-30,0 0,15 0,25 -30,10" fill="#cdc7be" stroke="#e45a0b" strokeWidth="2" />
-                  <polygon points="0,15 30,0 30,10 0,25" fill="#e4dfd7" stroke="#e45a0b" strokeWidth="2" />
-                  <polygon points="0,-15 30,0 0,15 -30,0" fill="#efe9e1" stroke="#e45a0b" strokeWidth="2" />
+                  <polygon points="-30,0 0,15 0,25 -30,10" fill="#cdc7be" stroke="#e86321" strokeWidth="2" />
+                  <polygon points="0,15 30,0 30,10 0,25" fill="#e4dfd7" stroke="#e86321" strokeWidth="2" />
+                  <polygon points="0,-15 30,0 0,15 -30,0" fill="#efe9e1" stroke="#e86321" strokeWidth="2" />
                   <g transform="translate(0, -1) scale(0.48, 0.28) rotate(-45)">
                     <FoodIcon type={mismatchedPacket.iconType} />
                   </g>
@@ -688,11 +688,11 @@ const BatchSortGame = () => {
             {feedbackTag.visible && (
               <g transform={`translate(${Math.round(feedbackTag.x)}, ${Math.round(feedbackTag.y)})`} className={`sprout-animation-${feedbackTag.color}`} style={{ pointerEvents: 'none', shapeRendering: 'crispEdges' }}>
                 {/* Thin geometric wireframe structure connecting sprout to target */}
-                <path d="M 0,0 L 0,-30 L -15,-40 L 15,-40 Z" fill="none" stroke={feedbackTag.color === 'orange' ? '#e45a0b' : '#002fa7'} strokeWidth="1" />
-                <line x1="0" y1="-40" x2="0" y2="-60" stroke={feedbackTag.color === 'orange' ? '#e45a0b' : '#002fa7'} strokeWidth="2" />
+                <path d="M 0,0 L 0,-30 L -15,-40 L 15,-40 Z" fill="none" stroke={feedbackTag.color === 'orange' ? '#e86321' : '#002fa7'} strokeWidth="1" />
+                <line x1="0" y1="-40" x2="0" y2="-60" stroke={feedbackTag.color === 'orange' ? '#e86321' : '#002fa7'} strokeWidth="2" />
                 
                 <g transform="translate(0, -60) rotate(-15)">
-                  <rect x="-85" y="-14" width="170" height="28" fill="#efe9e1" stroke={feedbackTag.color === 'orange' ? '#e45a0b' : '#002fa7'} strokeWidth="2.5" />
+                  <rect x="-85" y="-14" width="170" height="28" fill="#efe9e1" stroke={feedbackTag.color === 'orange' ? '#e86321' : '#002fa7'} strokeWidth="2.5" />
                   <text x="0" y="4" className={`feedback-tag-text font-mono text-center fill-${feedbackTag.color}`} textAnchor="middle">
                     {feedbackTag.text}
                   </text>
