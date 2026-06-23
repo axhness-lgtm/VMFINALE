@@ -49,12 +49,6 @@
   line-height: 1.4;
 }
 
-/* ─── MODAL PANEL ────────────────────────────────────────────── */
-.bm-modal,
-.bm-modal * {
-  font-family: 'League Gothic', sans-serif !important;
-}
-
 .bm-modal {
   position: relative;
   background: #efe9e1;
@@ -134,9 +128,9 @@
 }
 
 .bm-title {
-  font-family: 'League Gothic', sans-serif;
+  font-family: var(--font-heading);
   font-size: 48px;
-  font-weight: 900;
+  font-weight: normal;
   color: #002fa7;
   letter-spacing: -0.01em;
   line-height: 1;
@@ -161,11 +155,10 @@
   gap: 6px;
 }
 
-/* ─── KEY INFO DISPLAY (League Gothic for important values) ───── */
 .bm-info-value {
-  font-family: 'League Gothic', sans-serif;
+  font-family: var(--font-heading);
   font-size: 28px;
-  font-weight: 900;
+  font-weight: normal;
   color: #002fa7;
   letter-spacing: 0.01em;
   line-height: 1.1;
@@ -214,10 +207,10 @@
   box-sizing: border-box;
   transition: border-color 0.15s;
 }
-/* Use League Gothic for typing in phone and email inputs for extreme visibility */
+/* Use heading font for typing in phone and email inputs for extreme visibility */
 .bm-input[type="tel"],
 .bm-input[type="email"] {
-  font-family: 'League Gothic', sans-serif !important;
+  font-family: var(--font-heading) !important;
   font-size: 32px !important;
   letter-spacing: 0.05em;
   text-transform: none;
@@ -261,7 +254,7 @@
 }
 
 .bm-seat-num {
-  font-family: 'Anton', 'Impact', sans-serif;
+  font-family: var(--font-heading);
   font-size: 42px;
   color: #002fa7;
   line-height: 1;
@@ -331,8 +324,9 @@
 }
 
 .bm-countdown {
-  font-family: 'League Gothic', sans-serif;
+  font-family: var(--font-heading);
   font-size: 96px;
+  font-weight: normal;
   color: #002fa7;
   letter-spacing: -0.02em;
   line-height: 1;

@@ -52,9 +52,10 @@ body {
   color: var(--text-main);
   font-family: var(--font-body);
   overflow-x: hidden;
-  /* Global very fine, barely noticeable grain texture */
-  background-image: url("data:image/svg+xml;utf8,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.06'/%3E%3C/svg%3E");
+  background-image: url("/texture.png");
+  background-size: cover;
   background-attachment: fixed;
+  background-blend-mode: multiply;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -84,7 +85,7 @@ p {
   color: var(--text-main);
   font-family: var(--font-body);
   padding: 0.75rem 2rem;
-  border-radius: 9999px;
+  border-radius: 8px;
   border: 1px solid rgba(59, 43, 36, 0.1);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   transition: all 0.3s ease;
@@ -258,16 +259,105 @@ p {
 
 /* Ticket Edge Mask */
 .ticket-edge {
-  mask-image: radial-gradient(circle at 100% 50%, transparent 10px, black 11px),
-              radial-gradient(circle at 0% 50%, transparent 10px, black 11px);
-  mask-size: 51% 100%;
-  mask-repeat: no-repeat;
-  mask-position: right, left;
-  -webkit-mask-image: radial-gradient(circle at 100% 50%, transparent 10px, black 11px),
-                      radial-gradient(circle at 0% 50%, transparent 10px, black 11px);
-  -webkit-mask-size: 51% 100%;
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position: right, left;
+  mask-image: radial-gradient(circle at 10px 10px, transparent 10px, black 11px);
+  mask-position: -10px -10px;
+  -webkit-mask-image: radial-gradient(circle at 10px 10px, transparent 10px, black 11px);
+  -webkit-mask-position: -10px -10px;
+}
+
+@keyframes marquee-vertical {
+  0% { transform: translateY(0%); }
+  100% { transform: translateY(-33.3333%); }
+}
+
+@keyframes marquee-vertical-reverse {
+  0% { transform: translateY(-33.3333%); }
+  100% { transform: translateY(0%); }
+}
+
+.animate-marquee-vertical {
+  animation: marquee-vertical 25s linear infinite;
+}
+
+.animate-marquee-vertical-reverse {
+  animation: marquee-vertical-reverse 25s linear infinite;
+}
+@keyframes spin-arc {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes counter-spin-arc {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+.animate-spin-arc {
+  animation: spin-arc 40s linear infinite;
+}
+
+.animate-counter-spin-arc {
+  animation: counter-spin-arc 40s linear infinite;
+}
+
+.arc-radius {
+  transform: rotate(var(--angle)) translateY(-350px);
+}
+@media (min-width: 768px) {
+  .arc-radius {
+    transform: rotate(var(--angle)) translateY(-550px);
+  }
+}
+
+.arc-radius-large {
+  transform: rotate(var(--angle)) translateY(-450px);
+}
+@media (min-width: 768px) {
+  .arc-radius-large {
+    transform: rotate(var(--angle)) translateY(-750px);
+  }
+}
+
+.arc-radius-bottom {
+  transform: rotate(var(--angle)) translateY(-350px);
+}
+@media (min-width: 768px) {
+  .arc-radius-bottom {
+    transform: rotate(var(--angle)) translateY(-500px);
+  }
+}
+
+.arc-radius-flatter {
+  transform: rotate(var(--angle)) translateY(-350px);
+}
+@media (min-width: 768px) {
+  .arc-radius-flatter {
+    transform: rotate(var(--angle)) translateY(-480px);
+  }
+}
+
+.blog-ring-radius {
+  transform: rotate(var(--angle)) translateY(-200px);
+}
+@media (min-width: 768px) {
+  .blog-ring-radius {
+    transform: rotate(var(--angle)) translateY(-300px);
+  }
+}
+
+.pause-anim {
+  animation-play-state: paused !important;
+}
+
+.bg-\[var\(--bg-primary\)\],
+.bg-\[var\(--bg-secondary\)\],
+.bg-\[\#faf8f5\],
+.bg-\[\#f4ebd9\],
+.bg-\[\#efe9e1\] {
+  background-image: url('/texture.png') !important;
+  background-size: cover !important;
+  background-attachment: fixed !important;
+  background-blend-mode: multiply !important;
 }
 
 /* Bookmark Ribbon */

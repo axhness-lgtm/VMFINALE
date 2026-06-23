@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Volume2, VolumeX } from 'lucide-react';
 
 const navLinks = [
   { name: 'Home', path: '/' },
@@ -24,15 +24,28 @@ const RollingText = ({ text, active, hoverColorClass="text-[var(--accent-seconda
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const location = useLocation();
+
+  const toggleMusic = () => {
+    const audio = document.getElementById('bg-music');
+    if (audio) {
+      if (isPlaying) {
+        audio.pause();
+      } else {
+        audio.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
 
   return (
     <div className="fixed top-4 left-0 w-full z-50 flex justify-center px-6 pointer-events-none">
-      <header className="pointer-events-auto bg-cream/90 backdrop-blur-md border border-[#3b2b24]/10 shadow-lg rounded-2xl px-4 py-2 w-full max-w-6xl flex justify-between items-center transition-all duration-300">
+      <header className="pointer-events-auto bg-cream/90 backdrop-blur-md border border-[#3b2b24]/10 shadow-lg rounded-2xl px-6 py-3 w-full max-w-6xl flex justify-between items-center transition-all duration-300">
         
         {/* Logo */}
         <Link to="/" className="relative z-50 flex-shrink-0 hover:opacity-80 transition-opacity duration-300 flex items-center">
-          <span className="text-xl md:text-2xl text-[var(--accent-primary)] font-logo leading-none tracking-wide">
+          <span className="text-2xl md:text-3xl text-[var(--accent-primary)] font-logo leading-none tracking-wide">
             Vantammayilu
           </span>
         </Link>
@@ -43,9 +56,10 @@ export default function Navigation() {
             <Link 
               key={link.name}
               to={link.path}
-              className="group relative"
+              onClick={() => window.scrollTo(0,0)}
+              className="group relative pt-1"
             >
-              <span className={`text-[10px] font-body uppercase tracking-[0.1em] block ${
+              <span className={`text-[13px] font-body uppercase tracking-[0.1em] block ${
                 location.pathname === link.path ? 'text-[var(--accent-primary)]' : 'text-[var(--text-main)]'
               }`}>
                 <RollingText text={link.name} active={location.pathname === link.path} />
@@ -57,18 +71,33 @@ export default function Navigation() {
             </Link>
           ))}
           
-          <Link to="/dinner" className="btn-paper ml-4 font-body uppercase tracking-[0.1em] text-[7px] !px-2.5 !py-1 group flex items-center justify-center">
+          <Link to="/dinner" onClick={() => window.scrollTo(0,0)} className="btn-paper ml-4 font-body uppercase tracking-[0.1em] text-[5px] !px-2 !py-0.5 group flex items-center justify-center">
             <RollingText text="Reserve" active={false} hoverColorClass="text-[color:var(--bg-primary)]" />
           </Link>
+          
+          <button 
+            onClick={toggleMusic}
+            className="ml-4 text-[var(--text-main)] hover:text-[var(--accent-primary)] transition-colors"
+            title="Toggle Background Music"
+          >
+            {isPlaying ? <Volume2 size={16} /> : <VolumeX size={16} />}
+          </button>
         </nav>
 
-        {/* Mobile Navigation Toggle */}
-        <button 
-          className="md:hidden relative z-50 text-[var(--text-main)] p-2 hover:text-[var(--accent-primary)] transition-colors pointer-events-auto"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? <X size={16} /> : <Menu size={16} />}
-        </button>
+        <div className="md:hidden flex items-center gap-4 relative z-50 pointer-events-auto">
+          <button 
+            onClick={toggleMusic}
+            className="text-[var(--text-main)] hover:text-[var(--accent-primary)] transition-colors"
+          >
+            {isPlaying ? <Volume2 size={16} /> : <VolumeX size={16} />}
+          </button>
+          <button 
+            className="text-[var(--text-main)] p-2 hover:text-[var(--accent-primary)] transition-colors"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? <X size={16} /> : <Menu size={16} />}
+          </button>
+        </div>
 
         {/* Mobile Menu Overlay */}
         <AnimatePresence>
@@ -90,7 +119,7 @@ export default function Navigation() {
                   >
                     <Link 
                       to={link.path}
-                      onClick={() => setIsOpen(false)}
+                      onClick={() => { setIsOpen(false); window.scrollTo(0,0); }}
                       className={`text-2xl font-body uppercase tracking-[0.1em] transition-colors ${
                         location.pathname === link.path ? 'text-[var(--accent-primary)]' : 'text-[var(--text-main)] hover:text-[var(--accent-secondary)]'
                       }`}

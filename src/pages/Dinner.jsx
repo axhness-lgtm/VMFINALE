@@ -2,6 +2,9 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
 import { Check, Info, Clock, Users, MapPin, CreditCard, Sparkles } from 'lucide-react';
 import BookingModal from '../components/BookingModal';
+import InterestModal from '../components/InterestModal';
+import { useSearchParams } from 'react-router-dom';
+import { supabase } from '../supabase';
 
 const CURRENT_DINNER = {
   id: 'vietnam-dinner-01',
@@ -11,11 +14,11 @@ const CURRENT_DINNER = {
 };
 
 const menuItems = [
-  { course: "First", title: "A bright beginning.", desc: "Fresh. Crisp. Unexpected.", dish: "Gỏi Cuốn — Fresh summer rolls with herbs & peanut dipping sauce" },
-  { course: "Second", title: "Comfort in a bowl.", desc: "Fragrant star anise broth.", dish: "Phở Chay — A comforting, slow-simmered herb noodle soup" },
-  { course: "Third", title: "The heart of the evening.", desc: "Bold, rich flavor pairings.", dish: "Bánh Xèo — Sizzling crispy rice pancakes with savory mushroom filling" },
-  { course: "Fourth", title: "Made for sharing.", desc: "Smoky claypot eggplant.", dish: "Cà Tím Nướng — Grilled eggplant with scallion oil & garlic soy" },
-  { course: "Fifth", title: "A sweet ending...", desc: "Banana coconut soup.", dish: "Chè Chuối — Warm banana coconut sweet soup with toasted sesame" }
+  { course: "Course I", title: "A bright beginning.", desc: "Fresh. Crisp. Unexpected.", dish: "Gỏi Cuốn — Fresh summer rolls with herbs & peanut dipping sauce" },
+  { course: "Course II", title: "Comfort in a bowl.", desc: "Fragrant star anise broth.", dish: "Phở Chay — A comforting, slow-simmered herb noodle soup" },
+  { course: "Course III", title: "The heart of the evening.", desc: "Bold, rich flavor pairings.", dish: "Bánh Xèo — Sizzling crispy rice pancakes with savory mushroom filling" },
+  { course: "Course IV", title: "Made for sharing.", desc: "Smoky claypot eggplant.", dish: "Cà Tím Nướng — Grilled eggplant with scallion oil & garlic soy" },
+  { course: "Course V", title: "A sweet ending...", desc: "Banana coconut soup.", dish: "Chè Chuối — Warm banana coconut sweet soup with toasted sesame" }
 ];
 
 const faqs = [
@@ -43,53 +46,38 @@ const faqs = [
 
 
 
-const DinnerSequence = () => {
-  const containerRef = useRef(null);
-  const imgRef = useRef(null);
-  
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"]
-  });
-
-  useEffect(() => {
-    // Preload images for smoother scrubbing
-    for (let i = 1; i <= 27; i++) {
-      const img = new Image();
-      const num = i.toString().padStart(3, '0');
-      img.src = `/dinneranimate/ezgif-frame-${num}.jpg`;
-    }
-  }, []);
-
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    if (!imgRef.current) return;
-    const frame = Math.max(1, Math.min(27, Math.round(latest * 26) + 1));
-    const num = frame.toString().padStart(3, '0');
-    imgRef.current.src = `/dinneranimate/ezgif-frame-${num}.jpg`;
-  });
-
+const ReserveSection = ({ onReserveClick }) => {
   return (
-    <section ref={containerRef} className="h-[300vh] relative bg-[var(--bg-primary)]">
-      <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden border-t border-[var(--text-main)]/10">
-        
-        {/* Sequence Image Background */}
-        <img 
-          ref={imgRef}
-          src="/dinneranimate/ezgif-frame-001.jpg" 
-          alt="Dinner Table Assembly Sequence" 
-          className="absolute inset-0 w-full h-full object-cover opacity-90 mx-auto"
-        />
+    <section className="relative w-full bg-[var(--bg-primary)] flex flex-col items-center pt-24 pb-0 overflow-hidden">
+      {/* Background Texture */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <img src="/texture.png" alt="Background texture" className="w-full h-full object-cover opacity-40 mix-blend-multiply" />
+      </div>
 
-        {/* Overlay Text */}
-        <div className="relative z-10 container mx-auto px-6 max-w-4xl text-center flex flex-col items-center pointer-events-none">
-          <span className="font-logo text-5xl md:text-6xl text-[var(--accent-primary)] block mb-4 transform -rotate-2 drop-shadow-sm">
-            Reserve your seat
-          </span>
-          <h2 className="text-6xl md:text-[5.5rem] font-heading text-[var(--text-main)] mb-12 tracking-tight drop-shadow-md bg-[var(--bg-primary)]/70 backdrop-blur-md rounded-full px-12 py-4 shadow-2xl border border-[var(--text-main)]/5">
-            The table is almost ready.
-          </h2>
+      <div className="relative z-30 flex flex-col items-center w-full mx-auto">
+
+        {/* Center Title and Subtitle */}
+        <div className="text-center flex flex-col items-center mb-0 relative z-30 px-6">
+          <h2 className="font-logo text-7xl md:text-9xl text-[var(--accent-primary)] mb-2 drop-shadow-sm transform -rotate-2">Reserve a seat</h2>
+          <p className="font-body italic text-xl md:text-2xl text-[var(--text-main)] mb-6">
+            Good food. Warm company.<br />Stories that stay with you.
+          </p>
+          <button
+            onClick={onReserveClick}
+            className="bg-[var(--accent-primary)] text-white font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-full shadow-lg hover:bg-[#c14a27] hover:scale-105 transition-all duration-300 relative z-40"
+          >
+            Reserve Your Seat
+          </button>
         </div>
 
+        {/* Main Illustration immediately below CTA */}
+        <div className="w-full relative z-20 pointer-events-none flex justify-center -mt-32 md:-mt-64 px-4 md:px-0">
+          <img
+            src="/reserveseat.png"
+            alt="People dining at table"
+            className="w-full max-w-[1600px] lg:scale-110 object-contain object-bottom"
+          />
+        </div>
       </div>
     </section>
   );
@@ -97,10 +85,33 @@ const DinnerSequence = () => {
 
 export default function Dinner() {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
-  const [optionState, setOptionState] = useState('A'); // 'A' (3 seats), 'B' (1 seat), 'C' (Sold Out)
+  const [isInterestOpen, setIsInterestOpen] = useState(false);
+  const [optionState, setOptionState] = useState('A');
   const [revealedItems, setRevealedItems] = useState({});
   const [openFaq, setOpenFaq] = useState(null);
   const [clickedSeats, setClickedSeats] = useState({});
+
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get('token');
+
+  const [activeDinner, setActiveDinner] = useState(CURRENT_DINNER);
+
+  useEffect(() => {
+    // Fetch the latest active occurrence
+    const fetchDinner = async () => {
+      const { data, error } = await supabase
+        .from('occurrences')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (data) {
+        setActiveDinner({ ...data, price_inr: data.price_inr });
+      }
+    };
+    fetchDinner();
+  }, []);
 
   const handleSeatClick = (idx) => {
     setClickedSeats(prev => ({
@@ -158,9 +169,12 @@ export default function Dinner() {
         <div className="container mx-auto max-w-7xl relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
 
           <div className="lg:col-span-6 flex flex-col justify-center relative z-20">
-            <span className="text-[#d87c53] font-body tracking-[0.2em] uppercase text-xs mb-6 block font-bold">
-              NEXT AT VANTAMMAYILU
-            </span>
+            <div className="relative inline-block mb-6">
+              <img src="/curdest.png" alt="Current Destination" className="absolute -top-12 -left-6 w-24 h-auto -rotate-12 z-30 drop-shadow-md" />
+              <span className="text-[#d87c53] font-body tracking-[0.2em] uppercase text-xs block font-bold relative z-10">
+                NEXT AT VANTAMMAYILU
+              </span>
+            </div>
             <h1 className="text-6xl md:text-8xl lg:text-[7rem] font-heading leading-[1.05] text-[#2c2b29] mb-8 relative">
               When in <br />Marrakech, <br />
               <span className="relative inline-block mt-2">
@@ -176,29 +190,38 @@ export default function Dinner() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center mt-6">
-              <button
-                onClick={() => setIsBookingOpen(true)}
-                className="group relative inline-block bg-[#efe8db] text-[#2c2b29] border border-[#2c2b29]/5 shadow-sm hover:shadow-md transition-all duration-300 rounded-full px-8 py-4 font-body text-sm font-bold tracking-wide flex items-center justify-center text-center leading-tight"
+              {token ? (
+                <button
+                  onClick={() => setIsBookingOpen(true)}
+                  className="group relative btn-paper bg-[#efe8db] text-[#2c2b29] border-[#2c2b29]/5 hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] transition-colors text-sm px-8 py-4 drop-shadow-md rounded-xl font-bold tracking-wide z-10"
+                >
+                  Book your seat
+                </button>
+              ) : (
+                <button
+                  onClick={() => setIsInterestOpen(true)}
+                  className="group relative btn-paper bg-[#efe8db] text-[#2c2b29] border-[#2c2b29]/5 hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] transition-colors text-sm px-8 py-4 drop-shadow-md rounded-xl font-bold tracking-wide z-10"
+                >
+                  I'm interested
+                </button>
+              )}
+              <a
+                href="#menu"
+                className="group relative btn-paper bg-[#efe8db] text-[#2c2b29] border-[#2c2b29]/5 hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] transition-colors text-sm px-8 py-4 drop-shadow-md rounded-xl font-bold tracking-wide z-10"
               >
-                Reserve your<br/>seat
-              </button>
-              <a 
-                href="#menu" 
-                className="group relative inline-block bg-[#efe8db] text-[#2c2b29] border border-[#2c2b29]/5 shadow-sm hover:shadow-md transition-all duration-300 rounded-full px-8 py-4 font-body text-sm font-bold tracking-wide flex items-center justify-center text-center leading-tight"
-              >
-                Explore what's<br/>on the table
+                Explore the menu
               </a>
             </div>
           </div>
 
           {/* Hero Image / Collage */}
           <div className="lg:col-span-6 relative w-full min-h-[50vh] flex items-center justify-center lg:justify-end mt-12 lg:mt-0 pointer-events-none">
-            <motion.img 
+            <motion.img
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1.2, ease: "easeOut" }}
-              src="/dinnerheromix.png" 
-              alt="Morocco Dinner Experience" 
+              src="/herodinnerf.png"
+              alt="Morocco Dinner Experience"
               className="w-[110%] lg:w-[128%] max-w-none object-contain drop-shadow-sm -mr-16 lg:-mr-32 mix-blend-multiply z-0"
             />
           </div>
@@ -210,7 +233,7 @@ export default function Dinner() {
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="text-center mb-20 max-w-3xl mx-auto">
             <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2 font-logo">The Menu</span>
-            <h2 className="text-5xl md:text-6xl font-heading text-[var(--text-main)]">What's on the table?</h2>
+            <h2 className="text-5xl md:text-6xl font-heading text-[var(--text-main)]">The menu</h2>
             <p className="font-body text-lg text-[var(--text-main)]/60 mt-4">
               Instead of revealing the entire menu, we prefer curiosity. Pull a card to the right to reveal its dish.
             </p>
@@ -314,18 +337,18 @@ export default function Dinner() {
             {/* Scroll-driven doodle on path */}
             <motion.div
               style={{ top: doodleY }}
-              className="absolute left-6 md:left-1/2 -translate-x-[36px] md:-translate-x-1/2 z-20 w-[102px] h-[102px] flex items-center justify-center bg-[var(--bg-primary)] rounded-full border border-[var(--text-main)]/10 shadow-sm"
+              className="absolute left-6 md:left-1/2 -translate-x-[36px] md:-translate-x-1/2 z-20 w-[80px] h-[80px] flex items-center justify-center bg-[var(--bg-primary)] rounded-full border border-[var(--text-main)]/10 shadow-sm overflow-hidden"
             >
-              <img src="/d1alt.png" alt="doodle tracker" className="w-[64px] h-[64px] object-contain drop-shadow-sm" />
+              <img src="/d1alt.png" alt="doodle tracker" className="w-[72px] h-[72px] object-contain drop-shadow-sm" />
             </motion.div>
 
             <div className="w-full space-y-28 md:space-y-40 z-10 pt-10">
               {[
-                { time: "7:30 PM", title: "Doors open.", desc: "Music starts. Names become faces." },
-                { time: "8:00 PM", title: "First course.", desc: "The room is still getting to know itself." },
-                { time: "9:00 PM", title: "The conversations get louder.", desc: "Someone always mentions travel." },
-                { time: "10:00 PM", title: "Dessert arrives.", desc: "Nobody wants to check the time." },
-                { time: "Whenever it ends", title: "People leave slower...", desc: "Than they arrived.", highlight: true }
+                { time: "6:45 PM", title: "It starts.", desc: "Guests arrive." },
+                { time: "7:00 PM", title: "Take your seats.", desc: "Everyone settles in." },
+                { time: "7:15 PM", title: "The first course.", desc: "Little intros, icebreaker questions." },
+                { time: "9:30 PM", title: "Five courses later.", desc: "All courses are served, people keep talking." },
+                { time: "10:00 PM", title: "Staying late.", desc: "People end up staying till 10pm or even later.", highlight: true }
               ].map((step, idx) => {
                 const isLeft = idx % 2 === 0;
                 // Add some random horizontal staggering for a wavy organic feel
@@ -361,62 +384,7 @@ export default function Dinner() {
         </div>
       </section>
 
-      {/* 4. WHAT TO EXPECT (HOUSE RULES MARQUEES) */}
-      <section className="py-28 bg-[var(--bg-secondary)] relative overflow-hidden">
-        <div className="container mx-auto px-6 max-w-4xl mb-16">
-          <div className="text-center">
-            <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2 font-logo">House Rules</span>
-            <h2 className="text-5xl md:text-6xl font-heading text-[var(--text-main)]">What to expect</h2>
-          </div>
-        </div>
-
-        <div className="flex flex-col w-full relative">
-          {[
-            "Five curated courses",
-            "Eight guests",
-            "Shared table",
-            "Hosted at home",
-            "Vegetarian options available",
-            "Come alone or with one friend"
-          ].map((item, idx) => {
-            const isOdd = idx % 2 === 0; // 0, 2, 4 are 1st, 3rd, 5th
-            const bgInitial = isOdd ? 'bg-[var(--bg-secondary)]' : 'bg-[var(--accent-primary)]';
-            const textInitial = isOdd ? 'text-[var(--accent-primary)]' : 'text-[var(--bg-secondary)]';
-            const bgHover = isOdd ? 'hover:bg-[var(--accent-primary)]' : 'hover:bg-[var(--bg-secondary)]';
-            const textHover = isOdd ? 'hover:text-[var(--bg-secondary)]' : 'hover:text-[var(--accent-primary)]';
-
-            return (
-              <div
-                key={idx}
-                className={`group flex items-center w-full py-6 md:py-8 border-y border-[var(--text-main)]/10 -mt-[1px] transition-colors duration-500 cursor-default ${bgInitial} ${textInitial} ${bgHover} ${textHover}`}
-              >
-                <motion.div
-                  animate={{ x: [0, -1000] }}
-                  transition={{
-                    repeat: Infinity,
-                    ease: "linear",
-                    duration: 20 + (idx % 3) * 5
-                  }}
-                  className="flex items-center whitespace-nowrap"
-                >
-                  {[...Array(8)].map((_, i) => (
-                    <div key={i} className="flex items-center">
-                      <span className="font-body text-2xl md:text-3xl lg:text-4xl mx-8 tracking-widest leading-none drop-shadow-sm">
-                        {item}
-                      </span>
-                      <div className="w-12 h-12 flex items-center justify-center -rotate-12 group-hover:rotate-12 transition-transform duration-500">
-                        <Sparkles size={32} strokeWidth={2} />
-                      </div>
-                    </div>
-                  ))}
-                </motion.div>
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* 5. WHO'S THIS FOR? */}
+      {/* 4. WHO'S THIS FOR? */}
       <section className="py-32 relative overflow-hidden">
         <div className="container mx-auto px-6 max-w-7xl">
           <div className="text-center mb-20">
@@ -429,11 +397,11 @@ export default function Dinner() {
 
           <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
             {[
-              { text: "People who enjoy trying new food.", img: "/people/11.png" },
-              { text: "People who love travelling.", img: "/people/12.png" },
-              { text: "People who ask questions.", img: "/people/13.png" },
-              { text: "People who stay for one more conversation.", img: "/people/14.png" },
-              { text: "People who believe strangers have stories worth hearing.", img: "/people/15.png" }
+              { label: "The Curious One", text: "People who enjoy trying new food.", img: "/people/11.png" },
+              { label: "The Wanderer", text: "People who love travelling.", img: "/people/12.png" },
+              { label: "The Inquirer", text: "People who ask questions.", img: "/people/13.png" },
+              { label: "The Lingerer", text: "People who stay for one more conversation.", img: "/people/14.png" },
+              { label: "The Listener", text: "People who believe strangers have stories worth hearing.", img: "/people/15.png" }
             ].map((item, idx) => (
               <motion.div
                 key={idx}
@@ -443,11 +411,13 @@ export default function Dinner() {
                 transition={{ delay: idx * 0.1, duration: 0.8 }}
                 className="flex flex-col items-center text-center group"
               >
-                <div className="w-full aspect-square mb-6 relative flex items-center justify-center">
-                  <img src={item.img} alt={`Guest ${idx + 1}`} className="w-full h-full object-contain grayscale group-hover:grayscale-0 transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] scale-[1.3] group-hover:scale-[1.4]" />
+                <div className="font-logo text-3xl text-[var(--accent-primary)] mb-4 h-12 flex items-end">
+                  {item.label}
                 </div>
-                <span className="font-heading text-xl text-[var(--accent-primary)] mb-3">0{idx + 1}.</span>
-                <p className="font-body text-xl md:text-2xl text-[var(--text-main)]/85 leading-relaxed">
+                <div className="w-full aspect-square mb-6 relative flex items-center justify-center">
+                  <img src={item.img} alt={`Guest ${idx + 1}`} className="w-full h-full object-contain grayscale group-hover:grayscale-0 transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] scale-[1.5] group-hover:scale-[1.6]" />
+                </div>
+                <p className="font-body text-xl md:text-2xl text-[var(--text-main)]/85 leading-relaxed mt-4">
                   {item.text}
                 </p>
               </motion.div>
@@ -456,42 +426,41 @@ export default function Dinner() {
         </div>
       </section>
 
-      {/* 6. GOOD TO KNOW */}
+      {/* 5. HOUSE RULES & GOOD TO KNOW */}
       <section className="py-28 bg-[var(--bg-secondary)] relative overflow-hidden">
-        <div className="container mx-auto px-6 max-w-4xl">
-          <div className="text-center mb-16">
-            <h2 className="text-5xl font-heading text-[var(--text-main)]">Good to know</h2>
+        <div className="container mx-auto px-6 max-w-6xl">
+
+          <div className="flex flex-col gap-16">
+            <div className="text-center mb-4">
+              <span className="font-body italic text-4xl text-[var(--accent-primary)] block mb-4 font-logo -rotate-2">House Rules & Logistics</span>
+              <h2 className="text-5xl md:text-6xl font-heading text-[var(--text-main)]">What to expect</h2>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {[
+                { label: "Courses", value: "Five curated courses.", note: "Vegetarian options available." },
+                { label: "Seats", value: "Only eight.", note: "Highly intimate." },
+                { label: "Table", value: "Shared.", note: "Come alone or with a friend." },
+                { label: "Location", value: "Visakhapatnam.", note: "Shared after booking." },
+                { label: "Time", value: "6:45 PM onwards.", note: "Be on time." },
+                { label: "Dietary", value: "Tell us beforehand.", note: "We'll always try our best." }
+              ].map((item, idx) => (
+                <div
+                  key={idx}
+                  className="p-8 bg-[#faf8f5] border border-[var(--text-main)]/10 shadow-md rounded-lg flex flex-col justify-between hover:-translate-y-2 hover:rotate-[1deg] hover:border-[var(--accent-primary)]/50 transition-all duration-300"
+                >
+                  <div className="flex items-center gap-3 text-[var(--accent-primary)] mb-6 border-b border-[var(--text-main)]/10 pb-2">
+                    <span className="font-body text-sm uppercase tracking-widest text-[var(--text-main)]/60 font-bold">{item.label}</span>
+                  </div>
+                  <div>
+                    <span className="font-heading text-3xl text-[var(--text-main)] block leading-tight mb-2">{item.value}</span>
+                    <p className="font-body text-base text-[var(--accent-primary)]/80 italic">{item.note}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            {[
-              { icon: <MapPin size={22} />, label: "Location", value: "Visakhapatnam", note: "Shared after booking.", doodle: "/d1alt.png" },
-              { icon: <Clock size={22} />, label: "Time", value: "7:30 PM onwards", note: "Be on time.", doodle: "/d2alt.png" },
-              { icon: <Users size={22} />, label: "Seats", value: "Only eight.", note: "Highly intimate.", doodle: "/1.png" },
-              { icon: <CreditCard size={22} />, label: "Bookings", value: "Confirmed after payment.", note: "Non-refundable lock.", doodle: "/2.png" },
-              { icon: <Info size={22} />, label: "Dietary requests", value: "Tell us beforehand.", note: "We'll always try our best.", doodle: "/3.png" }
-            ].map((item, idx) => (
-              <div
-                key={idx}
-                style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%, 50% 93%, 0 100%)' }}
-                className="relative pt-12 p-6 bg-[var(--bg-primary)] border border-t-0 border-[var(--text-main)]/10 shadow-sm flex flex-col justify-between h-[320px] hover:-translate-y-2 transition-transform duration-300 group"
-              >
-                {/* Decorative Doodle Pin */}
-                <div className="absolute top-3 left-1/2 -translate-x-1/2 w-10 h-10 opacity-70 group-hover:opacity-100 transition-opacity">
-                  <img src={item.doodle} alt="pin" className="w-full h-full object-contain drop-shadow-sm" />
-                </div>
-
-                <div className="flex justify-center items-center text-[var(--accent-primary)] mb-6 mt-4">
-                  {item.icon}
-                </div>
-                <div className="text-center flex-1 flex flex-col justify-center">
-                  <span className="block font-body text-xs uppercase tracking-widest text-[var(--text-main)]/50 mb-2">{item.label}</span>
-                  <span className="font-heading text-3xl text-[var(--text-main)] block leading-tight">{item.value}</span>
-                  <p className="font-body text-sm text-[var(--text-main)]/60 mt-3 italic">{item.note}</p>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -539,18 +508,24 @@ export default function Dinner() {
         </div>
       </section>
 
-      {/* 7. THE TABLE IS ALMOST READY (SCROLL SEQUENCE) */}
-      <DinnerSequence />
+      {/* 7. RESERVE A SEAT */}
+      <ReserveSection onReserveClick={() => setIsBookingOpen(true)} />
 
-      {/* Shared Booking Modal Flow */}
+      {/* Shared Booking Modal Flow (Only accessible with token) */}
       <BookingModal
         isOpen={isBookingOpen}
         onClose={() => setIsBookingOpen(false)}
-        dinner={CURRENT_DINNER}
+        dinner={activeDinner}
         onBookingComplete={() => {
-          // Dynamic completion check, could optionally lock Option C
           setOptionState('C');
         }}
+      />
+
+      {/* Interest Modal (Accessible to public) */}
+      <InterestModal
+        isOpen={isInterestOpen}
+        onClose={() => setIsInterestOpen(false)}
+        dinner={activeDinner}
       />
     </div>
   );

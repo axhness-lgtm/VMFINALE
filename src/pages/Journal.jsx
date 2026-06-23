@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { motion, useMotionValue, useTransform, animate, useSpring } from 'framer-motion';
 import { ArrowRight, BookOpen, Music, Film, Compass, Disc, MapPin, Coffee, Utensils } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -46,7 +47,83 @@ const tinyObservations = [
   "The candles always burn longer than expected."
 ];
 
+const loveRecipes = [
+  { id: 1, img: "/fo1.png", title: "Citrus & Herb Spritz", desc: "A refreshing start with rosemary and grapefruit." },
+  { id: 2, img: "/fo2.png", title: "Burrata & Figs", desc: "Creamy burrata topped with roasted figs and honey." },
+  { id: 3, img: "/fo3.png", title: "Wild Mushroom Risotto", desc: "Earthy, rich, and slow-cooked to perfection." },
+  { id: 4, img: "/fo4.png", title: "Grilled Sea Bass", desc: "Lightly charred with lemon butter sauce." },
+  { id: 5, img: "/fo5.png", title: "Almond Panna Cotta", desc: "Silky smooth with a tart berry compote." }
+];
+
+const blogCards = [
+  { id: 1, img: "/card1.png" },
+  { id: 2, img: "/card2.png" },
+  { id: 3, img: "/card3.png" },
+  { id: 4, img: "/card4.png" },
+  { id: 5, img: "/card5.png" }
+];
+const fullBlogRing = [...blogCards, ...blogCards, ...blogCards].map((c, i) => ({ ...c, uniqueId: i }));
+
+const funIcons = Array.from({ length: 12 }).map(() => ["/ass1.png", "/ass2.png", "/ass3.png"]).flat();
+
+const funImages = Array.from({ length: 36 }).map((_, i) => ({
+  id: `fun-${i}`,
+  img: "/ass4.png",
+  title: "SUNDAY SUPPER",
+  date: "22 de Agosto 2024",
+  count: "127 fotos",
+  tags: ["family", "friends", "food", "celebration"]
+}));
+
 export default function Journal() {
+  const [hoveredRecipe, setHoveredRecipe] = useState(null);
+  
+  const [isDraggingRing, setIsDraggingRing] = useState(false);
+  const ringRotation = useMotionValue(0);
+  const smoothRingRotation = useSpring(ringRotation, { stiffness: 100, damping: 20 });
+
+  useEffect(() => {
+    if (isDraggingRing) return;
+    const controls = animate(ringRotation, ringRotation.get() - 360, {
+      duration: 60,
+      ease: "linear",
+      repeat: Infinity,
+    });
+    return () => controls.stop();
+  }, [isDraggingRing, ringRotation]);
+
+  // The Fun Section State
+  const [activeFunItem, setActiveFunItem] = useState(null);
+  const [isHoveringWheel, setIsHoveringWheel] = useState(false);
+  const [isDraggingFun, setIsDraggingFun] = useState(false);
+  const funRotation = useMotionValue(0);
+  const smoothFunRotation = useSpring(funRotation, { stiffness: 100, damping: 20 });
+  const funAreaRef = useRef(null);
+
+  useEffect(() => {
+    if (isDraggingFun || isHoveringWheel) return;
+    const controls = animate(funRotation, funRotation.get() - 360, {
+      duration: 120,
+      ease: "linear",
+      repeat: Infinity,
+    });
+    return () => controls.stop();
+  }, [isDraggingFun, isHoveringWheel, funRotation]);
+
+  useEffect(() => {
+    const wheelHandler = (e) => {
+      e.preventDefault();
+      funRotation.set(funRotation.get() - e.deltaY * 0.1);
+    };
+    const el = funAreaRef.current;
+    if (el) {
+      el.addEventListener("wheel", wheelHandler, { passive: false });
+    }
+    return () => {
+      if (el) el.removeEventListener("wheel", wheelHandler);
+    };
+  }, [funRotation]);
+
   return (
     <div className="w-full relative bg-[var(--bg-primary)]">
       
@@ -146,304 +223,216 @@ export default function Journal() {
         </div>
       </section>
 
-      {/* 2. RECENTLY FROM THE TABLE (EDITORIAL CARDS) */}
-      <section className="sticky top-0 h-screen w-full flex flex-col justify-center bg-[var(--bg-secondary)] overflow-hidden z-10 shadow-2xl">
-        <div className="container mx-auto px-6 max-w-7xl">
-          <div className="text-center mb-24">
-            <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2">Recent Entries</span>
-            <h2 className="text-5xl md:text-6xl font-body text-[var(--text-main)]">Recently from the table</h2>
-          </div>
+      {/* 1.5. RECIPES WE LOVE (RING/ARC SECTION) */}
+      <section className="sticky top-0 h-[800px] md:h-screen w-full flex flex-col items-center justify-center bg-[var(--bg-primary)] overflow-hidden z-[5] relative border-t border-[var(--text-main)]/30">
+        {/* Background texture */}
+        <div className="absolute inset-0 paper-texture opacity-30 mix-blend-multiply pointer-events-none" />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {editorialCards.map((card, i) => (
-              <motion.article 
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ delay: i * 0.1 }}
-                className={`bg-[var(--bg-primary)] p-5 shadow-xl border border-[var(--text-main)]/5 flex flex-col justify-between scrap-img ${card.rot} hover-lift relative torn-edge group z-10 polaroid-frame`}
+        {/* Center Text (Headline + Hover Info) */}
+        <div className="absolute top-20 md:top-32 left-1/2 -translate-x-1/2 text-center z-20 w-full px-6 pointer-events-none">
+          <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2 font-logo">Our Favorites</span>
+          <h2 className="text-5xl md:text-6xl lg:text-7xl font-heading text-[var(--text-main)] mb-6 transition-all duration-500">
+            {hoveredRecipe ? hoveredRecipe.title : "Recipes we love."}
+          </h2>
+          
+          <div className="h-20 max-w-lg mx-auto flex items-center justify-center">
+            {hoveredRecipe && (
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="font-body text-xl md:text-2xl text-[var(--text-main)]/80 italic leading-relaxed"
               >
-                {/* Bookmark ribbon on alternating items */}
-                {i % 2 !== 0 && <div className="bookmark-ribbon" />}
-                
-                {/* Tape on alternating items */}
-                {i % 2 === 0 && <div className="masking-tape w-16 h-4 -top-2 left-1/2 -translate-x-1/2 rotate-1" />}
-
-                <div>
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="font-body text-xs uppercase tracking-widest text-[var(--accent-primary)] font-bold">{card.category}</span>
-                    <span className="font-mono text-xs text-[var(--text-main)]/30 border border-dashed border-[var(--text-main)]/20 p-1">No.{card.num}</span>
-                  </div>
-
-                  <div className="aspect-[4/3] overflow-hidden mb-6 shadow-inner torn-edge filter grayscale-[0.2] relative">
-                    <img src={card.img} alt={card.title} className="w-full h-full object-cover filter sepia-[0.15] group-hover:scale-105 transition-transform duration-700" />
-                    {i === 1 && <span className="handwritten-annotation absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl rotate-[-15deg] bg-white/80 px-2 py-1 shadow-sm hidden group-hover:block">Must read!</span>}
-                  </div>
-
-                  <h3 className="font-body text-xl font-bold text-[var(--text-main)] mb-3 leading-snug relative inline-block">
-                    {card.title}
-                    {/* Animated Underline */}
-                    <span className="absolute left-0 bottom-[-2px] w-0 h-[2px] bg-[var(--accent-primary)]/40 transition-all duration-500 group-hover:w-full"></span>
-                  </h3>
-                </div>
-                
-                <p className="font-body text-sm text-[var(--text-main)]/70 italic mt-4 border-t border-dashed border-[var(--text-main)]/15 pt-4">
-                  {card.desc}
-                </p>
-              </motion.article>
-            ))}
+                "{hoveredRecipe.desc}"
+              </motion.p>
+            )}
           </div>
         </div>
-      </section>
 
-      {/* 3. TINY OBSERVATIONS (PLAYFUL LIST) */}
-      <section className="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden bg-[var(--bg-primary)] z-20 shadow-2xl">
-        <div className="container mx-auto px-6 max-w-4xl">
-          <div className="text-center mb-20">
-            <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2">Gathered Thoughts</span>
-            <h2 className="text-5xl md:text-6xl font-body text-[var(--text-main)]">Tiny observations</h2>
-            <p className="font-body text-lg text-[var(--text-main)]/60 mt-4">One line. One thought.</p>
-          </div>
-
-          {/* Notebook Spiral Margin grid layout */}
-          <div className="bg-[#fdfaf5] rounded-r-xl border border-[var(--text-main)]/10 shadow-2xl p-8 md:p-12 relative max-w-3xl mx-auto notebook-paper torn-edge">
-            {/* Spiral binding rings */}
-            <div className="absolute top-0 bottom-0 left-0 w-8 flex flex-col justify-evenly py-4">
-              {[...Array(12)].map((_, i) => (
-                <div key={i} className="w-8 h-2 bg-zinc-400 rounded-full shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] relative -ml-2">
-                  <div className="absolute right-2 top-0 bottom-0 w-1 bg-zinc-800 opacity-30"></div>
-                </div>
-              ))}
-            </div>
-
-            {/* Hanging paper details (red margin lines) */}
-            <div className="absolute top-0 bottom-0 left-12 border-l-2 border-red-400/30 pointer-events-none" />
-            <div className="absolute top-0 bottom-0 left-14 border-l border-red-400/20 pointer-events-none" />
-
-            {/* Coffee Stain */}
-            <div className="absolute -top-10 -right-10 w-32 h-32 coffee-ring opacity-40 rotate-[120deg]" />
-
-            <ul className="space-y-8 pl-12 md:pl-20 relative z-10">
-              {tinyObservations.map((obs, idx) => (
-                <motion.li 
-                  key={idx}
-                  initial={{ opacity: 0, x: -10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.08 }}
-                  className="font-body text-xl md:text-2xl text-[var(--text-main)] leading-relaxed flex items-start gap-4 relative group"
+        {/* Rotating Arc/Ring */}
+        <div className="absolute bottom-[-150px] md:bottom-[-200px] left-1/2 -translate-x-1/2 z-10 w-full flex items-center justify-center">
+          <div className={`relative flex items-center justify-center animate-spin-arc ${hoveredRecipe ? 'pause-anim' : ''}`}>
+            {[...loveRecipes, ...loveRecipes].map((recipe, idx, arr) => {
+              const angle = idx * (360 / arr.length);
+              return (
+                <div 
+                  key={`${recipe.id}-${idx}`}
+                  className="absolute origin-center arc-radius-flatter"
+                  style={{ '--angle': `${angle}deg` }}
                 >
-                  <span className="text-[var(--accent-primary)] select-none mt-1 opacity-50">✦</span>
-                  <span className="border-b border-blue-900/10 pb-1">{obs}</span>
-                  
-                  {/* Handwritten arrows/doodles on specific items */}
-                  {idx === 2 && (
-                    <span className="absolute -right-12 top-0 handwritten-note rotate-12 opacity-0 group-hover:opacity-100 transition-opacity">
-                      ← true!
-                    </span>
-                  )}
-                  {idx === 5 && (
-                    <span className="absolute -bottom-6 left-12 handwritten-note rotate-[-5deg] text-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                      (we need more candles)
-                    </span>
-                  )}
-                </motion.li>
-              ))}
-            </ul>
+                  <div 
+                    className={`w-72 h-72 md:w-[420px] md:h-[420px] cursor-pointer group transition-all duration-500`}
+                    onMouseEnter={() => setHoveredRecipe(recipe)}
+                    onMouseLeave={() => setHoveredRecipe(null)}
+                  >
+                    <img 
+                      src={recipe.img} 
+                      alt={recipe.title} 
+                      className="w-full h-full object-contain drop-shadow-2xl group-hover:-translate-y-8 group-hover:scale-105 transition-transform duration-500 pointer-events-auto select-none"
+                    />
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* 4. FROM OUR NOTEBOOK (MIX OF VISUAL & WRITTEN) */}
-      <section className="sticky top-0 h-screen w-full flex flex-col justify-center bg-[var(--bg-secondary)] overflow-hidden z-30 shadow-2xl">
-        <div className="container mx-auto px-6 max-w-6xl">
-          <div className="text-center mb-24">
-            <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2">Scrap Notes</span>
-            <h2 className="text-5xl md:text-6xl font-body text-[var(--text-main)]">From our notebook</h2>
-          </div>
+      {/* 1.6 BLOGS FROM THE CHAPATHI LOVER (INTERACTIVE RING) */}
+      <section className="sticky top-0 h-screen w-full flex flex-col items-center justify-center bg-[var(--accent-primary)] overflow-hidden z-[6] relative border-t border-[var(--text-main)]/30">
+        <div className="absolute inset-0 paper-texture opacity-30 mix-blend-multiply pointer-events-none" />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto">
-            
-            {/* Places we're thinking about */}
-            <div className="p-8 bg-[#fafafa] border border-[var(--text-main)]/10 shadow-md relative rotate-[-1deg] torn-edge hover-lift flex flex-col justify-between">
-              <div className="masking-tape w-20 h-6 -top-3 left-6 rotate-6" />
-              <div>
-                <div className="flex items-center justify-center text-[var(--accent-primary)] mb-4">
-                  <Compass size={22} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center z-20 w-[250px] md:w-[300px] px-6 pointer-events-none">
+          <span className="font-body italic text-2xl text-[#efe8db]/80 block mb-2 font-logo">Selected Works</span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading text-[var(--bg-primary)] drop-shadow-sm leading-tight">Blogs from the chapathi lover</h2>
+        </div>
+
+        <div className="relative w-full h-full flex items-center justify-center z-10">
+          <motion.div 
+            className="relative flex items-center justify-center cursor-grab active:cursor-grabbing touch-none w-[300px] h-[300px] md:w-[600px] md:h-[600px]"
+            style={{ rotate: smoothRingRotation }}
+            onPanStart={() => setIsDraggingRing(true)}
+            onPanEnd={() => setIsDraggingRing(false)}
+            onPan={(e, info) => ringRotation.set(ringRotation.get() + info.delta.x * 0.3 + info.delta.y * 0.3)}
+          >
+            {fullBlogRing.map((card, idx) => {
+              const angle = idx * (360 / fullBlogRing.length);
+              return (
+                <div 
+                  key={card.uniqueId}
+                  className="absolute origin-center blog-ring-radius"
+                  style={{ '--angle': `${angle}deg` }}
+                >
+                  <motion.div 
+                    className="w-32 md:w-48 hover:scale-110 transition-transform duration-300 pointer-events-none"
+                  >
+                    <img src={card.img} alt={`Blog ${idx}`} className="w-full h-auto object-contain drop-shadow-xl" />
+                  </motion.div>
                 </div>
-                <h3 className="font-heading text-center font-bold text-2xl text-[var(--text-main)] mb-2 uppercase tracking-widest border-y border-double border-[var(--text-main)]/20 py-2">Places</h3>
-                <ul className="space-y-3 font-body text-lg text-[var(--text-main)]/80 italic mt-6 columns-1">
-                  {["Lisbon.", "Oaxaca.", "Kyoto.", "George Town.", "Istanbul.", "Marrakech."].map((place, idx) => (
-                    <li key={idx} className="border-b border-dashed border-[var(--text-main)]/15 pb-1 text-center">
-                      {place}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            {/* Things we're cooking */}
-            <div className="p-8 bg-[#faf8f5] border border-amber-900/10 shadow-md relative rotate-[2deg] torn-edge hover-lift flex flex-col justify-between">
-              <div className="masking-tape w-20 h-6 -top-3 right-6 -rotate-3" />
-              <div>
-                <div className="flex items-center justify-center text-[var(--accent-primary)] mb-4">
-                  <Utensils size={22} />
-                </div>
-                <h3 className="font-heading text-center font-bold text-2xl text-[var(--text-main)] mb-2 uppercase tracking-widest border-y border-double border-[var(--text-main)]/20 py-2">Cooking</h3>
-                <ul className="space-y-3 font-body text-lg text-[var(--text-main)]/80 italic mt-6 columns-1">
-                  {["Fresh pasta.", "Pho.", "Bibimbap.", "Paella.", "Ratatouille."].map((dish, idx) => (
-                    <li key={idx} className="border-b border-dashed border-[var(--text-main)]/15 pb-1 text-center">
-                      {dish}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            {/* Things we're listening to */}
-            <div className="p-8 bg-zinc-50 border border-zinc-200 shadow-md relative rotate-[-2deg] torn-edge hover-lift flex flex-col justify-between">
-              <div className="masking-tape w-20 h-6 -top-3 left-1/2 -translate-x-1/2 rotate-1" />
-              <div>
-                <div className="flex items-center justify-center text-[var(--accent-primary)] mb-4">
-                  <Disc size={22} />
-                </div>
-                <h3 className="font-heading text-center font-bold text-2xl text-[var(--text-main)] mb-2 uppercase tracking-widest border-y border-double border-[var(--text-main)]/20 py-2">Listening</h3>
-                <ul className="space-y-3 font-body text-lg text-[var(--text-main)]/80 italic mt-6 columns-1 text-center">
-                  {[
-                    "Jazz while cooking.",
-                    "Vinyl on rainy evenings.",
-                    "Old Bollywood while cleaning up.",
-                    "Acoustic guitar after dessert."
-                  ].map((track, idx) => (
-                    <li key={idx} className="border-b border-dashed border-[var(--text-main)]/15 pb-1">
-                      {track}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-          </div>
+              );
+            })}
+          </motion.div>
         </div>
       </section>
 
-      {/* 5. WORTH SHARING (LONGER STORIES INTROS) */}
-      <section id="featured-essays" className="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden bg-[var(--bg-primary)] z-40 shadow-2xl">
-        <div className="container mx-auto px-6 max-w-4xl">
-          <div className="text-center mb-24">
-            <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2">Longer Reads</span>
-            <h2 className="text-5xl md:text-6xl font-body text-[var(--text-main)]">Worth sharing</h2>
-          </div>
+      {/* 1.7 THE FUN (VERTICAL ARC) */}
+      <section 
+        className="sticky top-0 h-screen w-full flex bg-[var(--bg-primary)] overflow-hidden z-[7] relative border-t border-[var(--text-main)]/30"
+        ref={funAreaRef}
+        onMouseEnter={() => setIsHoveringWheel(true)}
+        onMouseLeave={() => setIsHoveringWheel(false)}
+      >
+        <div className="absolute inset-0 paper-texture opacity-50 mix-blend-multiply pointer-events-none z-0" />
 
-          <div className="space-y-16">
-            {[
-              {
-                title: "How food changes the way strangers meet",
-                desc: "Sometimes it's easier to talk when everyone is passing the same bowl."
-              },
-              {
-                title: "Hosting taught us to slow down",
-                desc: "The best evenings were never rushed."
-              },
-              {
-                title: "The best souvenir is a recipe",
-                desc: "Some places stay with you through what you cook."
-              }
-            ].map((story, idx) => (
-              <motion.div 
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-                className="group border-b border-dashed border-[var(--text-main)]/20 pb-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-6"
-              >
-                <div className="max-w-2xl relative">
-                  {/* Subtle scribble marker on hover */}
-                  <span className="absolute -left-6 top-2 text-[var(--accent-primary)] font-logo text-xl opacity-0 group-hover:opacity-100 transition-opacity">
-                    *
-                  </span>
-                  <h3 className="font-body font-bold text-3xl md:text-4xl text-[var(--text-main)] group-hover:text-[var(--accent-primary)] transition-colors duration-300">
-                    {story.title}
-                  </h3>
-                  <p className="font-body text-lg text-[var(--text-main)]/70 mt-3">
-                    {story.desc}
-                  </p>
+        {/* Left Side: Vertical Arc Container */}
+        <div className="absolute top-1/2 left-[calc(0px-700px)] md:left-[calc(0px-850px)] w-0 h-0 z-10">
+          {/* Inner & Outer Hollow Circle Strokes */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[#3b2b24]/20 pointer-events-none" style={{ width: '2700px', height: '2700px' }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[#3b2b24]/20 pointer-events-none" style={{ width: '3100px', height: '3100px' }} />
+          
+          <motion.div 
+            className="absolute top-1/2 left-1/2 w-0 h-0 cursor-grab active:cursor-grabbing touch-none"
+            style={{ rotate: smoothFunRotation }}
+            onPanStart={() => setIsDraggingFun(true)}
+            onPanEnd={() => setIsDraggingFun(false)}
+            onPan={(e, info) => funRotation.set(funRotation.get() + info.delta.y * 0.2)}
+          >
+            {/* Small Icons Arc */}
+            {funIcons.map((icon, idx) => {
+              const angle = idx * (360 / funIcons.length);
+              return (
+                <div 
+                  key={`icon-${idx}`}
+                  className="absolute origin-center"
+                  style={{ top: '50%', left: '50%', transform: `translate(-50%, -50%) rotate(${angle}deg) translateX(1250px)` }}
+                >
+                  <img 
+                    src={icon} 
+                    alt="Icon" 
+                    className="w-12 h-12 object-contain pointer-events-none opacity-80 drop-shadow-md"
+                    style={{ transform: 'rotate(90deg)' }}
+                  />
                 </div>
-                <button className="flex items-center gap-2 font-body text-xs uppercase tracking-widest text-[var(--text-main)]/60 hover:text-[var(--accent-primary)] font-bold transition-colors">
-                  Read story
-                  <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform" />
-                </button>
-              </motion.div>
-            ))}
-          </div>
+              );
+            })}
+
+            {/* Images Arc (Film Strip) */}
+            {funImages.map((item, idx) => {
+              const angle = idx * (360 / funImages.length);
+              return (
+                <div 
+                  key={item.id}
+                  className="absolute origin-center"
+                  style={{ top: '50%', left: '50%', transform: `translate(-50%, -50%) rotate(${angle}deg) translateX(1450px)` }}
+                >
+                  <div 
+                    className="w-[180px] h-[254px] pointer-events-auto cursor-pointer relative transition-transform duration-300 hover:-translate-x-6 hover:scale-105"
+                    onMouseEnter={() => setActiveFunItem(item)}
+                    onMouseLeave={() => setActiveFunItem(null)}
+                  >
+                    <img src={item.img} alt={item.title} className="w-full h-full object-cover border-2 border-white rounded-lg shadow-md" style={{ transform: 'rotate(90deg)' }} />
+                  </div>
+                </div>
+              );
+            })}
+          </motion.div>
         </div>
-      </section>
 
-      {/* 6. CURRENTLY INSPIRING US (LIVING MOODBOARD) */}
-      <section className="sticky top-0 h-screen w-full flex flex-col justify-center bg-[var(--bg-secondary)] overflow-hidden z-50 shadow-2xl">
-        <div className="container mx-auto px-6 max-w-5xl">
-          <div className="text-center mb-20">
-            <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2">Moodboard</span>
-            <h2 className="text-5xl md:text-6xl font-body text-[var(--text-main)]">Currently inspiring us</h2>
-          </div>
+        {/* Ass Images on Left Side */}
+        <div className="absolute left-[5%] md:left-[10%] top-1/2 -translate-y-1/2 flex flex-col gap-4 z-30 pointer-events-auto">
+          {['ass1', 'ass2', 'ass3'].map((ass, i) => (
+            <div 
+              key={i} 
+              className="relative cursor-pointer transition-transform duration-300 hover:scale-110 hover:-translate-y-1"
+              onClick={() => funRotation.set(funRotation.get() - 1080)}
+            >
+              <div className="w-20 h-20 md:w-24 md:h-24 bg-[#fcf8f2] bg-opacity-90 backdrop-blur-sm rounded-2xl shadow-xl border-2 border-white/80 flex items-center justify-center p-4">
+                <img src={`/${ass}.png`} alt={ass} className="w-full h-full object-contain" />
+              </div>
+            </div>
+          ))}
+        </div>
 
-          {/* Living Moodboard tags scattered */}
-          <div className="flex flex-wrap justify-center gap-6 max-w-4xl mx-auto">
-            {[
-              { text: "Books", icon: <BookOpen size={16} />, rot: "rotate-2" },
-              { text: "Films", icon: <Film size={16} />, rot: "-rotate-2" },
-              { text: "Markets", icon: <Compass size={16} />, rot: "rotate-3" },
-              { text: "Restaurants", icon: <Coffee size={16} />, rot: "-rotate-1" },
-              { text: "Music", icon: <Music size={16} />, rot: "rotate-1" },
-              { text: "Travel", icon: <Compass size={16} />, rot: "-rotate-3" },
-              { text: "Art", icon: <BookOpen size={16} />, rot: "rotate-2" },
-              { text: "People", icon: <Coffee size={16} />, rot: "-rotate-2" }
-            ].map((tag, idx) => (
-              <motion.div
-                key={idx}
-                className={`relative px-8 py-5 bg-[#fafafa] border border-[var(--text-main)]/10 shadow-md font-body font-bold text-2xl text-[var(--text-main)] flex items-center gap-3 cursor-pointer ${tag.rot} hover-lift torn-edge`}
-              >
-                {/* Push Pin on specific items, Tape on others */}
-                {idx % 3 === 0 ? (
-                  <div className="push-pin" />
-                ) : (
-                  <div className="masking-tape w-10 h-3 -top-1 left-1/2 -translate-x-1/2 rotate-2 opacity-70" />
-                )}
-                
-                <span className="text-[var(--accent-primary)]">{tag.icon}</span>
-                <span>{tag.text}</span>
-              </motion.div>
-            ))}
+        {/* Right Side: Video Player */}
+        <div className={`absolute right-[5%] top-1/2 -translate-y-1/2 z-30 transition-all duration-700 cubic-bezier(0.16, 1, 0.3, 1) ${activeFunItem ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 pointer-events-none'}`}>
+          <div className="w-[350px] md:w-[550px] lg:w-[650px] aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border-4 border-[#f4ebd9]/80 bg-black relative">
+            {activeFunItem && (
+              <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover">
+                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
+              </video>
+            )}
+            <div className="absolute bottom-4 left-4 z-10 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full text-[#efe8db]">
+              <p className="font-body text-sm italic">{activeFunItem?.title || "Video playback"}</p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* 7. UNTIL NEXT TIME (CTA) */}
-      <section className="sticky top-0 h-screen w-full flex flex-col justify-center items-center text-center overflow-hidden bg-[var(--bg-primary)] z-[60] shadow-2xl">
-        {/* Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--accent-primary)]/5 rounded-full filter blur-3xl pointer-events-none" />
+      <section className="relative w-full py-32 flex flex-col justify-center items-center text-center overflow-hidden bg-[var(--accent-primary)] z-50">
+        {/* Background Texture */}
+        <div className="absolute inset-0 z-0">
+          <img src="/texture.png" alt="Background texture" className="w-full h-full object-cover opacity-30 mix-blend-multiply" />
+        </div>
 
         <div className="container mx-auto px-6 max-w-3xl relative z-10">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-6xl md:text-8xl font-body text-[var(--text-main)] mb-10 leading-tight"
+            className="text-6xl md:text-8xl font-body text-[#fcf8f2] mb-12 leading-tight drop-shadow-sm"
           >
             Until next time.
           </motion.h2>
 
-          <div className="font-body text-xl md:text-2xl text-[var(--text-main)]/80 max-w-xl mx-auto space-y-4 mb-16 italic border-l-2 border-[var(--accent-primary)]/20 pl-6 md:pl-10 text-left">
-            <p>The table will be set again soon.</p>
-            <p className="not-italic text-[var(--text-main)] font-semibold mt-4">Until then,</p>
-            <p className="font-body font-bold text-3xl text-[var(--accent-primary)] not-italic mt-2">stay curious.</p>
-            <div className="space-y-1 text-sm md:text-base font-body uppercase tracking-widest text-[var(--text-main)]/60 not-italic pt-4">
-              <p>• Cook something new.</p>
-              <p>• Invite someone over.</p>
-              <p>• Take the longer route home.</p>
+          <div className="font-body text-xl md:text-2xl text-[#fcf8f2]/90 max-w-xl mx-auto flex flex-col items-center justify-center mb-16 text-center space-y-6">
+            <p className="italic font-light">The table will be set again soon.</p>
+            <div className="w-16 h-[1px] bg-[#fcf8f2]/30"></div>
+            <div className="space-y-3 text-base md:text-lg tracking-wide">
+              <p>Cook something new.</p>
+              <p>Invite someone over.</p>
+              <p>Take the longer route home.</p>
             </div>
+            <p className="font-logo font-bold text-4xl text-[#fcf8f2] mt-8 transform -rotate-2">Stay curious.</p>
           </div>
 
           <motion.div
@@ -454,7 +443,7 @@ export default function Journal() {
           >
             <Link
               to="/dinner"
-              className="btn-paper bg-[var(--accent-primary)] text-[var(--bg-primary)] border-[var(--accent-primary)] hover:bg-[var(--text-main)] hover:border-[var(--text-main)] px-10 py-5 text-xl tracking-[0.1em]"
+              className="inline-block bg-[#fcf8f2] text-[#d45d3a] border-2 border-[#fcf8f2] font-sans text-sm md:text-base font-bold tracking-wider uppercase px-10 py-4 rounded-full shadow-lg hover:bg-[#d45d3a] hover:text-[#fcf8f2] transition-colors duration-300"
             >
               See the next dinner
             </Link>
