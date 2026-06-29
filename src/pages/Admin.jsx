@@ -79,7 +79,7 @@ export default function Admin() {
         body: JSON.stringify({ action: 'list', password: password || 'Hyndavio@1001' })
       });
       const listData = await listRes.json();
-      if (listData.success && listData.users) setCommunityList(listData.users);
+      if (listData.success && Array.isArray(listData.users)) setCommunityList(listData.users);
     } catch (err) {
       console.error('Error fetching community count:', err);
     }
@@ -93,7 +93,7 @@ export default function Admin() {
       const res = await fetch('/api/admin/get-interests', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ occurrence_id: occurrenceId, password })
+        body: JSON.stringify({ occurrence_id: occurrenceId, password: password || 'Hyndavio@1001' })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.details || data.error);
@@ -112,7 +112,7 @@ export default function Admin() {
       fetch('/api/admin/get-interests', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ occurrence_id: selectedOccurrenceId, password })
+        body: JSON.stringify({ occurrence_id: selectedOccurrenceId, password: password || 'Hyndavio@1001' })
       })
       .then(res => res.json())
       .then(data => {
@@ -416,7 +416,7 @@ export default function Admin() {
             <div className="col-span-1 bg-[var(--bg-primary)] p-6 rounded-xl shadow-sm border border-[var(--text-main)]/5">
               <h2 className="text-xl font-bold mb-4 text-[var(--text-main)]">Select Occurrence</h2>
               <div className="space-y-3">
-                {occurrences.map(occ => {
+                {(occurrences || []).map(occ => {
                   const sold = occ.sold_seats || 0;
                   const total = occ.total_seats || 8;
                   const isSoldOut = sold >= total;
@@ -434,7 +434,7 @@ export default function Admin() {
                       </div>
                       <div className="flex justify-between items-center mt-2 text-xs font-bold uppercase tracking-wider text-[var(--text-main)]/60">
                         <span>{new Date(occ.event_date).toLocaleDateString()}</span>
-                        <span className="px-2 py-0.5 rounded bg-[var(--text-main)]/5 text-[var(--accent-primary)]">{occ.status.replace(/_/g, ' ')}</span>
+                        <span className="px-2 py-0.5 rounded bg-[var(--text-main)]/5 text-[var(--accent-primary)]">{(occ.status || 'closed').replace(/_/g, ' ')}</span>
                       </div>
                     </div>
                   );
@@ -574,7 +574,7 @@ export default function Admin() {
                                 </tr>
                               </thead>
                               <tbody>
-                                {confirmedGuests.map(item => {
+                                {(confirmedGuests || []).map(item => {
                                   const u = item.users || {};
                                   return (
                                     <tr key={item.id} className="border-b border-[var(--text-main)]/5 hover:bg-white/50 font-body text-sm">
@@ -617,7 +617,7 @@ export default function Admin() {
                                 </tr>
                               </thead>
                               <tbody>
-                                {waitlistGuests.map(item => {
+                                {(waitlistGuests || []).map(item => {
                                   const u = item.users || {};
                                   return (
                                     <tr key={item.id} className="border-b border-[var(--text-main)]/5 hover:bg-[var(--text-main)]/5 text-sm">
@@ -633,7 +633,7 @@ export default function Admin() {
                                       <td className="py-3 px-3 text-xs font-mono">{u.email}<br/>{u.phone}</td>
                                       <td className="py-3 px-3">
                                         <span className="px-2.5 py-1 rounded text-xs uppercase font-extrabold tracking-wider bg-orange-100 text-orange-800">
-                                          {item.status.replace(/_/g, ' ')}
+                                          {(item.status || 'pending').replace(/_/g, ' ')}
                                         </span>
                                       </td>
                                       <td className="py-3 px-3">
@@ -700,7 +700,7 @@ export default function Admin() {
             <div className="col-span-1 md:col-span-2 bg-[var(--bg-primary)] p-6 rounded-xl shadow-sm border border-[var(--text-main)]/5">
               <h2 className="text-xl font-bold mb-4 text-[var(--text-main)]">Manage All Occurrences</h2>
               <div className="space-y-4">
-                {occurrences.map(occ => {
+                {(occurrences || []).map(occ => {
                   const sold = occ.sold_seats || 0;
                   const total = occ.total_seats || 8;
                   const isSoldOut = sold >= total;
@@ -812,7 +812,7 @@ export default function Admin() {
                       <label className="block text-xs font-bold uppercase tracking-widest text-[var(--text-main)]/70 mb-1">Select Occurrence to Announce</label>
                       <select className="w-full p-2 border rounded text-sm" value={blastOccId} onChange={e => setBlastOccId(e.target.value)}>
                         <option value="">-- Choose Occurrence --</option>
-                        {occurrences.map(o => <option key={o.id} value={o.id}>{o.title}</option>)}
+                        {(occurrences || []).map(o => <option key={o.id} value={o.id}>{o.title}</option>)}
                       </select>
                     </div>
 
@@ -863,8 +863,8 @@ export default function Admin() {
                     value={listFilterTag}
                     onChange={e => setListFilterTag(e.target.value)}
                   >
-                    <option value="ALL">All Segregation Tags ({communityList.length})</option>
-                    {Array.from(new Set(communityList.map(u => {
+                    <option value="ALL">All Segregation Tags ({(communityList || []).length})</option>
+                    {Array.from(new Set((communityList || []).map(u => {
                       const handle = u.instagram_handle || '';
                       const match = handle.match(/^\[Tag:\s*(.*?)\]/i);
                       return match ? match[1] : 'Untagged / General';
@@ -887,7 +887,7 @@ export default function Admin() {
                     </tr>
                   </thead>
                   <tbody>
-                    {communityList
+                    {(communityList || [])
                       .filter(u => {
                         if (listFilterTag === 'ALL') return true;
                         const handle = u.instagram_handle || '';
@@ -934,7 +934,7 @@ export default function Admin() {
                 <div>
                   <h3 className="font-heading text-2xl font-bold">{viewModalGuest.users?.name || 'Guest'}</h3>
                   <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase inline-block mt-1 ${viewModalGuest.is_paid || viewModalGuest.status === 'PAID' || viewModalGuest.status === 'booked' ? 'bg-green-600 text-white' : 'bg-orange-100 text-orange-800'}`}>
-                    {viewModalGuest.is_paid || viewModalGuest.status === 'PAID' || viewModalGuest.status === 'booked' ? `🎟️ CONFIRMED PAID (${viewModalGuest.seats || 1} SEAT)` : viewModalGuest.status.replace(/_/g, ' ')}
+                    {viewModalGuest.is_paid || viewModalGuest.status === 'PAID' || viewModalGuest.status === 'booked' ? `🎟️ CONFIRMED PAID (${viewModalGuest.seats || 1} SEAT)` : (viewModalGuest.status || 'pending').replace(/_/g, ' ')}
                   </span>
                 </div>
               </div>
@@ -951,7 +951,7 @@ export default function Admin() {
                 {viewModalGuest.users?.instagram_handle && (
                   <div className="grid grid-cols-3 gap-2 py-1 border-b border-[var(--text-main)]/5">
                     <span className="font-bold text-[var(--text-main)]/60 uppercase text-xs">Instagram:</span>
-                    <span className="col-span-2 font-mono">@{viewModalGuest.users?.instagram_handle.replace(/^@/, '')}</span>
+                    <span className="col-span-2 font-mono">@{(viewModalGuest.users?.instagram_handle || 'N/A').replace(/^@/, '')}</span>
                   </div>
                 )}
                 {(viewModalGuest.is_paid || viewModalGuest.status === 'PAID' || viewModalGuest.status === 'booked') && (
