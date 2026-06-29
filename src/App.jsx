@@ -37,6 +37,7 @@ function App() {
             <Route path="/community" element={<Community />} />
             <Route path="/dinner" element={<Dinner />} />
             <Route path="/journal" element={<Journal />} />
+            <Route path="/hyndavio" element={<Admin />} />
             <Route path="/founder-admin" element={<Admin />} />
             <Route path="/admin" element={<Admin />} />
           </Routes>
