@@ -44,17 +44,35 @@ export default async function handler(req, res) {
       email = req.body.email || 'guest@vantammayilu.com';
     }
 
-    // Ensure user_id is a valid UUID in users table
+    // Always verify user_id actually exists in DB (JWT may reference deleted users)
+    if (user_id) {
+      const { data: verifiedUser } = await supabase.from('users').select('id, email, phone').eq('id', user_id).maybeSingle();
+      if (!verifiedUser) {
+        console.log('[lock-seats] user_id from JWT not found in DB, will re-create via email');
+        if (!email) email = req.body.email || 'guest@vantammayilu.com';
+        user_id = null; // force re-creation below
+      } else {
+        email = email || verifiedUser.email;
+        phone = phone || verifiedUser.phone;
+      }
+    }
+
+    // Create or find user if we still don't have a valid user_id
     if (!user_id || !user_id.includes('-')) {
+      if (!email) email = req.body.email || 'guest@vantammayilu.com';
       const { data: existingUser } = await supabase.from('users').select('id').eq('email', email).maybeSingle();
       if (existingUser?.id) {
         user_id = existingUser.id;
       } else {
-        const { data: newUser } = await supabase.from('users').insert({
+        const { data: newUser, error: createErr } = await supabase.from('users').insert({
           name: email.split('@')[0],
           email: email,
           phone: phone !== '9999999999' ? phone : `g_${Date.now()}`
         }).select('id').single();
+        if (createErr) {
+          console.error('[lock-seats] Failed to create user:', createErr);
+          return res.status(500).json({ error: 'Failed to create user record.', details: createErr.message });
+        }
         if (newUser?.id) user_id = newUser.id;
       }
     }
@@ -89,7 +107,7 @@ export default async function handler(req, res) {
         user_id,
         seats,
         locked_until
-      }, { onConflict: 'occurrence_id, user_id' }); // overwrite existing expired lock for same user
+      }, { onConflict: 'occurrence_id,user_id' });
 
     if (lockError) throw lockError;
 

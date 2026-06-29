@@ -31,13 +31,10 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 1. Update occurrence status to bookings_open
-    await supabase
-      .from('occurrences')
-      .update({ status: 'bookings_open' })
-      .eq('id', occurrence_id);
+    // NOTE: We do NOT change occurrence status here — magic links are individual.
+    // The occurrence status is managed separately via the admin occurrences tab.
 
-    // 2. Update selected users' interest status
+    // 1. Update selected users' interest status to 'selected_by_founder'
     await supabase
       .from('occurrence_interests')
       .update({ status: 'selected_by_founder' })
@@ -84,7 +81,7 @@ export default async function handler(req, res) {
 
       const msg = {
         to: user.email,
-        from: process.env.SENDGRID_FROM_EMAIL || 'founder@vantammayilu.com', // Replace with verified sender
+        from: process.env.SENDGRID_FROM_EMAIL || 'hyndavio@vantammayilu.com',
         subject: custom_subject || `You're invited: ${occurrence.title}`,
         trackingSettings: {
           clickTracking: { enable: false, enableText: false },

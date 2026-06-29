@@ -56,7 +56,7 @@ export default async function handler(req, res) {
             // Send "Seat Opened" emails
             const msgs = activeInterests.map(interest => ({
               to: interest.users.email,
-              from: process.env.SENDGRID_FROM_EMAIL || 'founder@vantammayilu.com',
+              from: process.env.SENDGRID_FROM_EMAIL || 'hyndavio@vantammayilu.com',
               subject: `A seat has opened up for ${occ.title}!`,
               trackingSettings: {
                 clickTracking: { enable: false, enableText: false },
@@ -112,7 +112,7 @@ export default async function handler(req, res) {
               if (process.env.SENDGRID_API_KEY) {
                 await sgMail.send({
                   to: booking.users.email,
-                  from: process.env.SENDGRID_FROM_EMAIL || 'founder@vantammayilu.com',
+                  from: process.env.SENDGRID_FROM_EMAIL || 'hyndavio@vantammayilu.com',
                   subject: `Reminder: ${occ.title} is tomorrow`,
                   trackingSettings: {
                     clickTracking: { enable: false, enableText: false },

@@ -27,15 +27,12 @@ app.post('/api/bookings/lock-seats', wrap('./api/bookings/lock-seats.js'));
 app.post('/api/bookings/confirm', wrap('./api/bookings/confirm.js'));
 app.post('/api/bookings/finalize', wrap('./api/bookings/finalize.js'));
 app.post('/api/admin/open-bookings', wrap('./api/admin/open-bookings.js'));
-app.post('/api/admin/interests', wrap('./api/admin/interests.js'));
 app.post('/api/admin/reply-query', wrap('./api/admin/reply-query.js'));
-app.post('/api/admin/create-occurrence', wrap('./api/admin/create-occurrence.js'));
-app.post('/api/admin/update-occurrence', wrap('./api/admin/update-occurrence.js'));
-app.post('/api/admin/upload-csv', wrap('./api/admin/upload-csv.js'));
-app.post('/api/admin/community-blast', wrap('./api/admin/community-blast.js'));
 app.get('/api/occurrences', wrap('./api/occurrences.js'));
+app.post('/api/occurrences', wrap('./api/occurrences.js'));
 app.post('/api/admin/get-interests', wrap('./api/admin/get-interests.js'));
-app.get('/api/admin/get-community-count', wrap('./api/admin/get-community-count.js'));
+app.get('/api/admin/community', wrap('./api/admin/community.js'));
+app.post('/api/admin/community', wrap('./api/admin/community.js'));
 
 const PORT = 3001;
 app.listen(PORT, () => {

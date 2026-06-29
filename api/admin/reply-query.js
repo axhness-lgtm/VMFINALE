@@ -51,7 +51,7 @@ export default async function handler(req, res) {
     // 2. Send email
     const msg = {
       to: customerEmail,
-      from: process.env.SENDGRID_FROM_EMAIL || 'founder@vantammayilu.com',
+      from: process.env.SENDGRID_FROM_EMAIL || 'hyndavio@vantammayilu.com',
       subject: `Reply to your query regarding your upcoming dinner`,
       trackingSettings: {
         clickTracking: { enable: false, enableText: false },

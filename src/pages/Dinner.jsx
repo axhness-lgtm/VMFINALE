@@ -11,6 +11,7 @@ const CURRENT_DINNER = {
   title: 'A night in Vietnam',
   price_inr: 450000, // ₹4,500
   event_date: '2026-07-25',
+  status: 'collecting_interests',
 };
 
 const menuItems = [
@@ -106,7 +107,9 @@ export default function Dinner() {
   const token = searchParams.get('token');
 
   const [activeDinner, setActiveDinner] = useState(CURRENT_DINNER);
-  const canReserve = Boolean(token || activeDinner?.status === 'bookings_open');
+  // Only users with a valid magic link token can reserve.
+  // Occurrence status does NOT globally open booking for everyone.
+  const canReserve = Boolean(token);
 
   useEffect(() => {
     // Fetch the latest active occurrence
@@ -627,7 +630,8 @@ export default function Dinner() {
       {/* 7. RESERVE A SEAT */}
       <ReserveSection 
         onReserveClick={() => setIsBookingOpen(true)} 
-        onInterestClick={() => setIsInterestOpen(true)} 
+        onInterestClick={() => setIsInterestOpen(true)}
+        canReserve={canReserve}
       />
 
       {/* Shared Booking Modal Flow (Only accessible with token) */}

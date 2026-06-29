@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { supabase } from '../supabase';
 import './BookingModal.css';
 
 const IS_DEV_MODE = !import.meta.env.VITE_RAZORPAY_KEY_ID || import.meta.env.VITE_RAZORPAY_KEY_ID.includes('test_XXX');
@@ -16,29 +15,24 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
 
   const [lockExpiry, setLockExpiry] = useState(null);
   const [countdown, setCountdown] = useState(600);
-  const [lockoutMins, setLockoutMins] = useState(0);
-  
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  
+
+  // Core booking data — kept simple
   const [bookingId, setBookingId] = useState(null);
   const [guestUserId, setGuestUserId] = useState(null);
-  const [tokenName, setTokenName] = useState('The Curious One');
-  const [guestName, setGuestName] = useState('');
   const [guestEmail, setGuestEmail] = useState('');
   const [guestPhone, setGuestPhone] = useState('');
   const [customerQuery, setCustomerQuery] = useState('');
 
+  // Track how many finalize attempts have been made (for auto-retry)
+  const [finalizeAttempts, setFinalizeAttempts] = useState(0);
   const [stepAnim, setStepAnim] = useState(true);
 
   const lockTimerRef = useRef(null);
   const rzpRef = useRef(null);
-
-  const TOKEN_OPTIONS = [
-    'The Curious One', 'The Story Collector', 'The Wanderer', 
-    'The Listener', 'The Homekeeper', 'The Maker', 
-    'The Romantic', 'The Observer'
-  ];
+  const finalizeCalledRef = useRef(false);
 
   const goStep = (s) => {
     setStepAnim(false);
@@ -49,8 +43,10 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
     if (isOpen && dinner?.id) {
       setStep('seats');
       setError('');
-      setCountdown(600); // 10 minutes
+      setCountdown(600);
       setStepAnim(true);
+      setFinalizeAttempts(0);
+      finalizeCalledRef.current = false;
       fetchStatus();
     }
   }, [isOpen, dinner]);
@@ -68,6 +64,7 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
     }
   };
 
+  // Countdown timer while Razorpay modal is open
   useEffect(() => {
     if (step !== 'lock' || !lockExpiry) return;
     const tick = () => {
@@ -83,17 +80,69 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
   const handleTimeout = useCallback(async () => {
     clearInterval(lockTimerRef.current);
     if (rzpRef.current) {
-      try { rzpRef.current.close(); } catch (err) { }
+      try { rzpRef.current.close(); } catch (e) {}
       rzpRef.current = null;
     }
-    // We can call an endpoint to explicitly release lock, but pg_cron handles it
-    setLockoutMins(10);
     goStep('lockout');
   }, []);
 
+  // ── Core finalize function — called once after payment verified ──────────
+  const finalizeBooking = async ({ bookingIdVal, guestUserIdVal, guestEmailVal, seatsVal, queryVal }) => {
+    if (finalizeCalledRef.current) return; // prevent double-call
+    finalizeCalledRef.current = true;
+
+    setLoading(true);
+    setError('');
+
+    const timeoutId = setTimeout(() => {
+      setLoading(false);
+      finalizeCalledRef.current = false; // allow retry
+      setError('Request timed out — please click "Confirm Seat" to try again.');
+    }, 20000);
+
+    try {
+      const body = {
+        token,
+        user_id: guestUserIdVal,
+        booking_id: bookingIdVal || `guest_${Date.now()}`,
+        customer_query: queryVal || null,
+        occurrence_id: dinner.id,
+        seats: seatsVal,
+        email: guestEmailVal
+      };
+
+      console.log('[BookingModal] Calling finalize with:', body);
+
+      const res = await fetch('/api/bookings/finalize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+
+      const data = await res.json();
+      clearTimeout(timeoutId);
+      console.log('[BookingModal] Finalize response:', data);
+
+      if (!res.ok) {
+        throw new Error(data.details || data.error || `Server error (${res.status})`);
+      }
+
+      setLoading(false);
+      onBookingComplete?.();
+      goStep('confirmed');
+    } catch (err) {
+      clearTimeout(timeoutId);
+      finalizeCalledRef.current = false; // allow retry
+      setError('Could not confirm seat: ' + err.message);
+      setLoading(false);
+      setFinalizeAttempts(prev => prev + 1);
+    }
+  };
+
+  // ── Step 1: Lock seats + open Razorpay ───────────────────────────────────
   const handleSeatsNext = async () => {
     if (!token && (!guestEmail || !guestEmail.includes('@'))) {
-      setError('Please enter a valid email address to reserve your seat.');
+      setError('Please enter a valid email address.');
       return;
     }
     setLoading(true);
@@ -109,70 +158,69 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
 
       setLockExpiry(data.locked_until);
       if (data.user_id) setGuestUserId(data.user_id);
-      
-      // Initialize Razorpay
-      const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'dummy_key',
-        amount: data.amount,
-        currency: 'INR',
-        name: dinner?.title ? dinner.title.toUpperCase() : 'VANTAMMAYILU',
-        description: 'Seat Reservation',
-        order_id: data.order_id,
-        prefill: { email: data.email, contact: data.phone },
-        theme: { color: '#e86321' },
-        modal: {
-          escape: false,
-          ondismiss: () => {
-            setLoading(false);
-            rzpRef.current = null;
-          }
-        },
-        handler: async (response) => {
-          try {
-            const verifyRes = await fetch('/api/bookings/confirm', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                ...response,
-                token,
-                seats,
-                occurrence_id: dinner.id
-              })
-            });
-            const verifyData = await verifyRes.json();
-            if (!verifyRes.ok) throw new Error(verifyData.details || verifyData.error);
-            
-            setBookingId(verifyData.booking_id);
-            clearInterval(lockTimerRef.current);
-            goStep('details');
-          } catch (err) {
-            setError('Payment verification failed: ' + err.message);
-            setLoading(false);
-          }
-        },
-      };
+      if (data.email) setGuestEmail(data.email);
+
+      const amount = data.amount;
+      const orderId = data.order_id;
 
       if (!IS_DEV_MODE) {
+        const options = {
+          key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+          amount,
+          currency: 'INR',
+          name: dinner?.title?.toUpperCase() || 'VANTAMMAYILU',
+          description: 'Seat Reservation',
+          order_id: orderId,
+          prefill: { email: data.email, contact: data.phone },
+          theme: { color: '#e86321' },
+          modal: {
+            escape: false,
+            ondismiss: () => {
+              setLoading(false);
+              rzpRef.current = null;
+            }
+          },
+          handler: async (response) => {
+            // Payment success — verify then go straight to dietary notes
+            try {
+              const verifyRes = await fetch('/api/bookings/confirm', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...response, token, seats, occurrence_id: dinner.id })
+              });
+              const verifyData = await verifyRes.json();
+              if (!verifyRes.ok) throw new Error(verifyData.details || verifyData.error);
+
+              setBookingId(verifyData.booking_id);
+              clearInterval(lockTimerRef.current);
+              setLoading(false);
+              goStep('details');
+            } catch (err) {
+              setError('Payment verified by Razorpay but confirmation failed: ' + err.message);
+              setLoading(false);
+            }
+          },
+        };
+
         const rzp = new window.Razorpay(options);
         rzpRef.current = rzp;
         rzp.on('payment.failed', () => {
-          setError("Payment failed. Please try again within the time limit.");
+          setError('Payment failed. Please try again within the time limit.');
           setLoading(false);
         });
-        
-        goStep('lock'); // Show lock screen with countdown
+        goStep('lock');
         rzp.open();
       } else {
-        // Dev mode simulation
+        // Dev mode — skip payment
         console.warn('DEV MODE: Simulating payment success');
         goStep('lock');
         setTimeout(() => {
           clearInterval(lockTimerRef.current);
           setBookingId(`mock_${Date.now()}`);
+          setLoading(false);
           goStep('details');
-        }, 3000);
+        }, 1500);
       }
-
     } catch (err) {
       setError(err.message);
       setLoading(false);
@@ -180,7 +228,7 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
   };
 
   const fmtTime = (s) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
-  const price = (dinner?.price_inr ?? 299900) * seats / 100;
+  const price = (dinner?.price_inr ?? 450000) * seats / 100;
 
   if (!isOpen) return null;
 
@@ -197,38 +245,38 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
           {step === 'seats' && (
             <div className="bm-step">
               <div className="bm-step-tag font-body italicwritten">Booking — Step 1</div>
-              <h2 className="bm-title">How many seats?</h2>
-              
+              <h2 className="bm-title">Reserve your seat</h2>
+
               <div className="mb-6 p-4 bg-[var(--accent-primary)]/10 rounded-lg border border-[var(--accent-primary)]/20 text-center">
-                 <p className="font-body text-[var(--accent-primary)] font-bold text-lg mb-1">
-                    {interestedCount} people expressed interest for this dinner.
-                 </p>
-                 <p className="font-body text-[var(--text-main)]/80">
-                    Seats remaining: <strong>{availableSeats !== null ? availableSeats : '...'}</strong>
-                 </p>
+                <p className="font-body text-[var(--accent-primary)] font-bold text-lg mb-1">
+                  {interestedCount} people expressed interest for this dinner.
+                </p>
+                <p className="font-body text-[var(--text-main)]/80">
+                  Seats remaining: <strong>{availableSeats !== null ? availableSeats : '...'}</strong>
+                </p>
               </div>
 
               {!token && (
                 <div className="space-y-3 mb-4 text-left">
-                  <p className="text-xs text-[var(--accent-primary)] font-bold uppercase tracking-wider">Guest Checkout (No magic link needed)</p>
+                  <p className="text-xs text-[var(--accent-primary)] font-bold uppercase tracking-wider">Your Details</p>
                   <div className="bm-field-group">
                     <label className="bm-label">Email Address</label>
-                    <input 
-                      type="email" 
-                      className="bm-input font-body text-sm" 
-                      placeholder="you@example.com" 
-                      value={guestEmail} 
-                      onChange={e => setGuestEmail(e.target.value)} 
+                    <input
+                      type="email"
+                      className="bm-input font-body text-sm"
+                      placeholder="you@example.com"
+                      value={guestEmail}
+                      onChange={e => setGuestEmail(e.target.value)}
                     />
                   </div>
                   <div className="bm-field-group">
                     <label className="bm-label">Phone Number (Optional)</label>
-                    <input 
-                      type="tel" 
-                      className="bm-input font-body text-sm" 
-                      placeholder="+91 9876543210" 
-                      value={guestPhone} 
-                      onChange={e => setGuestPhone(e.target.value)} 
+                    <input
+                      type="tel"
+                      className="bm-input font-body text-sm"
+                      placeholder="+91 9876543210"
+                      value={guestPhone}
+                      onChange={e => setGuestPhone(e.target.value)}
                     />
                   </div>
                 </div>
@@ -242,16 +290,16 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
                   onChange={e => setSeats(parseInt(e.target.value))}
                   disabled={availableSeats < 1}
                 >
-                  <option value="1" disabled={availableSeats < 1}>1 seat — ₹{((dinner?.price_inr ?? 299900) / 100).toLocaleString('en-IN')}</option>
-                  <option value="2" disabled={availableSeats < 2}>2 seats — ₹{(((dinner?.price_inr ?? 299900) * 2) / 100).toLocaleString('en-IN')}</option>
+                  <option value="1" disabled={availableSeats < 1}>1 seat — ₹{((dinner?.price_inr ?? 450000) / 100).toLocaleString('en-IN')}</option>
+                  <option value="2" disabled={availableSeats < 2}>2 seats — ₹{(((dinner?.price_inr ?? 450000) * 2) / 100).toLocaleString('en-IN')}</option>
                 </select>
               </div>
-              
+
               {error && <div className="bm-error">{error}</div>}
-              
-              <button 
-                className="bm-btn-primary" 
-                onClick={handleSeatsNext} 
+
+              <button
+                className="bm-btn-primary"
+                onClick={handleSeatsNext}
                 disabled={loading || availableSeats < 1}
               >
                 {loading ? 'Processing...' : 'Continue to Payment →'}
@@ -264,40 +312,24 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
             <div className="bm-step bm-center">
               <div className="bm-step-tag font-body italicwritten text-center mx-auto">Booking — Step 2</div>
               <h2 className="bm-title text-center">Seats held.</h2>
-              
               <div className="bm-timer font-mono text-center" style={{ fontSize: '2rem', margin: '20px 0' }}>
                 {fmtTime(countdown)}
               </div>
-              
               <p className="font-body text-[var(--text-main)]/70 text-center mx-auto max-w-[280px]">
-                {loading ? "Finalizing your booking, please wait..." : "Complete your payment in the secure popup. Do not refresh this page."}
+                {loading ? 'Finalizing your booking, please wait...' : 'Complete your payment in the secure popup. Do not refresh this page.'}
               </p>
-              
               {error && <div className="bm-error mt-6">{error}</div>}
             </div>
           )}
 
-          {/* ── STEP 3: Details & Token Selection ── */}
+          {/* ── STEP 3: Dietary notes — dead simple, no personas ── */}
           {step === 'details' && (
             <div className="bm-step text-left">
               <div className="bm-step-tag font-body italicwritten">Booking — Step 3</div>
               <h2 className="bm-title">Payment Successful!</h2>
               <p className="font-body text-[var(--text-main)]/80 mb-6 text-sm leading-relaxed">
-                Your reservation payment has been verified. Choose your anonymous token identity for the table and let us know of any dietary notes.
+                Your payment has been received. Any dietary requirements? Let us know below, then confirm your seat.
               </p>
-
-              <div className="bm-field-group mb-4">
-                <label className="bm-label">Select Token Identity</label>
-                <select
-                  className="bm-input bm-select font-body font-bold text-base"
-                  value={tokenName}
-                  onChange={e => setTokenName(e.target.value)}
-                >
-                  {TOKEN_OPTIONS.map(opt => (
-                    <option key={opt} value={opt}>{opt}</option>
-                  ))}
-                </select>
-              </div>
 
               <div className="bm-field-group mb-6">
                 <label className="bm-label">Dietary Restrictions / Queries (Optional)</label>
@@ -310,60 +342,48 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
                 />
               </div>
 
-              {error && <div className="bm-error mb-4">{error}</div>}
+              {error && (
+                <div className="bm-error mb-4">
+                  {error}
+                  {finalizeAttempts > 0 && (
+                    <p className="text-xs mt-1 opacity-80">Tap the button below to retry.</p>
+                  )}
+                </div>
+              )}
 
               <button
                 className="bm-btn-primary"
-                onClick={async () => {
-                  setLoading(true);
-                  setError('');
-                  try {
-                    const res = await fetch('/api/bookings/finalize', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({
-                        token,
-                        user_id: guestUserId,
-                        booking_id: bookingId || `guest_${Date.now()}`,
-                        token_name: tokenName,
-                        customer_query: customerQuery,
-                        occurrence_id: dinner.id,
-                        seats,
-                        email: guestEmail
-                      })
-                    });
-                    const data = await res.json();
-                    if (!res.ok) throw new Error(data.details || data.error);
-                    
-                    setLoading(false);
-                    onBookingComplete?.();
-                    goStep('confirmed');
-                  } catch (err) {
-                    setError('Error completing reservation: ' + err.message);
-                    setLoading(false);
-                  }
-                }}
                 disabled={loading}
+                onClick={() => {
+                  finalizeCalledRef.current = false; // allow fresh call
+                  finalizeBooking({
+                    bookingIdVal: bookingId,
+                    guestUserIdVal: guestUserId,
+                    guestEmailVal: guestEmail,
+                    seatsVal: seats,
+                    queryVal: customerQuery
+                  });
+                }}
               >
-                {loading ? 'Finalizing...' : 'Complete Reservation →'}
+                {loading ? 'Confirming...' : finalizeAttempts > 0 ? 'Retry Confirm Seat →' : 'Confirm My Seat →'}
               </button>
             </div>
           )}
 
-          {/* ── LOCKOUT screen ── */}
+          {/* ── LOCKOUT ── */}
           {step === 'lockout' && (
             <div className="bm-step bm-lockout-step">
               <div className="bm-step-tag font-body italicwritten">System — Lockout</div>
               <div className="bm-lockout-icon">✕</div>
               <h2 className="bm-title">Seat Released.</h2>
               <p className="bm-subtitle">
-                Payment was not completed in time. Your seat has been released to the next person on the active list.
+                Payment was not completed in time. Your seat has been released to the next person.
               </p>
               <button className="bm-btn-ghost mt-6" onClick={onClose}>Close</button>
             </div>
           )}
 
-          {/* ── FINAL CONFIRMATION ── */}
+          {/* ── CONFIRMED ── */}
           {step === 'confirmed' && (
             <div className="bm-step bm-center" style={{ textAlign: 'center' }}>
               <div className="w-16 h-16 rounded-full bg-[var(--accent-primary)]/10 flex items-center justify-center mx-auto mb-6">
@@ -373,10 +393,9 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
               </div>
               <h2 className="bm-title text-center">See you at the table.</h2>
               <p className="font-body text-[var(--text-main)]/80 text-center mx-auto leading-relaxed mt-4">
-                Your payment was successful and your seat is confirmed.<br/><br/>
-                <strong>Your ticket will arrive to your mail shortly.</strong>
+                Your payment was successful and your seat is confirmed.<br /><br />
+                <strong>Your ticket will arrive to your email shortly.</strong>
               </p>
-              
               <button className="bm-btn-primary" style={{ marginTop: '32px' }} onClick={onClose}>
                 Close
               </button>
