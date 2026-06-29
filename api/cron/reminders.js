@@ -58,6 +58,10 @@ export default async function handler(req, res) {
               to: interest.users.email,
               from: process.env.SENDGRID_FROM_EMAIL || 'founder@vantammayilu.com',
               subject: `A seat has opened up for ${occ.title}!`,
+              trackingSettings: {
+                clickTracking: { enable: false, enableText: false },
+                openTracking: { enable: false }
+              },
               html: `<p>Hi ${interest.users.name},</p><p>A seat has just opened up for <strong>${occ.title}</strong>.</p><p>Click your original invite link to book it before someone else does!</p>`
             }));
             if (process.env.SENDGRID_API_KEY) {
@@ -110,6 +114,10 @@ export default async function handler(req, res) {
                   to: booking.users.email,
                   from: process.env.SENDGRID_FROM_EMAIL || 'founder@vantammayilu.com',
                   subject: `Reminder: ${occ.title} is tomorrow`,
+                  trackingSettings: {
+                    clickTracking: { enable: false, enableText: false },
+                    openTracking: { enable: false }
+                  },
                   html: `<p>Hi ${booking.users.name},</p><p>We look forward to seeing you tomorrow at <strong>${occ.title}</strong>.</p><p>Your token is ${booking.token_name}.</p>`
                 });
               }

@@ -32,16 +32,29 @@ export default function Navigation() {
     if (audio) {
       if (isPlaying) {
         audio.pause();
+        setIsPlaying(false);
       } else {
-        audio.play();
+        audio.volume = 0.5;
+        audio.play().then(() => {
+          setIsPlaying(true);
+        }).catch(err => {
+          console.error("Audio play error:", err);
+          alert("Could not start audio. Please click anywhere on the page first or verify your browser audio permissions.");
+          setIsPlaying(false);
+        });
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
   return (
-    <div className="fixed top-4 left-0 w-full z-50 flex justify-center px-6 pointer-events-none">
-      <header className="pointer-events-auto bg-cream/90 backdrop-blur-md border border-[#3b2b24]/10 shadow-lg rounded-2xl px-6 py-3 w-full max-w-6xl flex justify-between items-center transition-all duration-300">
+    <div className={`fixed left-0 w-full z-50 flex justify-center pointer-events-none transition-all duration-300 ${
+      location.pathname === '/dinner' ? 'top-0 px-0' : 'top-4 px-6'
+    }`}>
+      <header className={`pointer-events-auto flex justify-between items-center transition-all duration-300 ${
+        location.pathname === '/dinner'
+          ? 'bg-[#f3dbbd]/95 backdrop-blur-md px-6 md:px-16 py-5 w-full border-b border-[#3b2b24]/5 shadow-sm'
+          : 'bg-cream/90 backdrop-blur-md border border-[#3b2b24]/10 shadow-lg rounded-2xl px-6 py-3 w-full max-w-6xl'
+      }`}>
         
         {/* Logo */}
         <Link to="/" className="relative z-50 flex-shrink-0 hover:opacity-80 transition-opacity duration-300 flex items-center">
@@ -51,7 +64,7 @@ export default function Navigation() {
         </Link>
 
         {/* Desktop Links */}
-        <nav className="hidden md:flex gap-5 items-center">
+        <nav className="hidden md:flex gap-6 items-center">
           {navLinks.map((link) => (
             <Link 
               key={link.name}
@@ -59,28 +72,32 @@ export default function Navigation() {
               onClick={() => window.scrollTo(0,0)}
               className="group relative pt-1"
             >
-              <span className={`text-[13px] font-body uppercase tracking-[0.1em] block ${
+              <span className={`text-[13px] font-body uppercase tracking-[0.15em] font-bold block ${
                 location.pathname === link.path ? 'text-[var(--accent-primary)]' : 'text-[var(--text-main)]'
               }`}>
                 <RollingText text={link.name} active={location.pathname === link.path} />
               </span>
               {/* Subtle animated underline */}
-              <span className={`absolute -bottom-1 left-0 h-[1px] bg-[var(--accent-primary)] transition-all duration-300 ${
+              <span className={`absolute -bottom-1 left-0 h-[2px] bg-[var(--accent-primary)] transition-all duration-300 ${
                 location.pathname === link.path ? 'w-full' : 'w-0 group-hover:w-full'
               }`} />
             </Link>
           ))}
           
-          <Link to="/dinner" onClick={() => window.scrollTo(0,0)} className="btn-paper ml-4 font-body uppercase tracking-[0.1em] text-[5px] !px-2 !py-0.5 group flex items-center justify-center">
-            <RollingText text="Reserve" active={false} hoverColorClass="text-[color:var(--bg-primary)]" />
+          <Link 
+            to="/dinner" 
+            onClick={() => window.scrollTo(0,0)} 
+            className="ml-6 px-7 py-3 rounded-xl font-body text-sm uppercase tracking-[0.15em] font-extrabold bg-[var(--accent-primary)] text-white hover:bg-[#c14a27] hover:scale-105 active:scale-95 shadow-md transition-all duration-300"
+          >
+            RESERVE
           </Link>
           
           <button 
             onClick={toggleMusic}
-            className="ml-4 text-[var(--text-main)] hover:text-[var(--accent-primary)] transition-colors"
+            className="ml-2 text-[var(--text-main)] hover:text-[var(--accent-primary)] transition-colors p-1"
             title="Toggle Background Music"
           >
-            {isPlaying ? <Volume2 size={16} /> : <VolumeX size={16} />}
+            {isPlaying ? <Volume2 size={18} /> : <VolumeX size={18} />}
           </button>
         </nav>
 

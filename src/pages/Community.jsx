@@ -24,16 +24,16 @@ export default function Community() {
 
         <div className="container mx-auto max-w-4xl text-center relative z-10 mb-[-120px] md:mb-[-180px] mt-auto flex flex-col items-center">
           <div className="w-full flex flex-col items-center">
-            <span className="text-[var(--accent-primary)] font-body tracking-[0.25em] uppercase text-sm md:text-base mb-4 block font-bold">
+            <span className="text-[var(--accent-primary)] font-body tracking-[0.25em] uppercase text-xs md:text-sm mb-3 block font-bold">
               LONG TABLE SOCIETY
             </span>
-            <h1 className="text-6xl md:text-8xl font-heading leading-tight text-[var(--text-main)] mb-8">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-heading leading-tight text-[var(--text-main)] mb-6">
               A table that keeps growing.
             </h1>
-            <div className="font-body text-xl md:text-2xl text-[var(--text-main)]/80 max-w-2xl mx-auto space-y-2 relative z-10">
+            <div className="font-body text-lg md:text-xl text-[var(--text-main)]/80 max-w-xl mx-auto space-y-1.5 relative z-10">
               <p>Some people come once.</p>
               <p>Some keep coming back.</p>
-              <p className="italic text-[var(--accent-primary)] relative inline-block mt-4 text-2xl md:text-3xl">
+              <p className="italic text-[var(--accent-primary)] relative inline-block mt-3 text-xl md:text-2xl">
                 Either way, they leave a little something behind.
               </p>
             </div>

@@ -26,7 +26,10 @@ function App() {
       <Router>
         <ScrollToTop />
         <div className="relative min-h-screen">
-          <audio id="bg-music" src="https://cdn.pixabay.com/download/audio/2022/05/16/audio_f5352601dc.mp3" loop />
+          <audio id="bg-music" loop preload="auto" crossOrigin="anonymous">
+            <source src="https://ia800501.us.archive.org/33/items/OudImprovisation/OudImprovisation.mp3" type="audio/mpeg" />
+            <source src="https://upload.wikimedia.org/wikipedia/commons/4/44/Taqsim_Oud_Maqam_Rast.ogg" type="audio/ogg" />
+          </audio>
           <Navigation />
           <Routes>
             <Route path="/" element={<Home />} />
@@ -35,6 +38,7 @@ function App() {
             <Route path="/dinner" element={<Dinner />} />
             <Route path="/journal" element={<Journal />} />
             <Route path="/founder-admin" element={<Admin />} />
+            <Route path="/admin" element={<Admin />} />
           </Routes>
           <Footer />
         </div>

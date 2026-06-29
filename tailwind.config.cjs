@@ -7,9 +7,12 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        serif: ['"EB Garamond"', 'Georgia', 'serif'],
+        serif: ['"The Seasons"', 'Georgia', 'serif'],
         mono: ['"Mistrully"', 'cursive'],
-        sans: ['"Inter"', 'sans-serif'],
+        sans: ['"The Seasons"', 'sans-serif'],
+        body: ['"The Seasons"', 'sans-serif'],
+        heading: ['"The Seasons"', 'serif'],
+        logo: ['"Apricot"', 'cursive'],
       },
       colors: {
         cream: '#efe9e1',

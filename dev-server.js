@@ -10,34 +10,32 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Import API handlers
-const interestsHandler = (await import('./api/interests.js')).default;
-const statusHandler = (await import('./api/bookings/status.js')).default;
-const lockHandler = (await import('./api/bookings/lock-seats.js')).default;
-const confirmHandler = (await import('./api/bookings/confirm.js')).default;
-const finalizeHandler = (await import('./api/bookings/finalize.js')).default;
-const openHandler = (await import('./api/admin/open-bookings.js')).default;
-const adminInterestsHandler = (await import('./api/admin/interests.js')).default;
-const replyQueryHandler = (await import('./api/admin/reply-query.js')).default;
-
-// Wrap Vercel handlers in Express routes
-const wrap = (handler) => async (req, res) => {
+// Dynamic import wrapper for hot-reloading API routes in dev
+const wrap = (path) => async (req, res) => {
   try {
+    const handler = (await import(`${path}?t=${Date.now()}`)).default;
     await handler(req, res);
   } catch (err) {
-    console.error(err);
-    if (!res.headersSent) res.status(500).json({ error: 'Internal Server Error' });
+    console.error(`Error in ${path}:`, err);
+    if (!res.headersSent) res.status(500).json({ error: 'Internal Server Error', details: err.message });
   }
 };
 
-app.post('/api/interests', wrap(interestsHandler));
-app.get('/api/bookings/status', wrap(statusHandler));
-app.post('/api/bookings/lock-seats', wrap(lockHandler));
-app.post('/api/bookings/confirm', wrap(confirmHandler));
-app.post('/api/bookings/finalize', wrap(finalizeHandler));
-app.post('/api/admin/open-bookings', wrap(openHandler));
-app.post('/api/admin/interests', wrap(adminInterestsHandler));
-app.post('/api/admin/reply-query', wrap(replyQueryHandler));
+app.post('/api/interests', wrap('./api/interests.js'));
+app.get('/api/bookings/status', wrap('./api/bookings/status.js'));
+app.post('/api/bookings/lock-seats', wrap('./api/bookings/lock-seats.js'));
+app.post('/api/bookings/confirm', wrap('./api/bookings/confirm.js'));
+app.post('/api/bookings/finalize', wrap('./api/bookings/finalize.js'));
+app.post('/api/admin/open-bookings', wrap('./api/admin/open-bookings.js'));
+app.post('/api/admin/interests', wrap('./api/admin/interests.js'));
+app.post('/api/admin/reply-query', wrap('./api/admin/reply-query.js'));
+app.post('/api/admin/create-occurrence', wrap('./api/admin/create-occurrence.js'));
+app.post('/api/admin/update-occurrence', wrap('./api/admin/update-occurrence.js'));
+app.post('/api/admin/upload-csv', wrap('./api/admin/upload-csv.js'));
+app.post('/api/admin/community-blast', wrap('./api/admin/community-blast.js'));
+app.get('/api/occurrences', wrap('./api/occurrences.js'));
+app.post('/api/admin/get-interests', wrap('./api/admin/get-interests.js'));
+app.get('/api/admin/get-community-count', wrap('./api/admin/get-community-count.js'));
 
 const PORT = 3001;
 app.listen(PORT, () => {

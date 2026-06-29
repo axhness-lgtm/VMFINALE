@@ -21,10 +21,12 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   
-  // Post-payment details
   const [bookingId, setBookingId] = useState(null);
+  const [guestUserId, setGuestUserId] = useState(null);
   const [tokenName, setTokenName] = useState('The Curious One');
   const [guestName, setGuestName] = useState('');
+  const [guestEmail, setGuestEmail] = useState('');
+  const [guestPhone, setGuestPhone] = useState('');
   const [customerQuery, setCustomerQuery] = useState('');
 
   const [stepAnim, setStepAnim] = useState(true);
@@ -90,8 +92,8 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
   }, []);
 
   const handleSeatsNext = async () => {
-    if (!token) {
-      setError('Invalid magic link. Please use the link sent to your email.');
+    if (!token && (!guestEmail || !guestEmail.includes('@'))) {
+      setError('Please enter a valid email address to reserve your seat.');
       return;
     }
     setLoading(true);
@@ -100,20 +102,21 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
       const res = await fetch('/api/bookings/lock-seats', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, seats, occurrence_id: dinner.id })
+        body: JSON.stringify({ token, email: guestEmail, phone: guestPhone, seats, occurrence_id: dinner.id })
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      if (!res.ok) throw new Error(data.details || data.error);
 
       setLockExpiry(data.locked_until);
+      if (data.user_id) setGuestUserId(data.user_id);
       
       // Initialize Razorpay
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'dummy_key',
         amount: data.amount,
         currency: 'INR',
-        name: 'Vantammayilu',
-        description: dinner?.title,
+        name: dinner?.title ? dinner.title.toUpperCase() : 'VANTAMMAYILU',
+        description: 'Seat Reservation',
         order_id: data.order_id,
         prefill: { email: data.email, contact: data.phone },
         theme: { color: '#e86321' },
@@ -137,7 +140,7 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
               })
             });
             const verifyData = await verifyRes.json();
-            if (!verifyRes.ok) throw new Error(verifyData.error);
+            if (!verifyRes.ok) throw new Error(verifyData.details || verifyData.error);
             
             setBookingId(verifyData.booking_id);
             clearInterval(lockTimerRef.current);
@@ -205,6 +208,32 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
                  </p>
               </div>
 
+              {!token && (
+                <div className="space-y-3 mb-4 text-left">
+                  <p className="text-xs text-[var(--accent-primary)] font-bold uppercase tracking-wider">Guest Checkout (No magic link needed)</p>
+                  <div className="bm-field-group">
+                    <label className="bm-label">Email Address</label>
+                    <input 
+                      type="email" 
+                      className="bm-input font-body text-sm" 
+                      placeholder="you@example.com" 
+                      value={guestEmail} 
+                      onChange={e => setGuestEmail(e.target.value)} 
+                    />
+                  </div>
+                  <div className="bm-field-group">
+                    <label className="bm-label">Phone Number (Optional)</label>
+                    <input 
+                      type="tel" 
+                      className="bm-input font-body text-sm" 
+                      placeholder="+91 9876543210" 
+                      value={guestPhone} 
+                      onChange={e => setGuestPhone(e.target.value)} 
+                    />
+                  </div>
+                </div>
+              )}
+
               <div className="bm-field-group" style={{ marginBottom: '24px' }}>
                 <label className="bm-label">Select Seats (Max 2)</label>
                 <select
@@ -245,6 +274,79 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
               </p>
               
               {error && <div className="bm-error mt-6">{error}</div>}
+            </div>
+          )}
+
+          {/* ── STEP 3: Details & Token Selection ── */}
+          {step === 'details' && (
+            <div className="bm-step text-left">
+              <div className="bm-step-tag font-body italicwritten">Booking — Step 3</div>
+              <h2 className="bm-title">Payment Successful!</h2>
+              <p className="font-body text-[var(--text-main)]/80 mb-6 text-sm leading-relaxed">
+                Your reservation payment has been verified. Choose your anonymous token identity for the table and let us know of any dietary notes.
+              </p>
+
+              <div className="bm-field-group mb-4">
+                <label className="bm-label">Select Token Identity</label>
+                <select
+                  className="bm-input bm-select font-body font-bold text-base"
+                  value={tokenName}
+                  onChange={e => setTokenName(e.target.value)}
+                >
+                  {TOKEN_OPTIONS.map(opt => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="bm-field-group mb-6">
+                <label className="bm-label">Dietary Restrictions / Queries (Optional)</label>
+                <textarea
+                  className="bm-input font-body text-sm"
+                  rows="3"
+                  placeholder="e.g. Vegetarian, allergic to nuts, etc."
+                  value={customerQuery}
+                  onChange={e => setCustomerQuery(e.target.value)}
+                />
+              </div>
+
+              {error && <div className="bm-error mb-4">{error}</div>}
+
+              <button
+                className="bm-btn-primary"
+                onClick={async () => {
+                  setLoading(true);
+                  setError('');
+                  try {
+                    const res = await fetch('/api/bookings/finalize', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        token,
+                        user_id: guestUserId,
+                        booking_id: bookingId || `guest_${Date.now()}`,
+                        token_name: tokenName,
+                        customer_query: customerQuery,
+                        occurrence_id: dinner.id,
+                        seats,
+                        email: guestEmail
+                      })
+                    });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.details || data.error);
+                    
+                    setLoading(false);
+                    onBookingComplete?.();
+                    goStep('confirmed');
+                  } catch (err) {
+                    setError('Error completing reservation: ' + err.message);
+                    setLoading(false);
+                  }
+                }}
+                disabled={loading}
+              >
+                {loading ? 'Finalizing...' : 'Complete Reservation →'}
+              </button>
             </div>
           )}
 

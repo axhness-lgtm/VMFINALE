@@ -46,7 +46,7 @@ const faqs = [
 
 
 
-const ReserveSection = ({ onReserveClick }) => {
+const ReserveSection = ({ onReserveClick, onInterestClick, canReserve }) => {
   return (
     <section className="relative w-full bg-[var(--bg-primary)] flex flex-col items-center pt-24 pb-0 overflow-hidden">
       {/* Background Texture */}
@@ -62,12 +62,23 @@ const ReserveSection = ({ onReserveClick }) => {
           <p className="font-body italic text-xl md:text-2xl text-[var(--text-main)] mb-6">
             Good food. Warm company.<br />Stories that stay with you.
           </p>
-          <button
-            onClick={onReserveClick}
-            className="bg-[var(--accent-primary)] text-white font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-full shadow-lg hover:bg-[#c14a27] hover:scale-105 transition-all duration-300 relative z-40"
-          >
-            Reserve Your Seat
-          </button>
+          <div className="flex flex-col sm:flex-row items-center gap-4 relative z-40">
+            {canReserve ? (
+              <button
+                onClick={onReserveClick}
+                className="bg-[var(--accent-primary)] text-white font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-full shadow-lg hover:bg-[#c14a27] hover:scale-105 transition-all duration-300"
+              >
+                Reserve Your Seat
+              </button>
+            ) : (
+              <button
+                onClick={onInterestClick}
+                className="bg-[var(--accent-primary)] text-white font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-full shadow-lg hover:bg-[#c14a27] hover:scale-105 transition-all duration-300"
+              >
+                I'm Interested
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Main Illustration immediately below CTA */}
@@ -95,19 +106,20 @@ export default function Dinner() {
   const token = searchParams.get('token');
 
   const [activeDinner, setActiveDinner] = useState(CURRENT_DINNER);
+  const canReserve = Boolean(token || activeDinner?.status === 'bookings_open');
 
   useEffect(() => {
     // Fetch the latest active occurrence
     const fetchDinner = async () => {
-      const { data, error } = await supabase
-        .from('occurrences')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
-
-      if (data) {
-        setActiveDinner({ ...data, price_inr: data.price_inr });
+      try {
+        const res = await fetch('/api/occurrences');
+        const data = await res.json();
+        if (data.success && data.occurrences?.length > 0) {
+          const latest = data.occurrences[0];
+          setActiveDinner({ ...latest, price_inr: latest.price_inr });
+        }
+      } catch (err) {
+        console.error('Error fetching dinner occurrence:', err);
       }
     };
     fetchDinner();
@@ -162,69 +174,173 @@ export default function Dinner() {
     <div className="w-full relative bg-[var(--bg-primary)]">
 
       {/* 1. HERO SECTION */}
-      <section className="relative min-h-[90vh] flex items-center justify-center pt-24 pb-12 px-6 lg:px-16 overflow-hidden">
+      <section className="relative min-h-[92vh] flex flex-col justify-between pt-28 md:pt-36 pb-0 px-6 lg:px-16 overflow-hidden bg-[var(--bg-primary)]">
         {/* Soft background glow */}
         <div className="absolute top-1/3 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--accent-primary)]/5 rounded-full filter blur-3xl pointer-events-none" />
 
-        <div className="container mx-auto max-w-7xl relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div className="container mx-auto max-w-7xl relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center my-auto pb-16">
 
-          <div className="lg:col-span-6 flex flex-col justify-center relative z-20">
-            <div className="relative inline-block mb-6">
-              <img src="/curdest.png" alt="Current Destination" className="absolute -top-12 -left-6 w-24 h-auto -rotate-12 z-30 drop-shadow-md" />
-              <span className="text-[#d87c53] font-body tracking-[0.2em] uppercase text-xs block font-bold relative z-10">
-                NEXT AT VANTAMMAYILU
+          {/* Left Column: Typography & CTA */}
+          <div className="lg:col-span-6 flex flex-col justify-center relative z-30 pl-2 lg:pl-6 text-left">
+            
+            {/* Subtitle */}
+            <div className="flex items-center gap-3 mb-6">
+              <span className="text-[var(--accent-primary)] font-body tracking-[0.2em] uppercase text-xs md:text-sm font-bold">
+                BOOK YOUR SEAT
               </span>
-            </div>
-            <h1 className="text-6xl md:text-8xl lg:text-[7rem] font-heading leading-[1.05] text-[#2c2b29] mb-8 relative">
-              When in <br />Marrakech, <br />
-              <span className="relative inline-block mt-2">
-                Morocco.
-                {/* Thick Pink Painted Stroke */}
-                <svg className="absolute w-[110%] h-4 -bottom-1 -left-[5%] text-[#ea8591] opacity-90" viewBox="0 0 100 10" preserveAspectRatio="none">
-                  <path d="M2,5 Q50,7 98,4" stroke="currentColor" strokeWidth="4" fill="none" strokeLinecap="round" />
+              <motion.span 
+                animate={{ rotate: [-10, 10, -10], scale: [1, 1.1, 1] }}
+                transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+                className="text-[var(--accent-primary)] inline-block"
+              >
+                <svg className="w-5 h-5 text-[var(--accent-primary)]" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" opacity="0.3"/>
+                  <path d="M7 11h10v2H7zM12 7v10h-2V7z"/>
+                  {/* Little chair/sparkle silhouette */}
+                  <path d="M15 5h3v2h-3zm-9 0h3v2H6zm4.5 12h3v2h-3z"/>
                 </svg>
-              </span>
+              </motion.span>
+              <span className="text-[var(--accent-primary)] text-sm font-bold animate-pulse">✴</span>
+            </div>
+
+            {/* Stacked Big Heading */}
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[5rem] font-heading leading-[0.96] text-[#2c2b29] mb-5 tracking-tight">
+              Good<br />
+              food.<br />
+              Great<br />
+              company.
             </h1>
-            <p className="font-body text-xl text-[var(--text-main)]/80 mb-10 max-w-lg leading-relaxed">
-              Five courses inspired by Moroccan kitchens, shared with eight curious people around one table.
+
+            {/* Description */}
+            <p className="font-body text-lg md:text-xl text-[var(--text-main)]/85 mb-8 max-w-md leading-relaxed">
+              Intimate dinners. Curated menus.<br />
+              Conversations that <span className="underline decoration-[var(--accent-primary)] decoration-2 underline-offset-6">travel</span> beyond the table.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center mt-6">
-              {token ? (
+            {/* Reserve or Interest Button */}
+            <div className="flex flex-wrap items-center gap-3 my-3">
+              {canReserve ? (
                 <button
                   onClick={() => setIsBookingOpen(true)}
-                  className="group relative btn-paper bg-[#efe8db] text-[#2c2b29] border-[#2c2b29]/5 hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] transition-colors text-sm px-8 py-4 drop-shadow-md rounded-xl font-bold tracking-wide z-10"
+                  className="bg-[var(--accent-primary)] text-white font-body uppercase text-base md:text-lg font-extrabold tracking-widest px-8 py-3.5 rounded-xl shadow-xl hover:bg-[#c14a27] hover:scale-105 active:scale-95 border-2 border-[#ffffff]/20 transition-all duration-300 z-20 cursor-pointer"
                 >
-                  Book your seat
+                  RESERVE YOUR SEAT
                 </button>
               ) : (
                 <button
                   onClick={() => setIsInterestOpen(true)}
-                  className="group relative btn-paper bg-[#efe8db] text-[#2c2b29] border-[#2c2b29]/5 hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] transition-colors text-sm px-8 py-4 drop-shadow-md rounded-xl font-bold tracking-wide z-10"
+                  className="bg-[var(--accent-primary)] text-white font-body uppercase text-base md:text-lg font-extrabold tracking-widest px-8 py-3.5 rounded-xl shadow-xl hover:bg-[#c14a27] hover:scale-105 active:scale-95 border-2 border-[#ffffff]/20 transition-all duration-300 z-20 cursor-pointer"
                 >
-                  I'm interested
+                  I'M INTERESTED
                 </button>
               )}
-              <a
-                href="#menu"
-                className="group relative btn-paper bg-[#efe8db] text-[#2c2b29] border-[#2c2b29]/5 hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] transition-colors text-sm px-8 py-4 drop-shadow-md rounded-xl font-bold tracking-wide z-10"
-              >
-                Explore the menu
-              </a>
             </div>
+
+            {/* Heart & Handwritten Note */}
+            <div className="flex items-center gap-2 mt-5 text-[var(--text-main)]">
+              <span className="text-xl md:text-2xl text-[var(--accent-primary)]">♡</span>
+              <span className="font-logo text-xl md:text-2xl tracking-wide pt-1 text-[#2c2b29]">
+                <span className="border-b-[1.5px] border-[var(--accent-primary)] pb-0.5">Pick a dinner.</span> Join the table.
+              </span>
+            </div>
+
           </div>
 
-          {/* Hero Image / Collage */}
-          <div className="lg:col-span-6 relative w-full min-h-[50vh] flex items-center justify-center lg:justify-end mt-12 lg:mt-0 pointer-events-none">
-            <motion.img
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1.2, ease: "easeOut" }}
-              src="/herodinnerf.png"
-              alt="Morocco Dinner Experience"
-              className="w-[110%] lg:w-[128%] max-w-none object-contain drop-shadow-sm -mr-16 lg:-mr-32 mix-blend-multiply z-0"
-            />
+          {/* Right Column: Reference Collage Illustration Area */}
+          <div className="lg:col-span-6 relative w-full min-h-[420px] lg:min-h-[500px] flex items-center justify-center mt-6 lg:mt-0 pointer-events-none select-none">
+            
+            <div className="relative w-full max-w-[440px] flex items-center justify-center">
+              
+              {/* d3.png: Black Crescent Moon */}
+              <motion.img
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, delay: 0.2 }}
+                src="/d3.png"
+                alt="Crescent Moon"
+                className="absolute top-4 left-4 sm:left-6 md:left-2 lg:-left-4 w-10 sm:w-14 md:w-16 h-auto object-contain z-20 drop-shadow-sm"
+              />
+
+              {/* d4.png: Orange Star (Top right of moon) */}
+              <motion.img
+                animate={{ rotate: 360, scale: [1, 1.15, 1] }}
+                transition={{ rotate: { repeat: Infinity, duration: 25, ease: "linear" }, scale: { repeat: Infinity, duration: 3 } }}
+                src="/d4.png"
+                alt="Orange Star"
+                className="absolute -top-4 left-20 sm:left-28 md:left-32 w-7 sm:w-9 md:w-10 h-auto object-contain z-20"
+              />
+
+              {/* d4.png: Orange Star (Bottom left of moon) */}
+              <motion.img
+                animate={{ rotate: -360, scale: [1, 1.2, 1] }}
+                transition={{ rotate: { repeat: Infinity, duration: 30, ease: "linear" }, scale: { repeat: Infinity, duration: 4, delay: 1 } }}
+                src="/d4.png"
+                alt="Orange Star"
+                className="absolute top-28 left-6 sm:left-10 md:left-6 w-6 sm:w-8 md:w-9 h-auto object-contain z-20"
+              />
+
+              {/* d1.png: Main Orange Archway & Table Centerpiece */}
+              <motion.img
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1.1, ease: "easeOut" }}
+                src="/d1.png"
+                alt="Intimate Dinner Archway"
+                className="w-[80%] sm:w-[75%] md:w-[80%] h-auto object-contain relative z-10 drop-shadow-md mx-auto"
+              />
+
+              {/* d2.png: Hanging Lamp Glow / Layer overlay */}
+              <motion.img
+                animate={{ y: [-3, 3, -3] }}
+                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                src="/d2.png"
+                alt="Lamp"
+                className="absolute top-[12%] sm:top-[13%] left-1/2 -translate-x-1/2 w-20 sm:w-28 md:w-32 h-auto object-contain z-20 opacity-90 mix-blend-multiply"
+              />
+
+              {/* d7.png: Left Green Potted Plant */}
+              <motion.img
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 1, delay: 0.4 }}
+                src="/d7.png"
+                alt="Potted Plant Left"
+                className="absolute -bottom-4 left-0 sm:-left-4 md:-left-8 lg:-left-12 w-28 sm:w-36 md:w-40 lg:w-44 h-auto object-contain z-20 drop-shadow"
+              />
+
+              {/* d6.png: Right Tall Palm Plant */}
+              <motion.img
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 1, delay: 0.5 }}
+                src="/d6.png"
+                alt="Tall Potted Palm Right"
+                className="absolute -bottom-6 right-2 sm:-right-4 md:-right-8 lg:-right-12 w-32 sm:w-40 md:w-48 lg:w-52 h-auto object-contain z-20 drop-shadow"
+              />
+
+              {/* d5.png: Vertical Grid Dots */}
+              <motion.img
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.85 }}
+                transition={{ duration: 1.2, delay: 0.6 }}
+                src="/d5.png"
+                alt="Grid pattern"
+                className="absolute bottom-16 -right-2 sm:-right-8 md:-right-16 lg:-right-20 w-8 sm:w-12 md:w-14 h-auto object-contain z-10"
+              />
+
+            </div>
+
           </div>
+
+        </div>
+
+        {/* Transition edge bottom border leading into next section: d8.png zoomed end-to-end */}
+        <div className="w-full relative z-30 pt-6 pb-0 bg-transparent pointer-events-none flex justify-center overflow-hidden">
+          <img 
+            src="/d8.png" 
+            alt="Section transition decoration" 
+            className="w-full h-20 sm:h-28 md:h-36 lg:h-44 object-cover object-center select-none opacity-95 scale-110 transform" 
+          />
         </div>
       </section>
 
@@ -509,7 +625,10 @@ export default function Dinner() {
       </section>
 
       {/* 7. RESERVE A SEAT */}
-      <ReserveSection onReserveClick={() => setIsBookingOpen(true)} />
+      <ReserveSection 
+        onReserveClick={() => setIsBookingOpen(true)} 
+        onInterestClick={() => setIsInterestOpen(true)} 
+      />
 
       {/* Shared Booking Modal Flow (Only accessible with token) */}
       <BookingModal

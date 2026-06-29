@@ -19,10 +19,10 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { occurrence_id, selected_user_ids, password } = req.body;
+  const { occurrence_id, selected_user_ids, password, custom_subject, custom_message, poster_url, menu_url } = req.body;
 
   // Simple admin auth check
-  if (password !== (process.env.ADMIN_PASSWORD || 'founder123')) {
+  if (password !== (process.env.ADMIN_PASSWORD || 'Hyndavio@1001')) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
@@ -70,21 +70,38 @@ export default async function handler(req, res) {
 
       const magicLink = `${DOMAIN}/dinner?token=${token}`;
 
+      const formattedMessage = custom_message
+        ? custom_message.replace(/\n/g, '<br/>')
+        : `We've curated the list for <strong>${occurrence.title}</strong>, and we'd love for you to join us.<br/><br/>Please use the private link below to secure your seat. Bookings are on a first-come, first-served basis for the selected active list.`;
+
+      const posterHtml = poster_url
+        ? `<div style="margin-bottom: 24px;"><img src="${poster_url}" alt="Poster for ${occurrence.title}" style="width: 100%; max-width: 600px; border-radius: 8px; display: block;" /></div>`
+        : '';
+
+      const menuHtml = menu_url
+        ? `<div style="margin: 32px 0;"><h3 style="color: #e86321; font-size: 18px; margin-bottom: 12px;">Curated Menu</h3><img src="${menu_url}" alt="Menu for ${occurrence.title}" style="width: 100%; max-width: 600px; border-radius: 8px; display: block;" /></div>`
+        : '';
+
       const msg = {
         to: user.email,
         from: process.env.SENDGRID_FROM_EMAIL || 'founder@vantammayilu.com', // Replace with verified sender
-        subject: `You're invited: ${occurrence.title}`,
+        subject: custom_subject || `You're invited: ${occurrence.title}`,
+        trackingSettings: {
+          clickTracking: { enable: false, enableText: false },
+          openTracking: { enable: false }
+        },
         html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2>You're invited to the table.</h2>
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #1a1a1a; line-height: 1.6;">
+            ${posterHtml}
+            <h2 style="color: #e86321; font-size: 24px; margin-bottom: 16px;">You're invited to the table.</h2>
             <p>Hi ${user.name},</p>
-            <p>We've curated the list for <strong>${occurrence.title}</strong>, and we'd love for you to join us.</p>
-            <p>Please use the private link below to secure your seat. Bookings are on a first-come, first-served basis for the selected active list.</p>
-            <div style="margin: 30px 0;">
-              <a href="${magicLink}" style="background-color: #e86321; color: white; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 4px;">Secure Your Seat</a>
+            <p style="margin-bottom: 24px;">${formattedMessage}</p>
+            ${menuHtml}
+            <div style="margin: 32px 0;">
+              <a href="${magicLink}" style="background-color: #e86321; color: white; padding: 14px 28px; text-decoration: none; font-weight: bold; border-radius: 6px; display: inline-block; font-size: 16px;">Secure Your Seat</a>
             </div>
-            <p>If you don't book within the availability, your seat may be passed to the next person on the list.</p>
-            <p>Warmly,<br/>Vantammayilu</p>
+            <p style="font-size: 14px; color: #666;">If you don't book within the availability, your seat may be passed to the next person on the list.</p>
+            <p style="margin-top: 32px;">Warmly,<br/><strong>Vantammayilu</strong></p>
           </div>
         `,
       };

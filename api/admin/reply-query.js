@@ -18,7 +18,7 @@ export default async function handler(req, res) {
   const { booking_id, reply_text, password } = req.body;
 
   // Simple admin auth check
-  if (password !== (process.env.ADMIN_PASSWORD || 'founder123')) {
+  if (password !== (process.env.ADMIN_PASSWORD || 'Hyndavio@1001')) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
@@ -53,6 +53,10 @@ export default async function handler(req, res) {
       to: customerEmail,
       from: process.env.SENDGRID_FROM_EMAIL || 'founder@vantammayilu.com',
       subject: `Reply to your query regarding your upcoming dinner`,
+      trackingSettings: {
+        clickTracking: { enable: false, enableText: false },
+        openTracking: { enable: false }
+      },
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <p>Hi ${customerName},</p>

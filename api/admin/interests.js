@@ -13,7 +13,7 @@ export default async function handler(req, res) {
   const { occurrence_id, password } = req.body;
 
   // Simple admin auth check matching open-bookings
-  if (password !== (process.env.ADMIN_PASSWORD || 'founder123')) {
+  if (password !== (process.env.ADMIN_PASSWORD || 'Hyndavio@1001')) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 

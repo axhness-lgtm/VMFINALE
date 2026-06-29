@@ -4,16 +4,20 @@ import { createClient } from '@supabase/supabase-js';
 dotenv.config();
 const supabase = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
-async function run() {
-  const { data: occs } = await supabase.from('occurrences').select('id, title').order('created_at', { ascending: false }).limit(1);
-  const activeOccId = occs[0].id;
-  console.log('Active Occurrence:', activeOccId, occs[0].title);
-  
-  const { data: seats } = await supabase.rpc('get_available_seats', { p_occurrence_id: activeOccId });
-  console.log('Available seats:', seats);
+async function checkDb() {
+  console.log('--- Checking Occurrences ---');
+  const { data: occs, error: occErr } = await supabase.from('occurrences').select('*');
+  console.log('Occurrences:', occs, occErr || '');
 
-  const { data: bookings } = await supabase.from('bookings').select('*').eq('occurrence_id', activeOccId);
-  console.log('Bookings for occurrence:', bookings);
+  console.log('--- Checking Users ---');
+  const { data: users, error: userErr } = await supabase.from('users').select('*');
+  console.log('Users count:', users?.length, userErr || '');
+  if (users?.length) console.log('Latest users:', users.slice(-3));
+
+  console.log('--- Checking Interests ---');
+  const { data: ints, error: intErr } = await supabase.from('occurrence_interests').select('*, users(name, email)');
+  console.log('Interests count:', ints?.length, intErr || '');
+  if (ints?.length) console.log('Latest interests:', ints.slice(-3));
 }
 
-run();
+checkDb();

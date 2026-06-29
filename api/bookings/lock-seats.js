@@ -21,20 +21,43 @@ export default async function handler(req, res) {
 
   const { token, seats, occurrence_id } = req.body;
 
-  if (!token || !seats || !occurrence_id) {
-    return res.status(400).json({ error: 'Missing required fields' });
+  if (!seats || !occurrence_id) {
+    return res.status(400).json({ error: 'Missing required fields (seats, occurrence_id)' });
   }
 
   try {
-    // 1. Verify Magic Link Token
-    let decoded;
-    try {
-      decoded = jwt.verify(token, JWT_SECRET);
-    } catch (e) {
-      return res.status(401).json({ error: 'Invalid or expired magic link' });
+    // 1. Verify Magic Link Token or Fallback to Guest
+    let user_id, phone, email;
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        user_id = decoded.user_id;
+        phone = decoded.phone;
+        email = decoded.email;
+      } catch (e) {
+        phone = req.body.phone || '9999999999';
+        email = req.body.email || 'guest@vantammayilu.com';
+      }
+    } else {
+      user_id = req.body.user_id;
+      phone = req.body.phone || '9999999999';
+      email = req.body.email || 'guest@vantammayilu.com';
     }
 
-    const { user_id, phone, email } = decoded;
+    // Ensure user_id is a valid UUID in users table
+    if (!user_id || !user_id.includes('-')) {
+      const { data: existingUser } = await supabase.from('users').select('id').eq('email', email).maybeSingle();
+      if (existingUser?.id) {
+        user_id = existingUser.id;
+      } else {
+        const { data: newUser } = await supabase.from('users').insert({
+          name: email.split('@')[0],
+          email: email,
+          phone: phone !== '9999999999' ? phone : `g_${Date.now()}`
+        }).select('id').single();
+        if (newUser?.id) user_id = newUser.id;
+      }
+    }
 
     // 2. Check if already booked
     const { data: existingBooking } = await supabase
@@ -85,7 +108,7 @@ export default async function handler(req, res) {
        order = await razorpay.orders.create({
         amount: amount,
         currency: 'INR',
-        receipt: `receipt_${user_id}_${Date.now()}`
+        receipt: `rcpt_${Date.now()}` // Must be <= 40 chars for Razorpay API
       });
     } else {
        // Dev fallback
@@ -103,6 +126,7 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error('Error locking seats:', error);
-    return res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    const errorMsg = error?.error?.description || error?.message || (typeof error === 'object' ? JSON.stringify(error) : String(error));
+    return res.status(500).json({ error: 'Internal Server Error', details: errorMsg });
   }
 }

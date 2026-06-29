@@ -21,23 +21,38 @@ function useColumns() {
   return cols;
 }
 
-const baseImages = [
-  "/flow1.png", "/flow2.png", "/flow3.png", "/destination.png",
-  "/pattern.png", "/dinnertable.png", "/italy_pasta_table.png", "/sushi_platter.jpg"
+const gridPhotos = [
+  "/grid/PUS01765.jpg",
+  "/grid/PUS01922 (1).jpg",
+  "/grid/PUS02024 (1).jpg",
+  "/grid/PUS02027.jpg",
+  "/grid/PUS02031.jpg",
+  "/grid/_DSC0296.jpg",
+  "/grid/_DSC0343 (1).jpg"
+];
+
+const gridVideos = [
+  "/grid/C0001.MP4",
+  "/grid/C0060.MP4",
+  "/grid/C0074.MP4",
+  "/grid/C0121.MP4",
+  "/grid/C0171 (1).MP4",
+  "/grid/C0454.MP4",
+  "/grid/C0483.MP4",
+  "/grid/C0510.MP4",
+  "/grid/C0529.MP4"
 ];
 
 const flowGridItems = Array.from({ length: 12 }).map((_, i) => {
-  // Deterministic pseudo-random value so it doesn't shift on every render
   const pseudoRandom = Math.abs(Math.sin(i * 12.9898 + 78.233)) * 43758.5453;
-  // Aspect ratio between 0.6 (tall) and 1.6 (wide)
-  const uniqueAspectRatio = 0.6 + (pseudoRandom % 1.0);
+  const uniqueAspectRatio = 0.7 + (pseudoRandom % 0.8);
   
   return {
     id: i + 1,
-    imgSrc: baseImages[i % baseImages.length],
-    videoSrc: "/assets/heroland.mp4",
+    imgSrc: gridPhotos[i % gridPhotos.length],
+    videoSrc: gridVideos[i % gridVideos.length],
     aspectRatio: uniqueAspectRatio,
-    altText: `Flow ${i + 1}`
+    altText: `Vantammayilu Gathering ${i + 1}`
   };
 });
 
@@ -57,9 +72,9 @@ const HoverVideoCard = ({ imgSrc, videoSrc, aspectRatio, altText, isLast }) => {
     <div 
       style={{ 
         aspectRatio: isLast ? undefined : aspectRatio,
-        minHeight: isLast ? '200px' : undefined
+        minHeight: isLast ? '220px' : undefined
       }}
-      className={`relative w-full rounded-xl overflow-hidden shadow-lg hover-lift hover:shadow-2xl transition-all duration-500 group cursor-pointer inline-block ${isLast ? 'flex-grow mb-0' : 'mb-0'}`}
+      className={`relative w-full rounded-xl overflow-hidden shadow-lg hover-lift hover:shadow-2xl transition-all duration-500 group cursor-pointer inline-block bg-[#efe8db] ${isLast ? 'flex-grow mb-0' : 'mb-0'}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onTouchStart={() => setIsHovered(true)}
@@ -68,16 +83,18 @@ const HoverVideoCard = ({ imgSrc, videoSrc, aspectRatio, altText, isLast }) => {
       <img 
         src={imgSrc} 
         alt={altText} 
-        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${isHovered ? 'opacity-0' : 'opacity-100'}`} 
+        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${isHovered ? 'opacity-0' : 'opacity-100'}`} 
       />
-      <video
-        ref={videoRef}
-        src={videoSrc}
-        loop
-        muted
-        playsInline
-        className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ${isHovered ? 'opacity-100 scale-105' : 'opacity-0 scale-100'}`}
-      />
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <video
+          ref={videoRef}
+          src={videoSrc}
+          loop
+          muted
+          playsInline
+          className={`w-full h-full object-cover transition-all duration-500 transform -rotate-90 scale-[1.45] ${isHovered ? 'opacity-100' : 'opacity-0'}`}
+        />
+      </div>
       <div className={`absolute inset-0 bg-black/10 transition-opacity duration-500 pointer-events-none ${isHovered ? 'opacity-100' : 'opacity-0'}`} />
     </div>
   );

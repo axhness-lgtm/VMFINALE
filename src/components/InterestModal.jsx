@@ -5,6 +5,7 @@ export default function InterestModal({ isOpen, onClose, dinner }) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
+  const [platform, setPlatform] = useState('Instagram');
   const [instagram, setInstagram] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -34,7 +35,7 @@ export default function InterestModal({ isOpen, onClose, dinner }) {
           name, 
           phone: normalizedPhone, 
           email, 
-          instagram_handle: instagram, 
+          instagram_handle: `${platform}: ${instagram}`, 
           occurrence_id: dinner?.id
         })
       });
@@ -82,8 +83,20 @@ export default function InterestModal({ isOpen, onClose, dinner }) {
                 <input className="bm-input" type="email" placeholder="name@server.com" value={email} onChange={e => setEmail(e.target.value)} required />
               </div>
               <div className="bm-field-group">
-                <label className="bm-label">Instagram Handle</label>
-                <input className="bm-input" placeholder="@username" value={instagram} onChange={e => setInstagram(e.target.value)} required />
+                <label className="bm-label">Preferred Social Profile</label>
+                <div className="flex gap-2 mb-2">
+                  {['Instagram', 'Facebook', 'LinkedIn'].map(p => (
+                    <button
+                      type="button"
+                      key={p}
+                      onClick={() => setPlatform(p)}
+                      className={`px-3 py-1 text-xs rounded font-bold uppercase tracking-wider transition-colors ${platform === p ? 'bg-[var(--accent-primary)] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                </div>
+                <input className="bm-input" placeholder={`Your ${platform} Handle / Profile URL`} value={instagram} onChange={e => setInstagram(e.target.value)} required />
               </div>
 
               {error && <div className="bm-error">{error}</div>}
