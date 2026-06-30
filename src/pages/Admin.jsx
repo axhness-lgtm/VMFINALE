@@ -1,10 +1,65 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabase';
 
+class AdminErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null, errorInfo: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, errorInfo) {
+    console.error("Admin Render Error:", error, errorInfo);
+    this.setState({ errorInfo });
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-[var(--bg-secondary)] pt-32 pb-16 px-8 font-body">
+          <div className="max-w-4xl mx-auto p-8 bg-red-50 border-2 border-red-500 text-red-900 rounded-2xl shadow-xl font-mono">
+            <h2 className="text-3xl font-heading font-bold mb-4 flex items-center gap-2">
+              <span>🚨</span>
+              <span>Founder Suite Render Exception</span>
+            </h2>
+            <p className="font-bold text-base mb-4 bg-red-100 p-3 rounded border border-red-300 break-words">
+              {String(this.state.error)}
+            </p>
+            <div className="mb-6">
+              <span className="text-xs font-bold uppercase tracking-wider text-red-700 block mb-1">Component Stack Trace:</span>
+              <pre className="text-xs bg-white p-4 rounded-lg border border-red-200 overflow-auto max-h-80 leading-relaxed">
+                {this.state.errorInfo && this.state.errorInfo.componentStack}
+              </pre>
+            </div>
+            <div className="flex gap-4">
+              <button 
+                onClick={() => { this.setState({ hasError: false, error: null }); window.location.reload(); }}
+                className="bg-red-600 text-white px-6 py-3 rounded-lg font-bold text-sm uppercase tracking-wider hover:bg-red-700 transition-all shadow"
+              >
+                🔄 Reload Dashboard
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function Admin() {
+  return (
+    <AdminErrorBoundary>
+      <AdminDashboardContent />
+    </AdminErrorBoundary>
+  );
+}
+
+function AdminDashboardContent() {
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState('dispatch'); // 'dispatch' | 'occurrences' | 'community'
+  const [selectedUsers, setSelectedUsers] = useState(new Set());
 
   // Data state
   const [occurrences, setOccurrences] = useState([]);
@@ -51,19 +106,25 @@ export default function Admin() {
   };
 
   const fetchOccurrences = async () => {
+    setLoading(true);
     try {
       const res = await fetch('/api/occurrences');
       const data = await res.json();
-      if (data.success && data.occurrences) {
+      if (data && data.success && Array.isArray(data.occurrences)) {
         setOccurrences(data.occurrences);
         if (!selectedOccurrenceId && data.occurrences.length > 0) {
           setSelectedOccurrenceId(data.occurrences[0].id);
           setBlastOccId(data.occurrences[0].id);
           fetchInterests(data.occurrences[0].id);
         }
+      } else if (data && data.error) {
+        setError('Server Error: ' + data.error);
       }
     } catch (err) {
       console.error('Error fetching occurrences:', err);
+      setError('Network/Database error while loading occurrences. Please verify backend or database connection.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -71,7 +132,7 @@ export default function Admin() {
     try {
       const res = await fetch('/api/admin/community');
       const data = await res.json();
-      if (data.success) setCommunityCount(data.count);
+      if (data && data.success) setCommunityCount(data.count || 0);
 
       const listRes = await fetch('/api/admin/community', {
         method: 'POST',
@@ -79,13 +140,14 @@ export default function Admin() {
         body: JSON.stringify({ action: 'list', password: password || 'Hyndavio@1001' })
       });
       const listData = await listRes.json();
-      if (listData.success && Array.isArray(listData.users)) setCommunityList(listData.users);
+      if (listData && listData.success && Array.isArray(listData.users)) setCommunityList(listData.users);
     } catch (err) {
       console.error('Error fetching community count:', err);
     }
   };
 
   const fetchInterests = async (occurrenceId) => {
+    if (!occurrenceId) return;
     setSelectedOccurrenceId(occurrenceId);
     setLoading(true);
     setError('');
@@ -96,8 +158,8 @@ export default function Admin() {
         body: JSON.stringify({ occurrence_id: occurrenceId, password: password || 'Hyndavio@1001' })
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.details || data.error);
-      setInterests(data.interests || []);
+      if (!res.ok) throw new Error((data && (data.details || data.error)) || 'Failed to fetch interests');
+      setInterests((data && Array.isArray(data.interests)) ? data.interests : []);
       setSelectedUsers(new Set());
     } catch (err) {
       setError('Failed to fetch interests: ' + err.message);
@@ -105,6 +167,15 @@ export default function Admin() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    if (!selectedOccurrenceId && Array.isArray(occurrences) && occurrences.length > 0) {
+      setSelectedOccurrenceId(occurrences[0].id);
+      setBlastOccId(occurrences[0].id);
+      fetchInterests(occurrences[0].id);
+    }
+  }, [isAuthenticated, occurrences, selectedOccurrenceId]);
 
   useEffect(() => {
     if (!isAuthenticated || !selectedOccurrenceId || activeTab !== 'dispatch') return;
@@ -116,7 +187,7 @@ export default function Admin() {
       })
       .then(res => res.json())
       .then(data => {
-        if (data.success && data.interests) {
+        if (data && data.success && Array.isArray(data.interests)) {
           setInterests(data.interests);
         }
       })
@@ -384,7 +455,16 @@ export default function Admin() {
     <div className="min-h-screen bg-[var(--bg-secondary)] pt-32 pb-16 px-8 font-body">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-          <h1 className="text-5xl font-heading text-[var(--text-main)]">Founder Suite</h1>
+          <div className="flex items-center gap-4">
+            <h1 className="text-5xl font-heading text-[var(--text-main)]">Founder Suite</h1>
+            <button 
+              onClick={() => { fetchOccurrences(); fetchCommunityCount(); if (selectedOccurrenceId) fetchInterests(selectedOccurrenceId); }}
+              className="text-xs px-3 py-1.5 rounded-full bg-[var(--text-main)]/10 hover:bg-[var(--accent-primary)] hover:text-white transition-colors font-bold uppercase tracking-wider"
+              title="Refresh Data"
+            >
+              🔄 Refresh
+            </button>
+          </div>
           
           {/* Tab navigation */}
           <div className="flex flex-wrap gap-2 bg-[var(--bg-primary)] p-2 rounded-lg border border-[var(--text-main)]/10 shadow-sm">
@@ -404,10 +484,23 @@ export default function Admin() {
               onClick={() => setActiveTab('community')}
               className={`px-4 py-2 rounded font-bold text-sm transition-all ${activeTab === 'community' ? 'bg-[var(--accent-primary)] text-white shadow' : 'text-[var(--text-main)]/70 hover:bg-[var(--text-main)]/5'}`}
             >
-              📢 Community Waitlist ({communityCount})
+              📢 Community Waitlist ({communityCount || 0})
             </button>
           </div>
         </div>
+
+        {error && (
+          <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-800 rounded-xl flex items-center justify-between shadow-sm">
+            <span>🚨 {error}</span>
+            <button onClick={() => setError('')} className="font-bold text-sm underline hover:opacity-80 ml-4">Dismiss</button>
+          </div>
+        )}
+
+        {loading && (
+          <div className="mb-6 p-3 bg-[var(--accent-primary)]/10 border border-[var(--accent-primary)]/30 text-[var(--text-main)] rounded-xl flex items-center gap-2 text-sm shadow-sm animate-pulse">
+            <span>⏳ Working / Synchronizing with server...</span>
+          </div>
+        )}
 
         {/* ── TAB 1: DISPATCH & ACTIVE INTERESTS ── */}
         {activeTab === 'dispatch' && (
@@ -416,29 +509,41 @@ export default function Admin() {
             <div className="col-span-1 bg-[var(--bg-primary)] p-6 rounded-xl shadow-sm border border-[var(--text-main)]/5">
               <h2 className="text-xl font-bold mb-4 text-[var(--text-main)]">Select Occurrence</h2>
               <div className="space-y-3">
-                {(occurrences || []).map(occ => {
-                  const sold = occ.sold_seats || 0;
-                  const total = occ.total_seats || 8;
-                  const isSoldOut = sold >= total;
-                  return (
-                    <div 
-                      key={occ.id} 
-                      onClick={() => fetchInterests(occ.id)}
-                      className={`p-4 border rounded-lg cursor-pointer transition-all ${selectedOccurrenceId === occ.id ? 'bg-[var(--accent-primary)]/10 border-[var(--accent-primary)] shadow-sm' : 'border-[var(--text-main)]/10 hover:border-[var(--text-main)]/30'}`}
+                {(!occurrences || occurrences.length === 0) ? (
+                  <div className="p-6 text-center bg-[var(--bg-secondary)] rounded-xl border border-[var(--text-main)]/10">
+                    <p className="text-sm text-[var(--text-main)]/70 mb-3">No active dinner occurrences found.</p>
+                    <button
+                      onClick={() => setActiveTab('occurrences')}
+                      className="bg-[var(--accent-primary)] text-white px-4 py-2 rounded text-xs font-bold uppercase tracking-wider hover:bg-[#c95318] transition-all"
                     >
-                      <div className="flex justify-between items-start">
-                        <h3 className="font-heading text-lg text-[var(--text-main)]">{occ.title}</h3>
-                        <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase ${isSoldOut ? 'bg-red-600 text-white animate-pulse' : 'bg-green-100 text-green-800'}`}>
-                          {isSoldOut ? '🔴 SOLD OUT' : `🎟️ ${sold}/${total} Sold`}
-                        </span>
+                      + Create Occurrence
+                    </button>
+                  </div>
+                ) : (
+                  (occurrences || []).map(occ => {
+                    const sold = occ?.sold_seats || 0;
+                    const total = occ?.total_seats || 8;
+                    const isSoldOut = sold >= total;
+                    return (
+                      <div 
+                        key={occ?.id || Math.random()} 
+                        onClick={() => occ?.id && fetchInterests(occ.id)}
+                        className={`p-4 border rounded-lg cursor-pointer transition-all ${selectedOccurrenceId === occ?.id ? 'bg-[var(--accent-primary)]/10 border-[var(--accent-primary)] shadow-sm' : 'border-[var(--text-main)]/10 hover:border-[var(--text-main)]/30'}`}
+                      >
+                        <div className="flex justify-between items-start">
+                          <h3 className="font-heading text-lg text-[var(--text-main)]">{occ?.title || 'Dinner Event'}</h3>
+                          <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase ${isSoldOut ? 'bg-red-600 text-white animate-pulse' : 'bg-green-100 text-green-800'}`}>
+                            {isSoldOut ? '🔴 SOLD OUT' : `🎟️ ${sold}/${total} Sold`}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center mt-2 text-xs font-bold uppercase tracking-wider text-[var(--text-main)]/60">
+                          <span>{occ?.event_date ? new Date(occ.event_date).toLocaleDateString() : 'TBD'}</span>
+                          <span className="px-2 py-0.5 rounded bg-[var(--text-main)]/5 text-[var(--accent-primary)]">{String(occ?.status || 'closed').replace(/_/g, ' ')}</span>
+                        </div>
                       </div>
-                      <div className="flex justify-between items-center mt-2 text-xs font-bold uppercase tracking-wider text-[var(--text-main)]/60">
-                        <span>{new Date(occ.event_date).toLocaleDateString()}</span>
-                        <span className="px-2 py-0.5 rounded bg-[var(--text-main)]/5 text-[var(--accent-primary)]">{(occ.status || 'closed').replace(/_/g, ' ')}</span>
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                )}
               </div>
             </div>
 
@@ -524,14 +629,26 @@ export default function Admin() {
               )}
 
               {!selectedOccurrenceId ? (
-                <p className="text-[var(--text-main)]/50 italic">Select an occurrence to view interests.</p>
+                <div className="p-12 text-center bg-[var(--bg-secondary)] rounded-xl border border-[var(--text-main)]/10 space-y-4">
+                  <h3 className="text-2xl font-heading text-[var(--text-main)]">No Occurrence Selected</h3>
+                  <p className="text-sm text-[var(--text-main)]/70 max-w-md mx-auto">
+                    To view waitlist guests, send magic link invitations, and track confirmed seats, please select an occurrence from the left sidebar or create a new dinner event.
+                  </p>
+                  <button
+                    onClick={() => setActiveTab('occurrences')}
+                    className="bg-[var(--text-main)] text-white px-6 py-3 rounded-md font-bold text-xs uppercase tracking-wider hover:bg-[var(--accent-primary)] transition-all shadow-md"
+                  >
+                    🍽️ Create or Manage Occurrences
+                  </button>
+                </div>
               ) : (
                 (() => {
-                  const currOcc = occurrences.find(o => o.id === selectedOccurrenceId) || {};
-                  const totalSeats = currOcc.total_seats || 8;
-                  const confirmedGuests = interests.filter(i => i.is_paid === true || i.status === 'PAID' || i.status === 'booked' || i.status === 'confirmed');
-                  const waitlistGuests = interests.filter(i => !(i.is_paid === true || i.status === 'PAID' || i.status === 'booked' || i.status === 'confirmed'));
-                  const seatsSold = confirmedGuests.reduce((sum, g) => sum + (g.seats || 1), 0);
+                  const currOcc = (occurrences || []).find(o => o?.id === selectedOccurrenceId) || {};
+                  const totalSeats = currOcc?.total_seats || 8;
+                  const safeInterests = Array.isArray(interests) ? interests : [];
+                  const confirmedGuests = safeInterests.filter(i => i && (i.is_paid === true || i.status === 'PAID' || i.status === 'booked' || i.status === 'confirmed'));
+                  const waitlistGuests = safeInterests.filter(i => i && !(i.is_paid === true || i.status === 'PAID' || i.status === 'booked' || i.status === 'confirmed'));
+                  const seatsSold = confirmedGuests.reduce((sum, g) => sum + ((g && g.seats) || 1), 0);
 
                   return (
                     <div className="space-y-8">
@@ -542,7 +659,7 @@ export default function Admin() {
                             <span>🎟️ REAL-TIME CONFIRMED SEATS SOLD</span>
                           </h3>
                           <p className="text-sm font-body text-[var(--text-main)]/80 mt-1">
-                            Live dynamic count of seats paid and confirmed for <strong>{currOcc.title || 'Selected Dinner'}</strong>.
+                            Live dynamic count of seats paid and confirmed for <strong>{currOcc?.title || 'Selected Dinner'}</strong>.
                           </p>
                         </div>
                         <div className="text-center bg-white px-6 py-3 rounded-xl border border-[var(--accent-primary)]/30 shadow">
@@ -575,14 +692,14 @@ export default function Admin() {
                               </thead>
                               <tbody>
                                 {(confirmedGuests || []).map(item => {
-                                  const u = item.users || {};
+                                  const u = (item && item.users) || {};
                                   return (
-                                    <tr key={item.id} className="border-b border-[var(--text-main)]/5 hover:bg-white/50 font-body text-sm">
-                                      <td className="py-3 px-3 font-bold text-green-800">{u.name}</td>
-                                      <td className="py-3 px-3 text-xs font-mono">{u.email}<br/>{u.phone}</td>
-                                      <td className="py-3 px-3"><span className="bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] font-bold px-2 py-1 rounded text-xs">{item.token_name || 'The Curious One'}</span></td>
-                                      <td className="py-3 px-3 font-mono font-bold text-base">{item.seats || 1}</td>
-                                      <td className="py-3 px-3 text-[11px] font-mono text-[var(--text-main)]/70">{item.razorpay_order_id || 'N/A'}</td>
+                                    <tr key={item?.id || Math.random()} className="border-b border-[var(--text-main)]/5 hover:bg-white/50 font-body text-sm">
+                                      <td className="py-3 px-3 font-bold text-green-800">{u?.name || 'Anonymous Guest'}</td>
+                                      <td className="py-3 px-3 text-xs font-mono">{u?.email || 'N/A'}<br/>{u?.phone || ''}</td>
+                                      <td className="py-3 px-3"><span className="bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] font-bold px-2 py-1 rounded text-xs">{item?.token_name || 'The Curious One'}</span></td>
+                                      <td className="py-3 px-3 font-mono font-bold text-base">{item?.seats || 1}</td>
+                                      <td className="py-3 px-3 text-[11px] font-mono text-[var(--text-main)]/70">{item?.razorpay_order_id || 'N/A'}</td>
                                       <td className="py-3 px-3">
                                         <button onClick={() => setViewModalGuest(item)} className="bg-white hover:bg-[var(--accent-primary)] hover:text-white text-[var(--text-main)] px-3 py-1 rounded border border-[var(--text-main)]/20 text-xs font-bold transition-all shadow-sm">
                                           👁️ View Details
@@ -618,22 +735,22 @@ export default function Admin() {
                               </thead>
                               <tbody>
                                 {(waitlistGuests || []).map(item => {
-                                  const u = item.users || {};
+                                  const u = (item && item.users) || {};
                                   return (
-                                    <tr key={item.id} className="border-b border-[var(--text-main)]/5 hover:bg-[var(--text-main)]/5 text-sm">
+                                    <tr key={item?.id || Math.random()} className="border-b border-[var(--text-main)]/5 hover:bg-[var(--text-main)]/5 text-sm">
                                       <td className="py-3 px-3">
                                         <input 
                                           type="checkbox" 
-                                          checked={selectedUsers.has(u.id)}
-                                          onChange={() => toggleUserSelection(u.id)}
+                                          checked={selectedUsers.has(u?.id)}
+                                          onChange={() => u?.id && toggleUserSelection(u.id)}
                                           className="w-4 h-4 accent-[var(--accent-primary)]"
                                         />
                                       </td>
-                                      <td className="py-3 px-3 font-bold">{u.name}</td>
-                                      <td className="py-3 px-3 text-xs font-mono">{u.email}<br/>{u.phone}</td>
+                                      <td className="py-3 px-3 font-bold">{u?.name || 'Anonymous Guest'}</td>
+                                      <td className="py-3 px-3 text-xs font-mono">{u?.email || 'N/A'}<br/>{u?.phone || ''}</td>
                                       <td className="py-3 px-3">
                                         <span className="px-2.5 py-1 rounded text-xs uppercase font-extrabold tracking-wider bg-orange-100 text-orange-800">
-                                          {(item.status || 'pending').replace(/_/g, ' ')}
+                                          {String((item && item.status) || 'pending').replace(/_/g, ' ')}
                                         </span>
                                       </td>
                                       <td className="py-3 px-3">
@@ -700,35 +817,41 @@ export default function Admin() {
             <div className="col-span-1 md:col-span-2 bg-[var(--bg-primary)] p-6 rounded-xl shadow-sm border border-[var(--text-main)]/5">
               <h2 className="text-xl font-bold mb-4 text-[var(--text-main)]">Manage All Occurrences</h2>
               <div className="space-y-4">
-                {(occurrences || []).map(occ => {
-                  const sold = occ.sold_seats || 0;
-                  const total = occ.total_seats || 8;
-                  const isSoldOut = sold >= total;
-                  return (
-                    <div key={occ.id} className="p-4 border rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                      <div>
-                        <div className="flex items-center gap-3">
-                          <h3 className="font-heading text-xl font-bold text-[var(--text-main)]">{occ.title}</h3>
-                          <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase ${isSoldOut ? 'bg-red-600 text-white animate-pulse' : 'bg-green-100 text-green-800'}`}>
-                            {isSoldOut ? `🔴 SOLD OUT (${sold}/${total})` : `🎟️ ${sold} / ${total} Seats Sold`}
-                          </span>
+                {(!occurrences || occurrences.length === 0) ? (
+                  <div className="p-8 text-center bg-[var(--bg-secondary)] rounded-xl border border-[var(--text-main)]/10">
+                    <p className="text-sm text-[var(--text-main)]/70 italic">No occurrences created yet. Use the form on the left to create your first dinner event.</p>
+                  </div>
+                ) : (
+                  (occurrences || []).map(occ => {
+                    const sold = occ?.sold_seats || 0;
+                    const total = occ?.total_seats || 8;
+                    const isSoldOut = sold >= total;
+                    return (
+                      <div key={occ?.id || Math.random()} className="p-4 border rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                          <div className="flex items-center gap-3">
+                            <h3 className="font-heading text-xl font-bold text-[var(--text-main)]">{occ?.title || 'Dinner Event'}</h3>
+                            <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase ${isSoldOut ? 'bg-red-600 text-white animate-pulse' : 'bg-green-100 text-green-800'}`}>
+                              {isSoldOut ? `🔴 SOLD OUT (${sold}/${total})` : `🎟️ ${sold} / ${total} Seats Sold`}
+                            </span>
+                          </div>
+                          <p className="text-xs font-mono text-[var(--text-main)]/70 mt-1">{occ?.event_date ? new Date(occ.event_date).toLocaleString() : 'TBD'} • ₹{((occ?.price_inr || 0) / 100).toLocaleString('en-IN')} • {total} total seats</p>
                         </div>
-                        <p className="text-xs font-mono text-[var(--text-main)]/70 mt-1">{new Date(occ.event_date).toLocaleString()} • ₹{(occ.price_inr / 100).toLocaleString('en-IN')} • {total} total seats</p>
+                        <div className="flex items-center gap-2">
+                          <select 
+                            value={occ?.status || 'closed'} 
+                            onChange={e => occ?.id && handleUpdateStatus(occ.id, e.target.value)}
+                            className="p-2 border rounded text-xs font-bold uppercase bg-[var(--bg-secondary)]"
+                          >
+                            <option value="collecting_interests">Collecting Interests</option>
+                            <option value="bookings_open">Bookings Open</option>
+                            <option value="closed">Closed</option>
+                          </select>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <select 
-                          value={occ.status} 
-                          onChange={e => handleUpdateStatus(occ.id, e.target.value)}
-                          className="p-2 border rounded text-xs font-bold uppercase bg-[var(--bg-secondary)]"
-                        >
-                          <option value="collecting_interests">Collecting Interests</option>
-                          <option value="bookings_open">Bookings Open</option>
-                          <option value="closed">Closed</option>
-                        </select>
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                )}
               </div>
             </div>
           </div>
@@ -812,7 +935,7 @@ export default function Admin() {
                       <label className="block text-xs font-bold uppercase tracking-widest text-[var(--text-main)]/70 mb-1">Select Occurrence to Announce</label>
                       <select className="w-full p-2 border rounded text-sm" value={blastOccId} onChange={e => setBlastOccId(e.target.value)}>
                         <option value="">-- Choose Occurrence --</option>
-                        {(occurrences || []).map(o => <option key={o.id} value={o.id}>{o.title}</option>)}
+                        {(occurrences || []).map(o => <option key={o?.id || Math.random()} value={o?.id}>{o?.title || 'Occurrence'}</option>)}
                       </select>
                     </div>
 
@@ -853,7 +976,7 @@ export default function Admin() {
             <div className="bg-[var(--bg-primary)] p-6 rounded-xl shadow-sm border border-[var(--text-main)]/5">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 border-b border-[var(--text-main)]/10 pb-4">
                 <div>
-                  <h2 className="text-xl font-bold text-[var(--text-main)]">👥 Community Waitlist Directory ({communityList.length})</h2>
+                  <h2 className="text-xl font-bold text-[var(--text-main)]">👥 Community Waitlist Directory ({(communityList || []).length})</h2>
                   <p className="text-xs text-[var(--text-main)]/60">Filter and view all guests added via manual paste or CSV.</p>
                 </div>
                 <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -865,7 +988,7 @@ export default function Admin() {
                   >
                     <option value="ALL">All Segregation Tags ({(communityList || []).length})</option>
                     {Array.from(new Set((communityList || []).map(u => {
-                      const handle = u.instagram_handle || '';
+                      const handle = (u && u.instagram_handle) || '';
                       const match = handle.match(/^\[Tag:\s*(.*?)\]/i);
                       return match ? match[1] : 'Untagged / General';
                     }))).filter(Boolean).map(tag => (
@@ -875,48 +998,55 @@ export default function Admin() {
                 </div>
               </div>
 
-              <div className="overflow-x-auto max-h-96">
-                <table className="w-full text-left border-collapse text-sm">
-                  <thead>
-                    <tr className="border-b border-[var(--text-main)]/10 text-xs uppercase tracking-widest text-[var(--text-main)]/50 sticky top-0 bg-[var(--bg-primary)]">
-                      <th className="py-3 px-3">Name</th>
-                      <th className="py-3 px-3">Email</th>
-                      <th className="py-3 px-3">Segregation Tag</th>
-                      <th className="py-3 px-3">Phone / Info</th>
-                      <th className="py-3 px-3">Added Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {(communityList || [])
-                      .filter(u => {
-                        if (listFilterTag === 'ALL') return true;
-                        const handle = u.instagram_handle || '';
-                        const match = handle.match(/^\[Tag:\s*(.*?)\]/i);
-                        const tag = match ? match[1] : 'Untagged / General';
-                        return tag === listFilterTag;
-                      })
-                      .map(u => {
-                        const handle = u.instagram_handle || '';
-                        const match = handle.match(/^\[Tag:\s*(.*?)\]/i);
-                        const tag = match ? match[1] : 'General';
-                        const cleanHandle = handle.replace(/^\[Tag:\s*.*?\]\s*/i, '');
-                        return (
-                          <tr key={u.id} className="border-b border-[var(--text-main)]/5 hover:bg-[var(--text-main)]/5">
-                            <td className="py-3 px-3 font-bold">{u.name}</td>
-                            <td className="py-3 px-3 font-mono text-xs">{u.email}</td>
-                            <td className="py-3 px-3">
-                              <span className="px-2.5 py-1 rounded text-xs font-bold uppercase bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20">
-                                🏷️ {tag}
-                              </span>
-                            </td>
-                            <td className="py-3 px-3 text-xs font-mono text-[var(--text-main)]/70">{cleanHandle || u.phone || 'N/A'}</td>
-                            <td className="py-3 px-3 text-xs text-[var(--text-main)]/50">{new Date(u.created_at).toLocaleDateString()}</td>
-                          </tr>
-                        );
-                      })}
-                  </tbody>
-                </table>
-              </div>
+              {(!communityList || communityList.length === 0) ? (
+                <div className="p-8 text-center bg-[var(--bg-secondary)] rounded-xl border border-[var(--text-main)]/10">
+                  <p className="text-sm text-[var(--text-main)]/70 italic">No community waitlist guests yet. Paste emails or upload a CSV above to get started.</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto max-h-96">
+                  <table className="w-full text-left border-collapse text-sm">
+                    <thead>
+                      <tr className="border-b border-[var(--text-main)]/10 text-xs uppercase tracking-widest text-[var(--text-main)]/50 sticky top-0 bg-[var(--bg-primary)]">
+                        <th className="py-3 px-3">Name</th>
+                        <th className="py-3 px-3">Email</th>
+                        <th className="py-3 px-3">Segregation Tag</th>
+                        <th className="py-3 px-3">Phone / Info</th>
+                        <th className="py-3 px-3">Added Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(communityList || [])
+                        .filter(u => {
+                          if (!u) return false;
+                          if (listFilterTag === 'ALL') return true;
+                          const handle = u.instagram_handle || '';
+                          const match = handle.match(/^\[Tag:\s*(.*?)\]/i);
+                          const tag = match ? match[1] : 'Untagged / General';
+                          return tag === listFilterTag;
+                        })
+                        .map(u => {
+                          const handle = u?.instagram_handle || '';
+                          const match = handle.match(/^\[Tag:\s*(.*?)\]/i);
+                          const tag = match ? match[1] : 'General';
+                          const cleanHandle = handle.replace(/^\[Tag:\s*.*?\]\s*/i, '');
+                          return (
+                            <tr key={u?.id || Math.random()} className="border-b border-[var(--text-main)]/5 hover:bg-[var(--text-main)]/5">
+                              <td className="py-3 px-3 font-bold">{u?.name || 'Anonymous'}</td>
+                              <td className="py-3 px-3 font-mono text-xs">{u?.email || 'N/A'}</td>
+                              <td className="py-3 px-3">
+                                <span className="px-2.5 py-1 rounded text-xs font-bold uppercase bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20">
+                                  🏷️ {tag}
+                                </span>
+                              </td>
+                              <td className="py-3 px-3 text-xs font-mono text-[var(--text-main)]/70">{cleanHandle || u?.phone || 'N/A'}</td>
+                              <td className="py-3 px-3 text-xs text-[var(--text-main)]/50">{u?.created_at ? new Date(u.created_at).toLocaleDateString() : 'N/A'}</td>
+                            </tr>
+                          );
+                        })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
         )}

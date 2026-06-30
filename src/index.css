@@ -282,6 +282,15 @@ p {
 .animate-marquee-vertical-reverse {
   animation: marquee-vertical-reverse 25s linear infinite;
 }
+
+@keyframes marquee-horizontal {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-33.3333%); }
+}
+
+.animate-marquee-horizontal {
+  animation: marquee-horizontal 30s linear infinite;
+}
 @keyframes spin-arc {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
@@ -328,20 +337,20 @@ p {
 }
 
 .arc-radius-flatter {
-  transform: rotate(var(--angle)) translateY(-350px);
+  transform: rotate(var(--angle)) translateY(-402px);
 }
 @media (min-width: 768px) {
   .arc-radius-flatter {
-    transform: rotate(var(--angle)) translateY(-480px);
+    transform: rotate(var(--angle)) translateY(-552px);
   }
 }
 
 .blog-ring-radius {
-  transform: rotate(var(--angle)) translateY(-200px);
+  transform: rotate(var(--angle)) translateY(-140px);
 }
 @media (min-width: 768px) {
   .blog-ring-radius {
-    transform: rotate(var(--angle)) translateY(-300px);
+    transform: rotate(var(--angle)) translateY(-210px);
   }
 }
 
@@ -349,16 +358,7 @@ p {
   animation-play-state: paused !important;
 }
 
-.bg-\[var\(--bg-primary\)\],
-.bg-\[var\(--bg-secondary\)\],
-.bg-\[\#faf8f5\],
-.bg-\[\#f4ebd9\],
-.bg-\[\#efe9e1\] {
-  background-image: url('/texture.png') !important;
-  background-size: cover !important;
-  background-attachment: fixed !important;
-  background-blend-mode: multiply !important;
-}
+
 
 /* Bookmark Ribbon */
 .bookmark-ribbon {

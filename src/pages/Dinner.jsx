@@ -5,6 +5,7 @@ import BookingModal from '../components/BookingModal';
 import InterestModal from '../components/InterestModal';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '../supabase';
+import EdgeDivider from '../components/EdgeDivider';
 
 const CURRENT_DINNER = {
   id: 'vietnam-dinner-01',
@@ -59,8 +60,8 @@ const ReserveSection = ({ onReserveClick, onInterestClick, canReserve }) => {
 
         {/* Center Title and Subtitle */}
         <div className="text-center flex flex-col items-center mb-0 relative z-30 px-6">
-          <h2 className="font-logo text-7xl md:text-9xl text-[var(--accent-primary)] mb-2 drop-shadow-sm transform -rotate-2">Reserve a seat</h2>
-          <p className="font-body italic text-xl md:text-2xl text-[var(--text-main)] mb-6">
+          <h2 className="font-logo text-5xl md:text-7xl text-[var(--accent-primary)] mb-1 drop-shadow-sm transform -rotate-2">Reserve a seat</h2>
+          <p className="font-body italic text-lg md:text-xl text-[var(--text-main)] mb-4">
             Good food. Warm company.<br />Stories that stay with you.
           </p>
           <div className="flex flex-col sm:flex-row items-center gap-4 relative z-40">
@@ -83,11 +84,13 @@ const ReserveSection = ({ onReserveClick, onInterestClick, canReserve }) => {
         </div>
 
         {/* Main Illustration immediately below CTA */}
-        <div className="w-full relative z-20 pointer-events-none flex justify-center -mt-32 md:-mt-64 px-4 md:px-0">
+        <div className="w-full relative z-20 pointer-events-none flex justify-center mt-2 md:mt-4 px-4 md:px-0">
           <img
-            src="/reserveseat.png"
+            src="/dinnerlast.png"
             alt="People dining at table"
-            className="w-full max-w-[1600px] lg:scale-110 object-contain object-bottom"
+            loading="lazy"
+            decoding="async"
+            className="w-full max-w-[950px] max-h-[50vh] object-contain object-bottom"
           />
         </div>
       </div>
@@ -239,86 +242,78 @@ export default function Dinner() {
               )}
             </div>
 
-            {/* Heart & Handwritten Note */}
-            <div className="flex items-center gap-2 mt-5 text-[var(--text-main)]">
-              <span className="text-xl md:text-2xl text-[var(--accent-primary)]">♡</span>
-              <span className="font-logo text-xl md:text-2xl tracking-wide pt-1 text-[#2c2b29]">
-                <span className="border-b-[1.5px] border-[var(--accent-primary)] pb-0.5">Pick a dinner.</span> Join the table.
-              </span>
-            </div>
-
           </div>
 
           {/* Right Column: Reference Collage Illustration Area */}
-          <div className="lg:col-span-6 relative w-full min-h-[420px] lg:min-h-[500px] flex items-center justify-center mt-6 lg:mt-0 pointer-events-none select-none">
+          <div className="lg:col-span-6 relative w-full min-h-[500px] lg:min-h-[620px] flex items-center justify-center mt-12 lg:mt-0 pointer-events-none select-none">
             
-            <div className="relative w-full max-w-[440px] flex items-center justify-center">
+            <div className="relative w-full max-w-[620px] lg:max-w-[700px] flex items-center justify-center">
               
-              {/* d3.png: Black Crescent Moon */}
+              {/* d3.png: Black Crescent Moon - Larger & Prominent */}
               <motion.img
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1, delay: 0.2 }}
                 src="/d3.png"
                 alt="Crescent Moon"
-                className="absolute top-4 left-4 sm:left-6 md:left-2 lg:-left-4 w-10 sm:w-14 md:w-16 h-auto object-contain z-20 drop-shadow-sm"
+                className="absolute -top-6 left-0 sm:left-4 md:-left-4 lg:-left-8 w-20 sm:w-28 md:w-32 h-auto object-contain z-20 drop-shadow-sm"
               />
 
-              {/* d4.png: Orange Star (Top right of moon) */}
+              {/* d4.png: Orange Star 1 (Top right of moon) - Larger aiding element */}
               <motion.img
                 animate={{ rotate: 360, scale: [1, 1.15, 1] }}
                 transition={{ rotate: { repeat: Infinity, duration: 25, ease: "linear" }, scale: { repeat: Infinity, duration: 3 } }}
                 src="/d4.png"
                 alt="Orange Star"
-                className="absolute -top-4 left-20 sm:left-28 md:left-32 w-7 sm:w-9 md:w-10 h-auto object-contain z-20"
+                className="absolute -top-12 left-28 sm:left-36 md:left-44 w-14 sm:w-16 md:w-20 h-auto object-contain z-20"
               />
 
-              {/* d4.png: Orange Star (Bottom left of moon) */}
+              {/* d4.png: Orange Star 2 (Bottom left of moon) - Larger aiding element */}
               <motion.img
                 animate={{ rotate: -360, scale: [1, 1.2, 1] }}
                 transition={{ rotate: { repeat: Infinity, duration: 30, ease: "linear" }, scale: { repeat: Infinity, duration: 4, delay: 1 } }}
                 src="/d4.png"
                 alt="Orange Star"
-                className="absolute top-28 left-6 sm:left-10 md:left-6 w-6 sm:w-8 md:w-9 h-auto object-contain z-20"
+                className="absolute top-36 left-4 sm:left-8 md:left-4 w-12 sm:w-14 md:w-16 h-auto object-contain z-20"
               />
 
-              {/* d1.png: Main Orange Archway & Table Centerpiece */}
+              {/* d4.png: Orange Star 3 (Top right above arch) - Extra aiding element */}
+              <motion.img
+                animate={{ rotate: 360, scale: [1, 1.2, 1] }}
+                transition={{ rotate: { repeat: Infinity, duration: 28, ease: "linear" }, scale: { repeat: Infinity, duration: 3.5, delay: 0.5 } }}
+                src="/d4.png"
+                alt="Orange Star"
+                className="absolute -top-8 right-12 sm:right-20 md:right-24 w-12 sm:w-16 md:w-18 h-auto object-contain z-20"
+              />
+
+              {/* d1.png: Main Orange Archway & Table Centerpiece - Significantly scaled up */}
               <motion.img
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1.1, ease: "easeOut" }}
                 src="/d1.png"
                 alt="Intimate Dinner Archway"
-                className="w-[80%] sm:w-[75%] md:w-[80%] h-auto object-contain relative z-10 drop-shadow-md mx-auto"
+                className="w-full max-w-[540px] sm:max-w-[600px] h-auto object-contain relative z-10 drop-shadow-xl mx-auto"
               />
 
-              {/* d2.png: Hanging Lamp Glow / Layer overlay */}
-              <motion.img
-                animate={{ y: [-3, 3, -3] }}
-                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                src="/d2.png"
-                alt="Lamp"
-                className="absolute top-[12%] sm:top-[13%] left-1/2 -translate-x-1/2 w-20 sm:w-28 md:w-32 h-auto object-contain z-20 opacity-90 mix-blend-multiply"
-              />
-
-              {/* d7.png: Left Green Potted Plant */}
+              {/* d7.png: Left Green Potted Plant - Larger */}
               <motion.img
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 1, delay: 0.4 }}
                 src="/d7.png"
                 alt="Potted Plant Left"
-                className="absolute -bottom-4 left-0 sm:-left-4 md:-left-8 lg:-left-12 w-28 sm:w-36 md:w-40 lg:w-44 h-auto object-contain z-20 drop-shadow"
+                className="absolute -bottom-6 -left-4 sm:-left-8 md:-left-12 lg:-left-16 w-36 sm:w-48 md:w-56 lg:w-64 h-auto object-contain z-20 drop-shadow-md"
               />
 
-              {/* d6.png: Right Tall Palm Plant */}
+              {/* d6.png: Right Tall Palm Plant - Larger */}
               <motion.img
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 1, delay: 0.5 }}
                 src="/d6.png"
                 alt="Tall Potted Palm Right"
-                className="absolute -bottom-6 right-2 sm:-right-4 md:-right-8 lg:-right-12 w-32 sm:w-40 md:w-48 lg:w-52 h-auto object-contain z-20 drop-shadow"
+                className="absolute -bottom-8 -right-2 sm:-right-8 md:-right-12 lg:-right-16 w-40 sm:w-52 md:w-64 lg:w-72 h-auto object-contain z-20 drop-shadow-md"
               />
 
               {/* d5.png: Vertical Grid Dots */}
@@ -328,7 +323,7 @@ export default function Dinner() {
                 transition={{ duration: 1.2, delay: 0.6 }}
                 src="/d5.png"
                 alt="Grid pattern"
-                className="absolute bottom-16 -right-2 sm:-right-8 md:-right-16 lg:-right-20 w-8 sm:w-12 md:w-14 h-auto object-contain z-10"
+                className="absolute bottom-20 -right-4 sm:-right-12 md:-right-20 lg:-right-24 w-10 sm:w-14 md:w-16 h-auto object-contain z-10"
               />
 
             </div>
@@ -336,33 +331,27 @@ export default function Dinner() {
           </div>
 
         </div>
-
-        {/* Transition edge bottom border leading into next section: d8.png zoomed end-to-end */}
-        <div className="w-full relative z-30 pt-6 pb-0 bg-transparent pointer-events-none flex justify-center overflow-hidden">
-          <img 
-            src="/d8.png" 
-            alt="Section transition decoration" 
-            className="w-full h-20 sm:h-28 md:h-36 lg:h-44 object-cover object-center select-none opacity-95 scale-110 transform" 
-          />
-        </div>
       </section>
 
+      <EdgeDivider src="/edge2.png" />
+
       {/* 2. WHAT'S ON THE TABLE? (MENU) */}
-      <section id="menu" className="py-32 bg-[var(--bg-secondary)] relative overflow-hidden">
-        <div className="container mx-auto px-6 max-w-6xl">
+      <section id="menu" className="py-32 bg-[var(--accent-primary)] text-[#efe8db] relative overflow-hidden">
+        <div className="absolute inset-0 paper-texture opacity-20 mix-blend-multiply pointer-events-none z-0" />
+        <div className="container mx-auto px-6 max-w-6xl relative z-10">
           <div className="text-center mb-20 max-w-3xl mx-auto">
-            <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2 font-logo">The Menu</span>
-            <h2 className="text-5xl md:text-6xl font-heading text-[var(--text-main)]">The menu</h2>
-            <p className="font-body text-lg text-[var(--text-main)]/60 mt-4">
+            <span className="font-body italic text-3xl text-[var(--bg-primary)] block mb-2 font-logo">- Culinary -</span>
+            <h2 className="text-5xl md:text-6xl font-heading text-white drop-shadow-sm">The menu</h2>
+            <p className="font-body text-lg text-white/90 mt-4 italic">
               Instead of revealing the entire menu, we prefer curiosity. Pull a card to the right to reveal its dish.
             </p>
           </div>
 
-          <div className="space-y-6 flex flex-col items-start">
+          <div className="space-y-6 flex flex-col items-start w-full">
             {menuItems.map((item, idx) => (
               <div
                 key={idx}
-                className={`relative bg-[var(--bg-primary)] p-6 md:p-8 rounded-2xl shadow-sm border border-[var(--text-main)]/10 overflow-hidden hover:shadow-md ${revealedItems[idx] ? 'w-full' : 'w-full md:w-1/2 lg:w-[40%]'} transition-[width] duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] origin-left min-h-[220px] md:min-h-[180px] flex items-center`}
+                className={`relative bg-[var(--bg-primary)] text-[#2c2b29] p-6 md:p-8 rounded-2xl shadow-sm border border-[#2c2b29]/10 overflow-hidden hover:shadow-md ${revealedItems[idx] ? 'w-full' : 'w-full md:w-1/2 lg:w-[40%]'} transition-[width] duration-600 ease-[cubic-bezier(0.25,1,0.5,1)] origin-left min-h-[220px] md:min-h-[180px] flex items-center`}
               >
                 {!revealedItems[idx] && (
                   <motion.div
@@ -379,57 +368,42 @@ export default function Dinner() {
                     <motion.div animate={{ x: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 1.5 }} className="text-[var(--accent-primary)] font-bold text-2xl">→</motion.div>
                   </motion.div>
                 )}
-                <div className={`flex flex-col md:flex-row gap-6 items-center w-full h-full`}>
 
-                  {/* Left part (always visible) */}
-                  <div className={`flex flex-col justify-center h-full ${revealedItems[idx] ? 'md:w-1/3' : 'w-full'} transition-[width] duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]`}>
+                {/* Fixed-width inner container guarantees ZERO text reflowing, wrapping, or squishing as clipping boundary moves */}
+                <div className="flex flex-col md:flex-row gap-6 items-center w-full md:min-w-[680px] lg:min-w-[960px] h-full justify-between">
+
+                  {/* Left part (always visible Course Title) */}
+                  <div className="flex flex-col justify-center h-full w-full md:w-72 lg:w-80 flex-shrink-0">
                     <div className="flex items-center gap-3 mb-2">
                       <span className="font-body text-xs uppercase tracking-widest text-[var(--accent-primary)] font-bold">Course</span>
-                      <span className="font-heading text-2xl text-[var(--text-main)]">{item.course}</span>
+                      <span className="font-heading text-2xl text-[#2c2b29]">{item.course}</span>
                     </div>
-                    <h3 className="font-body text-2xl font-bold text-[var(--text-main)]">{item.title}</h3>
+                    <h3 className="font-body text-2xl font-bold text-[#2c2b29]">{item.title}</h3>
 
-                    <AnimatePresence>
-                      {!revealedItems[idx] && (
-                        <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          className="mt-4 font-body text-xs uppercase tracking-widest text-[var(--text-main)]/40 flex items-center gap-2 absolute bottom-6 md:bottom-8"
-                        >
-                          <span>Pull right edge to reveal</span>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                    {!revealedItems[idx] && (
+                      <div className="mt-4 font-body text-xs uppercase tracking-widest text-[#2c2b29]/50 flex items-center gap-2 absolute bottom-6 md:bottom-8">
+                        <span>Pull right edge to reveal</span>
+                      </div>
+                    )}
                   </div>
 
-                  {/* Revealed part */}
-                  <AnimatePresence>
-                    {revealedItems[idx] && (
-                      <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="flex-1 flex flex-col md:flex-row items-center w-full h-full"
-                      >
-                        {/* Center Dish Name */}
-                        <div className="flex-1 flex items-center justify-center text-center md:border-l md:border-r border-[var(--text-main)]/10 px-6 py-4 w-full h-full">
-                          <h4 className="font-heading text-3xl lg:text-4xl text-[var(--accent-primary)] leading-tight">{item.dish.split('—')[0]}</h4>
-                        </div>
+                  {/* Revealed part (always laid out at full desktop width, unmasked/unclipped smoothly) */}
+                  <div className={`flex-1 flex flex-col md:flex-row items-center w-full h-full transition-opacity duration-500 ${revealedItems[idx] ? 'opacity-100 pointer-events-auto delay-100' : 'opacity-0 pointer-events-none'}`}>
+                    {/* Center Dish Name */}
+                    <div className="flex-1 flex items-center justify-center text-center md:border-l md:border-r border-[#2c2b29]/10 px-6 py-4 w-full h-full">
+                      <h4 className="font-heading text-3xl lg:text-4xl text-[var(--accent-primary)] leading-tight whitespace-nowrap md:whitespace-normal">{item.dish.split('—')[0]}</h4>
+                    </div>
 
-                        {/* Right Description */}
-                        <div className="flex-1 md:pl-8 flex flex-col justify-center text-center md:text-left mt-4 md:mt-0 w-full h-full">
-                          <p className="font-body text-lg text-[var(--text-main)]/80 italic">
-                            {item.dish.split('—')[1]}
-                          </p>
-                          <p className="font-body text-sm text-[var(--text-main)]/60 mt-2 uppercase tracking-widest font-bold">
-                            {item.desc}
-                          </p>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                    {/* Right Description */}
+                    <div className="flex-1 md:pl-8 flex flex-col justify-center text-center md:text-left mt-4 md:mt-0 w-full h-full min-w-[280px]">
+                      <p className="font-body text-lg text-[#2c2b29]/90 italic font-medium leading-relaxed">
+                        {item.dish.split('—')[1]}
+                      </p>
+                      <p className="font-body text-sm text-[#2c2b29]/70 mt-2 uppercase tracking-widest font-bold">
+                        {item.desc}
+                      </p>
+                    </div>
+                  </div>
 
                 </div>
                 {/* Background wash on hover */}
@@ -440,8 +414,10 @@ export default function Dinner() {
         </div>
       </section>
 
+      <EdgeDivider src="/edge4.png" />
+
       {/* 3. THE EVENING, IN ORDER (TIMELINE) */}
-      <section className="py-32 relative overflow-hidden">
+      <section className="py-20 md:py-24 relative overflow-hidden">
         <div className="container mx-auto px-6 max-w-5xl relative" ref={timelineRef}>
           <div className="text-center mb-32">
             <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2 font-logo">Timeline</span>
@@ -503,8 +479,10 @@ export default function Dinner() {
         </div>
       </section>
 
+      <EdgeDivider src="/edge5.png" />
+
       {/* 4. WHO'S THIS FOR? */}
-      <section className="py-32 relative overflow-hidden">
+      <section className="py-20 md:py-24 relative overflow-hidden">
         <div className="container mx-auto px-6 max-w-7xl">
           <div className="text-center mb-20">
             <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2 font-logo">- Alignment -</span>
@@ -534,7 +512,7 @@ export default function Dinner() {
                   {item.label}
                 </div>
                 <div className="w-full aspect-square mb-6 relative flex items-center justify-center">
-                  <img src={item.img} alt={`Guest ${idx + 1}`} className="w-full h-full object-contain grayscale group-hover:grayscale-0 transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] scale-[1.5] group-hover:scale-[1.6]" />
+                  <img src={item.img} alt={`Guest ${idx + 1}`} loading="lazy" decoding="async" className="w-full h-full object-contain grayscale group-hover:grayscale-0 transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] scale-[1.5] group-hover:scale-[1.6]" />
                 </div>
                 <p className="font-body text-xl md:text-2xl text-[var(--text-main)]/85 leading-relaxed mt-4">
                   {item.text}
@@ -545,14 +523,17 @@ export default function Dinner() {
         </div>
       </section>
 
+      <EdgeDivider src="/edge2.png" />
+
       {/* 5. HOUSE RULES & GOOD TO KNOW */}
-      <section className="py-28 bg-[var(--bg-secondary)] relative overflow-hidden">
-        <div className="container mx-auto px-6 max-w-6xl">
+      <section className="py-20 md:py-24 bg-[var(--accent-primary)] text-[#efe8db] relative overflow-hidden">
+        <div className="absolute inset-0 paper-texture opacity-20 mix-blend-multiply pointer-events-none z-0" />
+        <div className="container mx-auto px-6 max-w-6xl relative z-10">
 
           <div className="flex flex-col gap-16">
             <div className="text-center mb-4">
-              <span className="font-body italic text-4xl text-[var(--accent-primary)] block mb-4 font-logo -rotate-2">House Rules & Logistics</span>
-              <h2 className="text-5xl md:text-6xl font-heading text-[var(--text-main)]">What to expect</h2>
+              <span className="font-body italic text-4xl text-[var(--bg-primary)] block mb-4 font-logo -rotate-2">- Logistics -</span>
+              <h2 className="text-5xl md:text-6xl font-heading text-white drop-shadow-sm">What to expect</h2>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -566,14 +547,14 @@ export default function Dinner() {
               ].map((item, idx) => (
                 <div
                   key={idx}
-                  className="p-8 bg-[#faf8f5] border border-[var(--text-main)]/10 shadow-md rounded-lg flex flex-col justify-between hover:-translate-y-2 hover:rotate-[1deg] hover:border-[var(--accent-primary)]/50 transition-all duration-300"
+                  className="p-8 bg-[#faf8f5] text-[#1a1918] border border-[var(--text-main)]/10 shadow-md rounded-lg flex flex-col justify-between hover:-translate-y-2 hover:rotate-[1deg] hover:border-[var(--accent-primary)]/50 transition-all duration-300"
                 >
-                  <div className="flex items-center gap-3 text-[var(--accent-primary)] mb-6 border-b border-[var(--text-main)]/10 pb-2">
-                    <span className="font-body text-sm uppercase tracking-widest text-[var(--text-main)]/60 font-bold">{item.label}</span>
+                  <div className="flex items-center gap-3 text-[#c14a27] mb-6 border-b border-[#1a1918]/10 pb-2">
+                    <span className="font-body text-sm uppercase tracking-widest text-[#c14a27] font-bold">{item.label}</span>
                   </div>
                   <div>
-                    <span className="font-heading text-3xl text-[var(--text-main)] block leading-tight mb-2">{item.value}</span>
-                    <p className="font-body text-base text-[var(--accent-primary)]/80 italic">{item.note}</p>
+                    <span className="font-heading text-3xl text-[#1a1918] font-bold block leading-tight mb-2">{item.value}</span>
+                    <p className="font-body text-base text-[#4a4642] font-medium italic">{item.note}</p>
                   </div>
                 </div>
               ))}
@@ -583,8 +564,10 @@ export default function Dinner() {
         </div>
       </section>
 
+      <EdgeDivider src="/edge4.png" />
+
       {/* FAQ SECTION */}
-      <section className="py-32 relative overflow-hidden bg-[var(--bg-primary)] border-t border-[var(--text-main)]/10">
+      <section className="py-32 relative overflow-hidden bg-[var(--bg-primary)]">
         <div className="container mx-auto px-6 max-w-4xl">
           <div className="text-center mb-16">
             <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2 font-logo">Questions</span>
@@ -627,12 +610,16 @@ export default function Dinner() {
         </div>
       </section>
 
+      <EdgeDivider src="/edge6.png" />
+
       {/* 7. RESERVE A SEAT */}
       <ReserveSection 
         onReserveClick={() => setIsBookingOpen(true)} 
         onInterestClick={() => setIsInterestOpen(true)}
         canReserve={canReserve}
       />
+
+      <EdgeDivider src="/edge4.png" />
 
       {/* Shared Booking Modal Flow (Only accessible with token) */}
       <BookingModal

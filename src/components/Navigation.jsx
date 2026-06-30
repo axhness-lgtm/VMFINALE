@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { Menu, X, Volume2, VolumeX } from 'lucide-react';
+import { useLenis } from '@studio-freight/react-lenis';
 
 const navLinks = [
   { name: 'Home', path: '/' },
@@ -26,6 +27,16 @@ export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const location = useLocation();
+  const lenis = useLenis();
+
+  const handleScrollTop = () => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    if (lenis) {
+      lenis.scrollTo(0, { immediate: true });
+    }
+  };
 
   const toggleMusic = () => {
     const audio = document.getElementById('bg-music');
@@ -47,17 +58,11 @@ export default function Navigation() {
   };
 
   return (
-    <div className={`fixed left-0 w-full z-50 flex justify-center pointer-events-none transition-all duration-300 ${
-      location.pathname === '/dinner' ? 'top-0 px-0' : 'top-4 px-6'
-    }`}>
-      <header className={`pointer-events-auto flex justify-between items-center transition-all duration-300 ${
-        location.pathname === '/dinner'
-          ? 'bg-[#f3dbbd]/95 backdrop-blur-md px-6 md:px-16 py-5 w-full border-b border-[#3b2b24]/5 shadow-sm'
-          : 'bg-cream/90 backdrop-blur-md border border-[#3b2b24]/10 shadow-lg rounded-2xl px-6 py-3 w-full max-w-6xl'
-      }`}>
+    <div className="fixed left-0 w-full z-50 flex justify-center pointer-events-none transition-all duration-300 top-4 px-6">
+      <header className="pointer-events-auto flex justify-between items-center transition-all duration-300 bg-cream/90 backdrop-blur-md border border-[#3b2b24]/10 shadow-lg rounded-2xl px-6 py-3 w-full max-w-6xl">
         
         {/* Logo */}
-        <Link to="/" className="relative z-50 flex-shrink-0 hover:opacity-80 transition-opacity duration-300 flex items-center">
+        <Link to="/" onClick={handleScrollTop} className="relative z-50 flex-shrink-0 hover:opacity-80 transition-opacity duration-300 flex items-center">
           <span className="text-2xl md:text-3xl text-[var(--accent-primary)] font-logo leading-none tracking-wide">
             Vantammayilu
           </span>
@@ -69,7 +74,7 @@ export default function Navigation() {
             <Link 
               key={link.name}
               to={link.path}
-              onClick={() => window.scrollTo(0,0)}
+              onClick={handleScrollTop}
               className="group relative pt-1"
             >
               <span className={`text-[13px] font-body uppercase tracking-[0.15em] font-bold block ${
@@ -86,10 +91,10 @@ export default function Navigation() {
           
           <Link 
             to="/dinner" 
-            onClick={() => window.scrollTo(0,0)} 
-            className="ml-6 px-7 py-3 rounded-xl font-body text-sm uppercase tracking-[0.15em] font-extrabold bg-[var(--accent-primary)] text-white hover:bg-[#c14a27] hover:scale-105 active:scale-95 shadow-md transition-all duration-300"
+            onClick={handleScrollTop} 
+            className="ml-6 px-9 py-3 rounded-xl font-heading italic font-light text-lg tracking-wider bg-[var(--accent-primary)] text-white hover:bg-[#c14a27] hover:scale-105 active:scale-95 shadow-md transition-all duration-300"
           >
-            RESERVE
+            Reserve
           </Link>
           
           <button 
@@ -136,7 +141,7 @@ export default function Navigation() {
                   >
                     <Link 
                       to={link.path}
-                      onClick={() => { setIsOpen(false); window.scrollTo(0,0); }}
+                      onClick={() => { setIsOpen(false); handleScrollTop(); }}
                       className={`text-2xl font-body uppercase tracking-[0.1em] transition-colors ${
                         location.pathname === link.path ? 'text-[var(--accent-primary)]' : 'text-[var(--text-main)] hover:text-[var(--accent-secondary)]'
                       }`}

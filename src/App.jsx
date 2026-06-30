@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { ReactLenis } from '@studio-freight/react-lenis';
+import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
 import Navigation from './components/Navigation';
 import Home from './pages/Home';
 import About from './pages/About';
@@ -12,10 +12,16 @@ import Footer from './components/Footer';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
+  const lenis = useLenis();
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [pathname]);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    if (lenis) {
+      lenis.scrollTo(0, { immediate: true });
+    }
+  }, [pathname, lenis]);
 
   return null;
 }

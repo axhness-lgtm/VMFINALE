@@ -1,23 +1,24 @@
 import { motion } from 'framer-motion';
 import { Compass, Users, RefreshCw, Sparkles, Smile, MessageSquare, Heart, Bookmark } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import EdgeDivider from '../components/EdgeDivider';
 
 export default function About() {
   return (
     <div className="w-full relative bg-[var(--bg-primary)]">
       
       {/* 1. HERO SECTION */}
-      <section className="relative w-full h-[calc(100vh-80px)] hidden md:flex flex-col items-center justify-center overflow-hidden bg-[#fdfaf6] pt-16">
+      <section className="relative w-full min-h-screen hidden md:flex flex-col items-center justify-center overflow-hidden bg-[var(--accent-primary)] pt-20 pb-12">
         {/* Background Texture */}
         <div className="absolute inset-0 pointer-events-none z-0">
           <img
             src="/texture.png"
             alt="paper texture"
-            className="absolute inset-0 w-full h-full object-cover z-0 opacity-40 mix-blend-multiply"
+            className="absolute inset-0 w-full h-full object-cover z-0 opacity-30 mix-blend-multiply"
           />
         </div>
 
-        {/* Aspect Ratio Box container */}
+        {/* Aspect Ratio Box container defaulted */}
         <div 
           className="relative w-full aspect-[16/10] max-h-[85vh] z-10 mx-auto"
           style={{ maxWidth: 'calc(85vh * 1.6)' }}
@@ -40,8 +41,8 @@ export default function About() {
               transition={{ delay: 2.6, duration: 1 }}
               className="w-full"
             >
-              <h2 className="text-lg md:text-xl font-body tracking-widest uppercase text-[#3b2b24] mb-1 font-bold">The World Has</h2>
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-logo text-[var(--accent-primary)] drop-shadow-sm">Seven Wonders.</h1>
+              <h2 className="text-lg md:text-xl font-body tracking-widest uppercase text-[#efe8db] mb-1 font-bold">The World Has</h2>
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-logo text-white drop-shadow-sm">Seven Wonders.</h1>
             </motion.div>
           </div>
 
@@ -80,12 +81,6 @@ export default function About() {
             <img src="/seven (2).png" alt="Wonder 7" className="w-full h-auto object-contain hover:scale-105 transition-transform drop-shadow-md" />
           </motion.div>
 
-          {/* 9. The Eighth Wonder Text (Above Table) */}
-          <div className="absolute top-[28%] left-1/2 transform -translate-x-1/2 w-[35%] z-30">
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 2.6, duration: 1 }} className="w-full">
-              <img src="/nine.png" alt="Where the world comes together" className="w-full h-auto object-contain drop-shadow-sm" />
-            </motion.div>
-          </div>
 
           {/* 8. The Table (Center) */}
           <div className="absolute top-[50%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[55%] z-10">
@@ -98,24 +93,25 @@ export default function About() {
       </section>
 
       {/* Mobile Fallback */}
-      <section className="relative md:hidden flex flex-col items-center justify-center pt-32 pb-20 px-6 bg-[#fdfaf6] overflow-hidden min-h-[70vh]">
+      <section className="relative md:hidden flex flex-col items-center justify-center pt-32 pb-20 px-6 bg-[var(--accent-primary)] overflow-hidden min-h-screen">
         <div className="absolute inset-0 pointer-events-none z-0">
           <img
             src="/texture.png"
             alt="paper texture"
-            className="absolute inset-0 w-full h-full object-cover z-0 opacity-40 mix-blend-multiply"
+            className="absolute inset-0 w-full h-full object-cover z-0 opacity-30 mix-blend-multiply"
           />
         </div>
         <div className="relative z-10 text-center w-full mb-12">
-          <h2 className="text-lg font-body tracking-widest uppercase text-[#3b2b24] mb-1 font-bold">The World Has</h2>
-          <h1 className="text-5xl font-logo text-[var(--accent-primary)] drop-shadow-sm">Seven Wonders.</h1>
+          <h2 className="text-lg font-body tracking-widest uppercase text-[#efe8db] mb-1 font-bold">The World Has</h2>
+          <h1 className="text-5xl font-logo text-white drop-shadow-sm">Seven Wonders.</h1>
         </div>
         <motion.img initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2, duration: 1 }} src="/eight.png" alt="The Table" className="w-[90%] h-auto object-contain relative z-10 drop-shadow-xl mb-8" />
-        <motion.img initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6, duration: 1 }} src="/nine.png" alt="The Eighth Wonder" className="w-[70%] h-auto object-contain relative z-10 drop-shadow-sm" />
       </section>
 
+      <EdgeDivider src="/edge4.png" />
+
       {/* 2. WHY VANTAMMAYILU? */}
-      <section className="py-32 bg-[var(--bg-secondary)] relative overflow-hidden">
+      <section className="py-20 md:py-24 bg-[var(--bg-secondary)] relative overflow-hidden">
         <div className="container mx-auto px-6 max-w-4xl">
           <div className="text-center mb-16">
             <h2 className="text-5xl md:text-6xl font-heading text-[var(--text-main)]">Why Vantammayilu?</h2>
@@ -153,10 +149,10 @@ export default function About() {
         </div>
       </section>
 
-
+      <EdgeDivider src="/edge2.png" />
 
       {/* 4. MEET THE HOST (HYNDAVI) */}
-      <section className="py-32 bg-[var(--accent-primary)] relative overflow-hidden">
+      <section className="py-20 md:py-24 bg-[var(--accent-primary)] relative overflow-hidden">
         <div className="container mx-auto px-6 max-w-5xl">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-16 items-center">
             
@@ -210,26 +206,26 @@ export default function About() {
         </div>
       </section>
 
-
+      <EdgeDivider src="/edge3.png" />
 
       {/* 6. IF THIS SOUNDS LIKE YOUR KIND OF EVENING (CTA) */}
-      <section className="py-32 bg-[var(--bg-secondary)] relative text-center overflow-hidden flex flex-col items-center justify-center">
-        {/* Soft background accents */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[var(--accent-primary)]/5 rounded-full filter blur-3xl pointer-events-none" />
+      <section className="py-20 md:py-24 bg-[var(--accent-primary)] relative text-center overflow-hidden flex flex-col items-center justify-center text-[#efe8db]">
+        <div className="absolute inset-0 paper-texture opacity-20 mix-blend-multiply pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-white/5 rounded-full filter blur-3xl pointer-events-none" />
 
         <div className="container mx-auto px-6 max-w-3xl relative z-10">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-5xl md:text-7xl font-heading text-[var(--text-main)] mb-6 leading-tight"
+            className="text-5xl md:text-7xl font-heading text-[var(--bg-primary)] mb-6 leading-tight drop-shadow-sm"
           >
             If this sounds like your <br className="hidden md:inline" /> kind of evening...
           </motion.h2>
 
-          <div className="font-body text-xl md:text-2xl text-[var(--text-main)]/80 max-w-md mx-auto space-y-2 mb-12 italic">
+          <div className="font-body text-xl md:text-2xl text-[var(--bg-primary)]/90 max-w-md mx-auto space-y-2 mb-12 italic">
             <p>There's always another table waiting.</p>
-            <p className="font-heading text-[var(--accent-primary)] not-italic">We'd love to save you a seat.</p>
+            <p className="font-heading text-white not-italic underline decoration-white/40 underline-offset-4">We'd love to save you a seat.</p>
           </div>
 
           <motion.div
@@ -240,7 +236,7 @@ export default function About() {
           >
             <Link
               to="/dinner"
-              className="group relative inline-block bg-[#efe8db] text-[#2c2b29] border border-[#2c2b29]/5 shadow-sm hover:shadow-md transition-all duration-300 rounded-full px-10 py-5 font-body text-lg font-bold tracking-wide"
+              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-white hover:text-[var(--accent-primary)] px-12 py-5 text-xl font-bold tracking-[0.1em] rounded-full shadow-2xl transition-all duration-300 hover:scale-105 uppercase"
             >
               See upcoming dinners
             </Link>
@@ -248,6 +244,7 @@ export default function About() {
         </div>
       </section>
 
+      <EdgeDivider src="/edge4.png" />
     </div>
   );
 }

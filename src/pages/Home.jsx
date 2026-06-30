@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import ScrollHighlight from '../components/ScrollHighlight';
+import EdgeDivider from '../components/EdgeDivider';
 
 function useColumns() {
   const [cols, setCols] = useState(5);
@@ -31,18 +32,6 @@ const gridPhotos = [
   "/grid/_DSC0343 (1).jpg"
 ];
 
-const gridVideos = [
-  "/grid/C0001.MP4",
-  "/grid/C0060.MP4",
-  "/grid/C0074.MP4",
-  "/grid/C0121.MP4",
-  "/grid/C0171 (1).MP4",
-  "/grid/C0454.MP4",
-  "/grid/C0483.MP4",
-  "/grid/C0510.MP4",
-  "/grid/C0529.MP4"
-];
-
 const flowGridItems = Array.from({ length: 12 }).map((_, i) => {
   const pseudoRandom = Math.abs(Math.sin(i * 12.9898 + 78.233)) * 43758.5453;
   const uniqueAspectRatio = 0.7 + (pseudoRandom % 0.8);
@@ -50,52 +39,28 @@ const flowGridItems = Array.from({ length: 12 }).map((_, i) => {
   return {
     id: i + 1,
     imgSrc: gridPhotos[i % gridPhotos.length],
-    videoSrc: gridVideos[i % gridVideos.length],
     aspectRatio: uniqueAspectRatio,
     altText: `Vantammayilu Gathering ${i + 1}`
   };
 });
 
-const HoverVideoCard = ({ imgSrc, videoSrc, aspectRatio, altText, isLast }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const videoRef = useRef(null);
-
-  useEffect(() => {
-    if (isHovered && videoRef.current) {
-      videoRef.current.play().catch(e => console.log("Video autoplay blocked", e));
-    } else if (!isHovered && videoRef.current) {
-      videoRef.current.pause();
-    }
-  }, [isHovered]);
-
+const HoverVideoCard = ({ imgSrc, aspectRatio, altText, isLast }) => {
   return (
     <div 
       style={{ 
         aspectRatio: isLast ? undefined : aspectRatio,
         minHeight: isLast ? '220px' : undefined
       }}
-      className={`relative w-full rounded-xl overflow-hidden shadow-lg hover-lift hover:shadow-2xl transition-all duration-500 group cursor-pointer inline-block bg-[#efe8db] ${isLast ? 'flex-grow mb-0' : 'mb-0'}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onTouchStart={() => setIsHovered(true)}
-      onTouchEnd={() => setIsHovered(false)}
+      className={`relative w-full rounded-xl overflow-hidden shadow-lg hover-lift hover:shadow-2xl group cursor-pointer inline-block bg-[#efe8db] will-change-transform ${isLast ? 'flex-grow mb-0' : 'mb-0'}`}
     >
       <img 
         src={imgSrc} 
         alt={altText} 
-        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${isHovered ? 'opacity-0' : 'opacity-100'}`} 
+        loading="lazy"
+        decoding="async"
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 will-change-transform" 
       />
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <video
-          ref={videoRef}
-          src={videoSrc}
-          loop
-          muted
-          playsInline
-          className={`w-full h-full object-cover transition-all duration-500 transform -rotate-90 scale-[1.45] ${isHovered ? 'opacity-100' : 'opacity-0'}`}
-        />
-      </div>
-      <div className={`absolute inset-0 bg-black/10 transition-opacity duration-500 pointer-events-none ${isHovered ? 'opacity-100' : 'opacity-0'}`} />
+      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500 pointer-events-none" />
     </div>
   );
 };
@@ -192,8 +157,10 @@ export default function Home() {
         </div>
       </section>
 
+      <EdgeDivider src="/edge.png" />
+
       {/* 2. NOT JUST DINNER */}
-      <section className="bg-[var(--bg-primary)] relative min-h-screen flex flex-col justify-center items-center overflow-hidden">
+      <section className="bg-[var(--bg-primary)] relative py-20 md:py-28 flex flex-col justify-center items-center overflow-hidden">
         {/* Background Texture */}
         <div className="absolute inset-0 pointer-events-none z-0">
           <img
@@ -211,8 +178,10 @@ export default function Home() {
         </div>
       </section>
 
+      <EdgeDivider src="/edge5.png" />
+
       {/* 3. WHAT USUALLY HAPPENS */}
-      <section className="relative bg-[var(--bg-primary)] py-32 px-2 md:px-4 w-full">
+      <section className="relative bg-[var(--bg-primary)] py-20 md:py-24 px-2 md:px-4 w-full">
         <div className="text-center mb-16 relative z-50">
           <span className="font-body italic text-2xl md:text-3xl text-[var(--accent-primary)] -rotate-2 block mb-2 font-logo drop-shadow-sm">The evening flow</span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading text-[var(--text-main)]">What usually happens.</h2>
@@ -231,12 +200,14 @@ export default function Home() {
         </div>
       </section>
 
+      <EdgeDivider src="/edge3.png" />
+
       {/* 4. EIGHT SEATS */}
-      <section className="py-32 bg-[var(--bg-secondary)] relative overflow-hidden" style={{ cursor: "url('/custcor.png'), auto" }}>
-        <div className="absolute inset-0 paper-texture opacity-30 mix-blend-multiply pointer-events-none z-0" />
+      <section className="py-20 md:py-24 bg-[var(--accent-primary)] relative overflow-hidden text-[#efe8db]" style={{ cursor: "url('/custcor.png'), auto" }}>
+        <div className="absolute inset-0 paper-texture opacity-20 mix-blend-multiply pointer-events-none z-0" />
         
         {/* Large overlapping background "8" */}
-        <div className="absolute right-0 bottom-0 lg:right-[-5%] lg:-bottom-20 text-[25rem] md:text-[35rem] lg:text-[45rem] font-heading font-light text-[var(--text-main)]/5 select-none pointer-events-none leading-none">
+        <div className="absolute right-0 bottom-0 lg:right-[-5%] lg:-bottom-20 text-[25rem] md:text-[35rem] lg:text-[45rem] font-heading font-light text-white/10 select-none pointer-events-none leading-none">
           8
         </div>
 
@@ -246,15 +217,15 @@ export default function Home() {
         <div className="container mx-auto px-6 max-w-6xl relative z-10 flex flex-col md:flex-row items-center gap-16 md:gap-24">
           
           <div className="w-full md:w-5/12 relative pl-4 md:pl-0">
-            <span className="font-mono text-xs tracking-[0.2em] uppercase text-[var(--accent-primary)] mb-6 block border-b border-[var(--accent-primary)]/30 pb-2 w-max">The Capacity</span>
-            <h2 className="text-7xl md:text-8xl lg:text-9xl font-heading text-[var(--accent-primary)] leading-[0.9] tracking-tight mb-4">
-              Eight<br /><span className="text-[var(--text-main)] italic">seats.</span>
+            <span className="font-mono text-xs tracking-[0.2em] uppercase text-[#efe8db] mb-6 block border-b border-[#efe8db]/30 pb-2 w-max">The Capacity</span>
+            <h2 className="text-7xl md:text-8xl lg:text-9xl font-heading text-[var(--bg-primary)] leading-[0.9] tracking-tight mb-4 drop-shadow-sm">
+              Eight<br /><span className="text-white italic">seats.</span>
             </h2>
-            <div className="absolute -bottom-12 -right-8 text-3xl text-[var(--text-main)]/60 font-logo -rotate-6 hidden md:block">No more, no less.</div>
+            <div className="absolute -bottom-12 -right-8 text-3xl text-white/80 font-logo -rotate-6 hidden md:block">No more, no less.</div>
           </div>
           
           <div className="w-full md:w-7/12 relative mt-8 md:mt-0">
-            <div className="bg-[#fcfbf9] p-10 md:p-14 shadow-xl border border-[#3b2b24]/5 hover-lift relative group -rotate-1 z-10 transition-transform duration-500">
+            <div className="bg-[#fcfbf9] text-[var(--text-main)] p-10 md:p-14 shadow-2xl border border-[#3b2b24]/5 hover-lift relative group -rotate-1 z-10 transition-transform duration-500 rounded-2xl">
               <div className="masking-tape w-24 h-6 -top-3 left-1/2 -translate-x-1/2 rotate-[-2deg]" />
               <div className="absolute top-6 right-6 stamp rotate-12 opacity-60 scale-75 border-[var(--accent-primary)] text-[var(--accent-primary)]">INTIMATE</div>
               
@@ -274,14 +245,16 @@ export default function Home() {
             </div>
             
             {/* Background offset card for depth */}
-            <div className="absolute inset-0 bg-[#efe8db] border border-[#3b2b24]/10 shadow-lg translate-x-3 translate-y-3 rotate-2 z-0 hidden md:block pointer-events-none" />
+            <div className="absolute inset-0 bg-[#efe8db] border border-[#3b2b24]/10 shadow-lg translate-x-3 translate-y-3 rotate-2 z-0 hidden md:block pointer-events-none rounded-2xl" />
           </div>
           
         </div>
       </section>
 
+      <EdgeDivider src="/edge4.png" />
+
       {/* 5. EVERY DINNER BEGINS SOMEWHERE ELSE */}
-      <section className="relative overflow-hidden bg-[var(--bg-primary)] w-full py-32 mx-auto">
+      <section className="relative overflow-hidden bg-[var(--bg-primary)] w-full py-20 md:py-24 mx-auto">
         {/* Background Paper Texture */}
         <div className="absolute inset-0 paper-texture opacity-40 mix-blend-multiply z-0 pointer-events-none" />
 
@@ -362,6 +335,8 @@ export default function Home() {
         </div>
       </section>
 
+      <EdgeDivider src="/edge5.png" />
+
       {/* 6. PEOPLE LEAVE THINGS BEHIND */}
       <section className="py-16 md:py-20 bg-[var(--bg-secondary)] relative overflow-hidden">
         <div className="container mx-auto px-4 md:px-6 max-w-5xl relative z-10">
@@ -430,26 +405,19 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 7. COME CURIOUS */}
-      <section className="py-40 relative text-center overflow-hidden flex flex-col items-center justify-center bg-[var(--bg-primary)] cursor-crosshair">
-        {/* Background Texture */}
-        <div className="absolute inset-0 pointer-events-none z-0">
-          <img
-            src="/texture.png"
-            alt="paper texture"
-            className="absolute inset-0 w-full h-full object-cover z-0 opacity-60 mix-blend-multiply"
-            onError={(e) => { e.target.style.display = 'none'; }}
-          />
-        </div>
+      <EdgeDivider src="/edge.png" />
 
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--accent-primary)]/10 rounded-full filter blur-[80px] pointer-events-none z-0" />
+      {/* 7. COME CURIOUS */}
+      <section className="py-40 relative text-center overflow-hidden flex flex-col items-center justify-center bg-[var(--accent-primary)] text-[#efe8db] cursor-crosshair">
+        <div className="absolute inset-0 paper-texture opacity-20 mix-blend-multiply pointer-events-none z-0" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/10 rounded-full filter blur-[80px] pointer-events-none z-0" />
 
         <div className="container mx-auto px-6 max-w-3xl relative z-10">
           <motion.div
             whileHover={{ scale: 1.05, rotate: -2 }}
             className="inline-block"
           >
-            <h2 className="text-6xl md:text-8xl font-heading text-[var(--accent-primary)] mb-6 leading-tight drop-shadow-sm">
+            <h2 className="text-6xl md:text-8xl font-heading text-[var(--bg-primary)] mb-6 leading-tight drop-shadow-sm">
               Come curious.
             </h2>
           </motion.div>
@@ -459,7 +427,7 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.15 }}
-            className="font-logo text-3xl md:text-4xl text-[var(--text-main)] mb-14 drop-shadow-sm -rotate-2"
+            className="font-logo text-3xl md:text-4xl text-white mb-14 drop-shadow-sm -rotate-2"
           >
             We'll take care of the rest.
           </motion.p>
@@ -473,7 +441,7 @@ export default function Home() {
           >
             <Link
               to="/dinner"
-              className="btn-paper !bg-[#fcf8f2] !text-[var(--text-main)] border-[#fcf8f2] hover:!bg-[var(--accent-primary)] hover:!text-[#fcf8f2] hover:!border-[var(--accent-primary)] px-12 py-5 text-xl tracking-[0.15em] hover:scale-105 shadow-lg hover:shadow-[0_0_30px_rgba(232,99,33,0.4)]"
+              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-white hover:text-[var(--accent-primary)] px-12 py-5 text-xl font-bold tracking-[0.15em] rounded-full shadow-2xl transition-all duration-300 hover:scale-105 uppercase"
             >
               Join the next evening
             </Link>
@@ -481,6 +449,7 @@ export default function Home() {
         </div>
       </section>
 
+      <EdgeDivider src="/edge4.png" />
     </div>
   );
 }
