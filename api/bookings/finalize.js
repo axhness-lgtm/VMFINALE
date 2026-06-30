@@ -68,12 +68,12 @@ export default async function handler(req, res) {
           .from('users')
           .insert({ name: email.split('@')[0], email, phone: `g_${Date.now()}` })
           .select('id')
-          .single();
+          .maybeSingle();
         if (insertErr) {
           console.error('[finalize] Failed to create user:', insertErr);
           return res.status(500).json({ error: 'Failed to create user record.', details: insertErr.message });
         }
-        user_id = newUser.id;
+        user_id = newUser?.id;
         console.log('[finalize] Created new user:', user_id);
       }
     }
@@ -121,7 +121,7 @@ export default async function handler(req, res) {
       .from('bookings')
       .insert(bookingPayload)
       .select('id')
-      .single();
+      .maybeSingle();
 
     if (insertError) {
       console.log('[finalize] Insert failed (likely duplicate), trying update:', insertError.message);
@@ -137,7 +137,7 @@ export default async function handler(req, res) {
         .eq('occurrence_id', occurrence_id)
         .eq('user_id', user_id)
         .select('id')
-        .single();
+        .maybeSingle();
 
       if (updateError) {
         console.error('[finalize] Update also failed:', updateError);

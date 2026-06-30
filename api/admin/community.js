@@ -87,7 +87,7 @@ export default async function handler(req, res) {
       }
 
       try {
-        const { data: occ } = await supabase.from('occurrences').select('*').eq('id', occurrence_id).single();
+        const { data: occ } = await supabase.from('occurrences').select('*').eq('id', occurrence_id).maybeSingle();
         if (!occ) throw new Error('Occurrence not found');
 
         const { data: dbUsers, error: usersError } = await supabase.from('users').select('email, name');

@@ -27,7 +27,7 @@ export default async function handler(req, res) {
             status: status || 'collecting_interests'
           })
           .select()
-          .single();
+          .maybeSingle();
 
         if (error) throw error;
         return res.status(200).json({ success: true, occurrence: data });
@@ -43,7 +43,7 @@ export default async function handler(req, res) {
           .update(updates)
           .eq('id', id)
           .select()
-          .single();
+          .maybeSingle();
 
         if (error) throw error;
         return res.status(200).json({ success: true, occurrence: data });

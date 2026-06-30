@@ -67,7 +67,7 @@ export default async function handler(req, res) {
           name: email.split('@')[0],
           email: email,
           phone: phone !== '9999999999' ? phone : `g_${Date.now()}`
-        }).select('id').single();
+        }).select('id').maybeSingle();
         if (createErr) {
           console.error('[lock-seats] Failed to create user:', createErr);
           return res.status(500).json({ error: 'Failed to create user record.', details: createErr.message });
@@ -96,17 +96,18 @@ export default async function handler(req, res) {
     }
 
     // 4. Create Seat Lock
-    // We add 10 minutes (600000 ms)
-    const locked_until = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+    const lockedUntil = new Date(Date.now() + 10 * 60 * 1000).toISOString();
 
-    const { error: lockError } = await supabase
+    const { data: lock, error: lockError } = await supabase
       .from('seat_locks')
       .upsert({
         occurrence_id,
         user_id,
         seats,
-        locked_until
-      }, { onConflict: 'occurrence_id,user_id' });
+        locked_until: lockedUntil
+      }, { onConflict: 'occurrence_id, user_id' })
+      .select()
+      .maybeSingle();
 
     if (lockError) throw lockError;
 

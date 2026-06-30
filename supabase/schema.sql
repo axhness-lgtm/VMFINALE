@@ -112,3 +112,27 @@ ALTER TABLE reminders ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Public can view active occurrences" ON occurrences;
 CREATE POLICY "Public can view active occurrences"
   ON occurrences FOR SELECT USING (true);
+
+-- Enable full read/write/update access for users table
+DROP POLICY IF EXISTS "Enable public access for users" ON users;
+CREATE POLICY "Enable public access for users" ON users FOR ALL USING (true) WITH CHECK (true);
+
+-- Enable full read/write/update access for occurrences table
+DROP POLICY IF EXISTS "Enable public access for occurrences" ON occurrences;
+CREATE POLICY "Enable public access for occurrences" ON occurrences FOR ALL USING (true) WITH CHECK (true);
+
+-- Enable full read/write/update access for occurrence_interests table
+DROP POLICY IF EXISTS "Enable public access for occurrence_interests" ON occurrence_interests;
+CREATE POLICY "Enable public access for occurrence_interests" ON occurrence_interests FOR ALL USING (true) WITH CHECK (true);
+
+-- Enable full read/write/update access for seat_locks table
+DROP POLICY IF EXISTS "Enable public access for seat_locks" ON seat_locks;
+CREATE POLICY "Enable public access for seat_locks" ON seat_locks FOR ALL USING (true) WITH CHECK (true);
+
+-- Enable full read/write/update access for bookings table
+DROP POLICY IF EXISTS "Enable public access for bookings" ON bookings;
+CREATE POLICY "Enable public access for bookings" ON bookings FOR ALL USING (true) WITH CHECK (true);
+
+-- Enable full read/write/update access for reminders table
+DROP POLICY IF EXISTS "Enable public access for reminders" ON reminders;
+CREATE POLICY "Enable public access for reminders" ON reminders FOR ALL USING (true) WITH CHECK (true);
