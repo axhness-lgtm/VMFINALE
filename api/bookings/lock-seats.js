@@ -137,7 +137,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ 
       success: true, 
-      locked_until,
+      locked_until: lockedUntil,
       order_id: order.id,
       amount: order.amount,
       user_id,
