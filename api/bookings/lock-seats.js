@@ -122,12 +122,14 @@ export default async function handler(req, res) {
 
     // 6. Create Razorpay Order
     let order;
-    if (process.env.VITE_RAZORPAY_KEY_ID && !process.env.VITE_RAZORPAY_KEY_ID.includes('test_XXX')) {
+    if (process.env.VITE_RAZORPAY_KEY_ID && !process.env.VITE_RAZORPAY_KEY_ID.includes('test_XXX') && process.env.RAZORPAY_KEY_SECRET && process.env.RAZORPAY_KEY_SECRET !== 'dummy_secret') {
        order = await razorpay.orders.create({
         amount: amount,
         currency: 'INR',
         receipt: `rcpt_${Date.now()}` // Must be <= 40 chars for Razorpay API
       });
+    } else if (process.env.VITE_RAZORPAY_KEY_ID && (!process.env.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_KEY_SECRET === 'dummy_secret')) {
+       throw new Error('Razorpay Authentication failed: RAZORPAY_KEY_SECRET is missing in Vercel environment variables.');
     } else {
        // Dev fallback
        order = { id: `MOCK_ORDER_${Date.now()}`, amount };
@@ -144,7 +146,10 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error('Error locking seats:', error);
-    const errorMsg = error?.error?.description || error?.message || (typeof error === 'object' ? JSON.stringify(error) : String(error));
-    return res.status(500).json({ error: 'Internal Server Error', details: errorMsg });
+    let errorMsg = error?.error?.description || error?.message || (typeof error === 'object' ? JSON.stringify(error) : String(error));
+    if (errorMsg === 'Authentication failed') {
+      errorMsg = 'Razorpay Authentication failed: Please add RAZORPAY_KEY_SECRET to your Vercel Environment Variables.';
+    }
+    return res.status(500).json({ error: errorMsg, details: errorMsg });
   }
 }
