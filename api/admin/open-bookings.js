@@ -106,15 +106,25 @@ export default async function handler(req, res) {
         return sgMail.send(msg);
       } else {
         console.log(`[DEV] Mock email sent to ${user.email}. Link: ${magicLink}`);
-        return Promise.resolve();
+        return Promise.resolve('MOCK');
       }
     });
 
-    await Promise.all(emailPromises);
+    const results = await Promise.allSettled(emailPromises);
+    const failures = results.filter(r => r.status === 'rejected');
+    const isMock = !process.env.SENDGRID_API_KEY;
 
-    return res.status(200).json({ success: true, message: `Bookings opened and ${users.length} emails sent.` });
+    if (failures.length > 0) {
+      const firstErr = failures[0].reason;
+      const sendgridDetails = firstErr?.response?.body?.errors?.map(e => e.message).join('; ') || firstErr?.message || String(firstErr);
+      throw new Error(`SendGrid failed to send email: ${sendgridDetails}`);
+    }
+
+    const modeTail = isMock ? ` (NOTE: SENDGRID_API_KEY is not set in Vercel, so mock links were logged to console instead of sending live emails.)` : `.`;
+    return res.status(200).json({ success: true, message: `Bookings opened and ${users.length} invitation emails processed${modeTail}` });
   } catch (error) {
     console.error('Error opening bookings:', error);
-    return res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    const errDetails = error?.response?.body?.errors?.map(e => e.message).join('; ') || error?.message || String(error);
+    return res.status(500).json({ error: errDetails || 'Internal Server Error', details: errDetails });
   }
 }

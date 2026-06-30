@@ -1,3 +1,4 @@
+
 import { createClient } from '@supabase/supabase-js';
 import sgMail from '@sendgrid/mail';
 
@@ -82,9 +83,11 @@ export default async function handler(req, res) {
       .update({ founder_reply: reply_text })
       .eq('id', booking_id);
 
-    return res.status(200).json({ success: true, message: 'Reply sent successfully' });
+    const modeTail = !process.env.SENDGRID_API_KEY ? ` (NOTE: SENDGRID_API_KEY missing in Vercel environment variables, so email was logged in mock dev mode)` : `.`;
+    return res.status(200).json({ success: true, message: `Reply sent successfully${modeTail}` });
   } catch (error) {
     console.error('Error sending reply:', error);
-    return res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    const errDetails = error?.response?.body?.errors?.map(e => e.message).join('; ') || error?.message || String(error);
+    return res.status(500).json({ error: errDetails || 'Internal Server Error', details: errDetails });
   }
 }

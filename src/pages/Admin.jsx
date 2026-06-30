@@ -358,12 +358,13 @@ function AdminDashboardContent() {
         const res = await fetch('/api/admin/community', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'upload', users: parsedUsers, password })
+          body: JSON.stringify({ action: 'upload', users: parsedUsers, occurrence_id: blastOccId || selectedOccurrenceId, password })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.details || data.error);
         alert('🎉 ' + data.message);
         fetchCommunityCount();
+        if (blastOccId || selectedOccurrenceId) fetchInterests(blastOccId || selectedOccurrenceId);
       } catch (err) {
         alert('Error uploading CSV: ' + err.message);
       } finally {
@@ -390,13 +391,14 @@ function AdminDashboardContent() {
       const res = await fetch('/api/admin/community', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'upload', users: parsedUsers, password })
+        body: JSON.stringify({ action: 'upload', users: parsedUsers, occurrence_id: blastOccId || selectedOccurrenceId, password })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.details || data.error);
       alert('🎉 ' + data.message);
       setManualEmails('');
       fetchCommunityCount();
+      if (blastOccId || selectedOccurrenceId) fetchInterests(blastOccId || selectedOccurrenceId);
     } catch (err) {
       alert('Error bulk adding emails: ' + err.message);
     } finally {

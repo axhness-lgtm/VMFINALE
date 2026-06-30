@@ -49,12 +49,18 @@ export default async function handler(req, res) {
         let errorCount = 0;
 
         for (let i = 0; i < users.length; i += 50) {
-          const batch = users.slice(i, i + 50).map(u => ({
-            name: u.name?.trim() || 'Community Member',
-            email: u.email?.trim()?.toLowerCase(),
-            phone: u.phone?.trim() || 'N/A',
-            instagram_handle: u.tag ? `[Tag: ${u.tag.trim()}] ${u.instagram?.trim() || u.instagram_handle?.trim() || ''}`.trim() : (u.instagram?.trim() || u.instagram_handle?.trim() || null)
-          })).filter(u => u.email && u.email.includes('@'));
+          const batch = users.slice(i, i + 50).map((u, idx) => {
+            const rawPhone = u.phone?.trim();
+            const safePhone = (!rawPhone || rawPhone === 'N/A' || rawPhone === '')
+              ? `na_${Date.now()}_${i}_${idx}_${Math.random().toString(36).substring(2, 6)}`
+              : rawPhone;
+            return {
+              name: u.name?.trim() || 'Community Member',
+              email: u.email?.trim()?.toLowerCase(),
+              phone: safePhone,
+              instagram_handle: u.tag ? `[Tag: ${u.tag.trim()}] ${u.instagram?.trim() || u.instagram_handle?.trim() || ''}`.trim() : (u.instagram?.trim() || u.instagram_handle?.trim() || null)
+            };
+          }).filter(u => u.email && u.email.includes('@'));
 
           if (batch.length === 0) continue;
 
@@ -68,12 +74,23 @@ export default async function handler(req, res) {
             errorCount += batch.length;
           } else if (data) {
             insertedCount += data.length;
+            if (occurrence_id && data.length > 0) {
+              const interestBatch = data.map(u => ({
+                occurrence_id,
+                user_id: u.id,
+                status: 'interested'
+              }));
+              await supabase
+                .from('occurrence_interests')
+                .upsert(interestBatch, { onConflict: 'occurrence_id, user_id' });
+            }
           }
         }
 
+        const msgTail = occurrence_id ? ` and linked to active dinner occurrence.` : `.`;
         return res.status(200).json({ 
           success: true, 
-          message: `Successfully processed list. Imported/Updated ${insertedCount} community members.` 
+          message: `Successfully processed list. Imported/Updated ${insertedCount} community members${msgTail}` 
         });
       } catch (error) {
         console.error('Error importing CSV/list:', error);
@@ -137,16 +154,19 @@ export default async function handler(req, res) {
             }
           } catch (emailErr) {
             console.error('SendGrid Blast Error:', emailErr);
-            return res.status(200).json({ success: true, message: `Blast processed for ${msgs.length} members, but SendGrid returned an error or partial delay.` });
+            const sendgridDetails = emailErr?.response?.body?.errors?.map(e => e.message).join('; ') || emailErr?.message || String(emailErr);
+            return res.status(500).json({ error: `SendGrid Error: ${sendgridDetails}`, details: sendgridDetails });
           }
         } else {
           console.log(`[DEV] Simulated Community Blast sent to ${msgs.length} recipients.`);
+          return res.status(200).json({ success: true, message: `Announcement broadcast simulated for ${msgs.length} members (NOTE: SENDGRID_API_KEY is missing in environment variables).` });
         }
 
         return res.status(200).json({ success: true, message: `Announcement broadcast sent to ${msgs.length} community members.` });
       } catch (error) {
         console.error('Error sending community blast:', error);
-        return res.status(500).json({ error: 'Internal Server Error', details: error.message });
+        const errDetails = error?.response?.body?.errors?.map(e => e.message).join('; ') || error?.message || String(error);
+        return res.status(500).json({ error: errDetails || 'Internal Server Error', details: errDetails });
       }
     }
 
