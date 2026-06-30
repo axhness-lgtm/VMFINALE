@@ -82,7 +82,7 @@ export default async function handler(req, res) {
       .select('id')
       .eq('occurrence_id', occurrence_id)
       .eq('user_id', user_id)
-      .single();
+      .maybeSingle();
 
     if (existingBooking) {
       return res.status(400).json({ error: 'You have already booked a seat for this dinner.' });

@@ -23,14 +23,14 @@ export default async function handler(req, res) {
     let userId;
 
     // 1. Check if user already exists in the Common Community List (by email or phone)
-    const { data: existingUser } = await supabase
+    const { data: existingUsers } = await supabase
       .from('users')
       .select('id')
       .or(`email.eq.${email},phone.eq.${phone}`)
-      .single();
+      .limit(1);
 
-    if (existingUser) {
-      userId = existingUser.id;
+    if (existingUsers && existingUsers.length > 0) {
+      userId = existingUsers[0].id;
       // Update their latest details
       await supabase
         .from('users')
@@ -42,10 +42,30 @@ export default async function handler(req, res) {
         .from('users')
         .insert({ name, email, phone, instagram_handle })
         .select('id')
-        .single();
+        .maybeSingle();
         
-      if (createError) throw createError;
-      userId = newUser.id;
+      if (createError) {
+        if (createError.code === '23505' || createError.message?.includes('duplicate') || createError.message?.includes('unique')) {
+          const { data: retryUsers } = await supabase
+            .from('users')
+            .select('id')
+            .or(`email.eq.${email},phone.eq.${phone}`)
+            .limit(1);
+          if (retryUsers && retryUsers.length > 0) {
+            userId = retryUsers[0].id;
+          } else {
+            throw createError;
+          }
+        } else {
+          throw createError;
+        }
+      } else if (newUser?.id) {
+        userId = newUser.id;
+      }
+    }
+
+    if (!userId) {
+      throw new Error('Unable to resolve user profile identity.');
     }
 
     // 2. Add to Occurrence Interests (Active List)
@@ -58,13 +78,14 @@ export default async function handler(req, res) {
       });
       
     // Ignore conflict if they already showed interest for this occurrence
-    if (interestError && interestError.code !== '23505') { 
+    if (interestError && interestError.code !== '23505' && !interestError.message?.includes('duplicate') && !interestError.message?.includes('unique')) { 
        throw interestError;
     }
 
     return res.status(200).json({ success: true, message: 'Interest registered successfully' });
   } catch (error) {
     console.error('Error registering interest:', error);
-    return res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    const errMsg = error?.message || error?.details || (typeof error === 'object' ? JSON.stringify(error) : String(error));
+    return res.status(500).json({ error: errMsg || 'Internal Server Error', details: errMsg });
   }
 }
