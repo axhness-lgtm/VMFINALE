@@ -234,7 +234,7 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
 
   return (
     <div className="bm-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="bm-modal">
+      <div className="bm-modal" data-lenis-prevent="true">
         {step !== 'confirmed' && (
           <button className="bm-close" onClick={onClose} aria-label="Close">✕</button>
         )}

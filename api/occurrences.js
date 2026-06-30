@@ -1,11 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || 'https://placeholder.supabase.co';
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || 'placeholder_key';
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default async function handler(req, res) {
+  if (supabaseUrl === 'https://placeholder.supabase.co' || supabaseKey === 'placeholder_key') {
+    return res.status(500).json({ error: 'Database configuration missing. Please add VITE_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to Vercel environment variables.' });
+  }
   if (req.method === 'POST') {
     const { action, id, title, event_date, total_seats = 8, price_inr = 299900, status, password } = req.body;
 

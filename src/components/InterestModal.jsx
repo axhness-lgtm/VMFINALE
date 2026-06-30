@@ -51,7 +51,7 @@ export default function InterestModal({ isOpen, onClose, dinner }) {
 
   return (
     <div className="bm-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="bm-modal">
+      <div className="bm-modal" data-lenis-prevent="true">
         <button className="bm-close" onClick={onClose} aria-label="Close">✕</button>
 
         <div className="bm-step-wrapper step-in">

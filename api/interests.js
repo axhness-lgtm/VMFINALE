@@ -1,14 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Initialize Supabase Admin Client using service_role key to bypass RLS
-const supabase = createClient(
-  process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || 'https://placeholder.supabase.co';
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || 'placeholder_key';
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+
+  if (supabaseUrl === 'https://placeholder.supabase.co' || supabaseKey === 'placeholder_key') {
+    return res.status(500).json({ error: 'Database configuration missing. Please add VITE_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to Vercel environment variables.' });
   }
 
   const { name, email, phone, instagram_handle, occurrence_id } = req.body;

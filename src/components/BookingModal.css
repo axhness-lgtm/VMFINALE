@@ -59,6 +59,7 @@
   max-width: 480px;
   max-height: 90vh;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 40px 36px 36px 36px;
   box-sizing: border-box;
   animation: bm-slide-up 0.3s cubic-bezier(0.19, 1, 0.22, 1);

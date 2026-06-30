@@ -27,7 +27,7 @@ class AdminErrorBoundary extends React.Component {
             </p>
             <div className="mb-6">
               <span className="text-xs font-bold uppercase tracking-wider text-red-700 block mb-1">Component Stack Trace:</span>
-              <pre className="text-xs bg-white p-4 rounded-lg border border-red-200 overflow-auto max-h-80 leading-relaxed">
+              <pre className="text-xs bg-white p-4 rounded-lg border border-red-200 overflow-auto max-h-80 leading-relaxed" data-lenis-prevent="true">
                 {this.state.errorInfo && this.state.errorInfo.componentStack}
               </pre>
             </div>
@@ -1054,7 +1054,7 @@ function AdminDashboardContent() {
         {/* ── GUEST DETAILS & TRACKING LINK MODAL ── */}
         {viewModalGuest && (
           <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fadeIn" onClick={(e) => e.target === e.currentTarget && setViewModalGuest(null)}>
-            <div className="bg-[var(--bg-primary)] border-2 border-[var(--accent-primary)] rounded-2xl p-6 md:p-8 max-w-lg w-full shadow-2xl relative text-[var(--text-main)]">
+            <div className="bg-[var(--bg-primary)] border-2 border-[var(--accent-primary)] rounded-2xl p-6 md:p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl relative text-[var(--text-main)]" data-lenis-prevent="true">
               <button onClick={() => setViewModalGuest(null)} className="absolute top-4 right-4 text-xl font-bold hover:text-[var(--accent-primary)]">✕</button>
               
               <div className="flex items-center gap-3 mb-4 border-b border-[var(--text-main)]/10 pb-4">

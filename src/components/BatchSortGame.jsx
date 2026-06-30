@@ -796,7 +796,7 @@ const BatchSortGame = () => {
             {/* Logs events stream matching layout */}
             <div className="ledger-event-log-container">
               <div className="event-log-title">[ CALIBRATION_STREAM_LOG ]</div>
-              <div className="event-log-list">
+              <div className="event-log-list" data-lenis-prevent="true">
                 {processedItems.length === 0 ? (
                   <div className="empty-log-msg">&gt;_ Awaiting packet inputs...</div>
                 ) : (
@@ -867,7 +867,7 @@ const BatchSortGame = () => {
       {/* FINAL CALIBRATION COMPLETION MANIFEST POPUP */}
       {gameState === 'complete' && (
         <div className="final-manifest-overlay">
-          <div className="manifest-box">
+          <div className="manifest-box" data-lenis-prevent="true">
             <div className="manifest-header">
               <span className="manifest-title">SYSTEM MANIFEST</span>
               <span className="manifest-close" onClick={() => setGameState('idle')}>[ CLOSE ]</span>

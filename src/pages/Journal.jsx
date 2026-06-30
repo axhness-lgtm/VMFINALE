@@ -534,8 +534,9 @@ export default function Journal() {
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 20 }}
               onClick={(e) => e.stopPropagation()}
+              data-lenis-prevent="true"
               className="bg-[#fcf8f2] text-[#3b2b24] max-w-3xl w-full max-h-[85vh] overflow-y-auto rounded-3xl p-6 md:p-12 shadow-2xl relative border border-[#3b2b24]/10"
-              style={{ backgroundImage: "url('/texture.png')", backgroundSize: "cover", backgroundBlendMode: "multiply" }}
+              style={{ backgroundImage: "url('/texture.png')", backgroundSize: "cover", backgroundBlendMode: "multiply", overscrollBehavior: "contain" }}
             >
               <button 
                 onClick={() => setActiveBlogRead(null)}
