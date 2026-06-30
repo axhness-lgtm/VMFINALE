@@ -9,7 +9,7 @@ if (process.env.SENDGRID_API_KEY) {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 }
 
-const DOMAIN = process.env.VITE_DOMAIN || 'http://localhost:5173';
+const DOMAIN = process.env.VITE_DOMAIN || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : 'https://vantammayilu.com');
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {

@@ -11,7 +11,7 @@ if (process.env.SENDGRID_API_KEY) {
 }
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-for-dev';
-const DOMAIN = process.env.VITE_DOMAIN || 'http://localhost:5173'; // Update with Vercel domain later
+const DOMAIN = process.env.VITE_DOMAIN || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : 'https://vantammayilu.com');
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
