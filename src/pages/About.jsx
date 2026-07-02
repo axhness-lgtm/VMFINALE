@@ -18,10 +18,9 @@ export default function About() {
           />
         </div>
 
-        {/* Aspect Ratio Box container defaulted */}
+        {/* Aspect Ratio Box container widened */}
         <div 
-          className="relative w-full aspect-[16/10] max-h-[85vh] z-10 mx-auto"
-          style={{ maxWidth: 'calc(85vh * 1.6)' }}
+          className="relative w-full max-w-7xl aspect-[16/9] min-h-[700px] max-h-[90vh] z-10 mx-auto px-4"
         >
           {/* Decorative Doodles from a to h */}
           <img src="/a.png" className="absolute top-[5%] left-[30%] w-[5%] object-contain opacity-70 pointer-events-none -rotate-12 mix-blend-multiply" alt="" />
@@ -43,47 +42,50 @@ export default function About() {
             >
               <h2 className="text-lg md:text-xl font-body tracking-widest uppercase text-[var(--accent-primary)] mb-1 font-bold">The World Has</h2>
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-logo text-[var(--text-main)] drop-shadow-sm">Seven Wonders.</h1>
+              <p className="text-2xl md:text-3xl lg:text-4xl font-heading italic text-[var(--accent-primary)] mt-1 font-bold drop-shadow-sm">
+                We Believe there is an Eighth!
+              </p>
             </motion.div>
           </div>
 
-          {/* 1. Great Wall (Top Left) */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2, duration: 0.8 }} className="absolute top-[15%] left-[3%] w-[32%] z-20">
+          {/* 1. Great Wall (Top Left spread wide) */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2, duration: 0.8 }} className="absolute top-[12%] left-[-2%] w-[32%] z-20">
             <img src="/one.png" alt="Wonder 1" className="w-full h-auto object-contain hover:scale-105 transition-transform drop-shadow-md" />
           </motion.div>
 
-          {/* 2. Petra (Mid Left) */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.8 }} className="absolute top-[43%] left-[1%] w-[28%] z-20">
+          {/* 2. Petra (Mid Left spread wide) */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.8 }} className="absolute top-[45%] left-[-4%] w-[28%] z-20">
             <img src="/two.png" alt="Wonder 2" className="w-full h-auto object-contain hover:scale-105 transition-transform drop-shadow-md" />
           </motion.div>
 
-          {/* 3. Christ Redeemer (Bottom Left) */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8, duration: 0.8 }} className="absolute bottom-[2%] left-[8%] w-[25%] z-20">
+          {/* 3. Christ Redeemer (Bottom Left spread wide) */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8, duration: 0.8 }} className="absolute bottom-[2%] left-[2%] w-[25%] z-20">
             <img src="/three.png" alt="Wonder 3" className="w-full h-auto object-contain hover:scale-105 transition-transform drop-shadow-md" />
           </motion.div>
 
-          {/* 4. Machu Picchu (Bottom Mid-Left) */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1, duration: 0.8 }} className="absolute bottom-[2%] left-[26%] w-[28%] z-20">
+          {/* 4. Machu Picchu (Bottom Mid-Left spread wide) */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1, duration: 0.8 }} className="absolute bottom-[1%] left-[21%] w-[28%] z-20">
             <img src="/four.png" alt="Wonder 4" className="w-full h-auto object-contain hover:scale-105 transition-transform drop-shadow-md" />
           </motion.div>
 
-          {/* 5. Chichen Itza (Bottom Mid-Right) */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4, duration: 0.8 }} className="absolute bottom-[2%] right-[26%] w-[28%] z-20">
+          {/* 5. Chichen Itza (Bottom Mid-Right spread wide) */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4, duration: 0.8 }} className="absolute bottom-[1%] right-[21%] w-[28%] z-20">
             <img src="/five.png" alt="Wonder 5" className="w-full h-auto object-contain hover:scale-105 transition-transform drop-shadow-md" />
           </motion.div>
 
-          {/* 6. Colosseum (Bottom Right) */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.7, duration: 0.8 }} className="absolute bottom-[5%] right-[6%] w-[32%] z-20">
+          {/* 6. Colosseum (Bottom Right spread wide) */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.7, duration: 0.8 }} className="absolute bottom-[2%] right-[2%] w-[32%] z-20">
             <img src="/six.png" alt="Wonder 6" className="w-full h-auto object-contain hover:scale-105 transition-transform drop-shadow-md" />
           </motion.div>
 
-          {/* 7. Taj Mahal (Mid Right) */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.0, duration: 0.8 }} className="absolute top-[25%] right-[2%] w-[35%] z-20">
+          {/* 7. Taj Mahal (Mid Right spread wide) */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.0, duration: 0.8 }} className="absolute top-[20%] right-[-4%] w-[35%] z-20">
             <img src="/seven (2).png" alt="Wonder 7" className="w-full h-auto object-contain hover:scale-105 transition-transform drop-shadow-md" />
           </motion.div>
 
 
           {/* 8. The Table (Center) */}
-          <div className="absolute top-[50%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[55%] z-10">
+          <div className="absolute top-[52%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[52%] z-10">
             <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 2.3, duration: 1 }} className="w-full">
               <img src="/eight.png" alt="The Eighth Wonder - Table" className="w-full h-auto object-contain drop-shadow-xl" />
             </motion.div>
@@ -104,6 +106,7 @@ export default function About() {
         <div className="relative z-10 text-center w-full mb-12">
           <h2 className="text-lg font-body tracking-widest uppercase text-[var(--accent-primary)] mb-1 font-bold">The World Has</h2>
           <h1 className="text-5xl font-logo text-[var(--text-main)] drop-shadow-sm">Seven Wonders.</h1>
+          <p className="text-xl font-heading italic text-[var(--accent-primary)] mt-2 font-bold drop-shadow-sm">We Believe there is an Eighth!</p>
         </div>
         <motion.img initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2, duration: 1 }} src="/eight.png" alt="The Table" className="w-[90%] h-auto object-contain relative z-10 drop-shadow-xl mb-8" />
       </section>
@@ -167,7 +170,7 @@ export default function About() {
                 viewport={{ once: true }}
                 className="aspect-[3/4] overflow-hidden torn-edge shadow-2xl filter grayscale hover:grayscale-0 transition-all duration-700 relative z-10 polaroid-frame hover-lift"
               >
-                <img src="/herofordinner.jpeg" alt="Hyndavi Onimi" className="w-full h-full object-cover" />
+                <img src="/host.png" alt="Hyndavi Onimi" className="w-full h-full object-cover" />
               </motion.div>
               <span className="handwritten-annotation absolute -bottom-8 right-0 -rotate-6 z-20 text-3xl text-[var(--accent-primary)]">Hyndavi</span>
               {/* Pressed flower illustration instead of emoji sticker */}
@@ -238,7 +241,7 @@ export default function About() {
           >
             <Link
               to="/dinner"
-              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-white hover:text-[var(--accent-primary)] px-12 py-5 text-xl font-bold tracking-[0.1em] rounded-full shadow-2xl transition-all duration-300 hover:scale-105 uppercase"
+              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-white hover:text-[var(--accent-primary)] px-12 py-5 text-xl font-bold tracking-[0.1em] rounded-md shadow-2xl transition-all duration-300 hover:scale-105 uppercase"
             >
               See upcoming dinners
             </Link>

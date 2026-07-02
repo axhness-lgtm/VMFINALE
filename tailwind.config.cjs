@@ -8,12 +8,12 @@ module.exports = {
     extend: {
       fontFamily: {
         serif: ['"The Seasons"', 'Georgia', 'serif'],
-        mono: ['"Hibernate"', 'sans-serif'],
+        mono: ['"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
         sans: ['"The Seasons"', 'sans-serif'],
         body: ['"The Seasons"', 'sans-serif'],
         heading: ['"The Seasons"', 'serif'],
-        logo: ['"Hibernate"', 'sans-serif'],
-        hibernate: ['"Hibernate"', 'sans-serif'],
+        logo: ['"Apricot"', 'cursive'],
+        hibernate: ['"The Seasons"', 'serif'],
       },
       colors: {
         cream: '#efe9e1',

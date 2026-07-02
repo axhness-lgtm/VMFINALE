@@ -135,7 +135,7 @@ export default function Home() {
             </p>
 
             <div className="reveal-item flex flex-col sm:flex-row gap-6 items-center justify-center mt-2">
-              <Link to="/dinner" className="group relative btn-paper !overflow-visible bg-cream text-[var(--text-main)] border-[var(--text-main)] border hover:bg-orange hover:text-[var(--bg-primary)] hover:border-orange transition-colors text-sm px-6 py-3 drop-shadow-md rounded-full font-hibernate tracking-normal z-10">
+              <Link to="/dinner" className="group relative btn-paper !overflow-visible bg-cream text-[var(--text-main)] border-[var(--text-main)] border hover:bg-orange hover:text-[var(--bg-primary)] hover:border-orange transition-colors text-sm px-6 py-3 drop-shadow-md rounded-md font-body font-bold tracking-wider uppercase z-10">
                 <img
                   src="/assets/d2.png"
                   alt="doodle"
@@ -143,7 +143,7 @@ export default function Home() {
                 />
                 Upcoming dinner
               </Link>
-              <Link to="/about" className="group relative btn-paper !overflow-visible bg-cream text-[var(--text-main)] border-[var(--text-main)] border hover:bg-orange hover:text-[var(--bg-primary)] hover:border-orange transition-colors text-sm px-6 py-3 drop-shadow-md rounded-full font-hibernate tracking-normal z-10">
+              <Link to="/about" className="group relative btn-paper !overflow-visible bg-cream text-[var(--text-main)] border-[var(--text-main)] border hover:bg-orange hover:text-[var(--bg-primary)] hover:border-orange transition-colors text-sm px-6 py-3 drop-shadow-md rounded-md font-body font-bold tracking-wider uppercase z-10">
                 <img
                   src="/assets/d1.png"
                   alt="doodle"
@@ -182,7 +182,7 @@ export default function Home() {
 
       {/* 3. WHAT USUALLY HAPPENS */}
       <section className="relative bg-[var(--bg-primary)] py-20 md:py-24 px-2 md:px-4 w-full">
-        <div className="text-center mb-16 relative z-50">
+        <div className="text-center mb-16 relative z-10">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading text-[var(--text-main)] flex flex-wrap items-center justify-center gap-2 md:gap-4">
             <span className="font-logo text-5xl md:text-6xl lg:text-7xl text-[var(--accent-primary)] font-normal -rotate-2 inline-block">Glimpses</span>
             <span className="font-heading">from the table</span>

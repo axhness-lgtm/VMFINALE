@@ -58,11 +58,11 @@ export default function Navigation() {
   };
 
   return (
-    <div className="fixed left-0 w-full z-50 flex justify-center pointer-events-none transition-all duration-300 top-4 px-6">
-      <header className="pointer-events-auto flex justify-between items-center transition-all duration-300 bg-cream/90 backdrop-blur-md border border-[#3b2b24]/10 shadow-lg rounded-2xl px-6 py-3 w-full max-w-6xl">
+    <div className="fixed left-0 w-full z-[9999] flex justify-center pointer-events-none transition-all duration-300 top-4 px-6">
+      <header className="pointer-events-auto flex justify-between items-center transition-all duration-300 bg-cream/95 backdrop-blur-md border border-[#3b2b24]/10 shadow-lg rounded-2xl px-6 py-3 w-full max-w-6xl">
         
         {/* Logo */}
-        <Link to="/" onClick={handleScrollTop} className="relative z-50 flex-shrink-0 hover:opacity-80 transition-opacity duration-300 flex items-center">
+        <Link to="/" onClick={handleScrollTop} className="relative z-[9999] flex-shrink-0 hover:opacity-80 transition-opacity duration-300 flex items-center">
           <span className="text-2xl md:text-3xl text-[var(--accent-primary)] font-logo leading-none tracking-wide">
             Vantammayilu
           </span>
@@ -92,7 +92,7 @@ export default function Navigation() {
           <Link 
             to="/dinner" 
             onClick={handleScrollTop} 
-            className="ml-6 px-9 py-3 rounded-xl font-heading italic font-light text-lg tracking-wider bg-[var(--accent-primary)] text-white hover:bg-[#c14a27] hover:scale-105 active:scale-95 shadow-md transition-all duration-300"
+            className="ml-6 px-9 py-3 rounded-md font-heading italic font-light text-lg tracking-wider bg-[var(--accent-primary)] text-white hover:bg-[#c14a27] hover:scale-105 active:scale-95 shadow-md transition-all duration-300"
           >
             Reserve
           </Link>

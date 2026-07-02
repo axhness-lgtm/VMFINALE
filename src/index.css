@@ -89,7 +89,11 @@ p {
 }
 
 .font-hibernate, .font-\[Hibernate\] {
-  font-family: 'Hibernate', sans-serif !important;
+  font-family: var(--font-body) !important;
+}
+
+.admin-dashboard, .admin-dashboard * {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
 }
 
 /* Base button styling */
@@ -98,7 +102,7 @@ p {
   color: var(--text-main);
   font-family: var(--font-body);
   padding: 0.75rem 2rem;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 1px solid rgba(59, 43, 36, 0.1);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   transition: all 0.3s ease;

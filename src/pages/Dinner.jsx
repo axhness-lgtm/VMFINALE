@@ -72,7 +72,7 @@ const ReserveSection = ({ onReserveClick, onInterestClick, canReserve, isSoldOut
                 </div>
                 <button
                   onClick={onInterestClick}
-                  className="bg-[var(--text-main)] text-white font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-full shadow-lg hover:bg-[#1a130f] hover:scale-105 transition-all duration-300"
+                  className="bg-[var(--text-main)] text-white font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-md shadow-lg hover:bg-[#1a130f] hover:scale-105 transition-all duration-300"
                 >
                   Join Waitlist (I'm Interested)
                 </button>
@@ -83,14 +83,14 @@ const ReserveSection = ({ onReserveClick, onInterestClick, canReserve, isSoldOut
             ) : canReserve ? (
               <button
                 onClick={onReserveClick}
-                className="bg-[var(--accent-primary)] text-white font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-full shadow-lg hover:bg-[#c14a27] hover:scale-105 transition-all duration-300"
+                className="bg-[var(--accent-primary)] text-white font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-md shadow-lg hover:bg-[#c14a27] hover:scale-105 transition-all duration-300"
               >
                 Reserve Your Seat
               </button>
             ) : (
               <button
                 onClick={onInterestClick}
-                className="bg-[var(--accent-primary)] text-white font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-full shadow-lg hover:bg-[#c14a27] hover:scale-105 transition-all duration-300"
+                className="bg-[var(--accent-primary)] text-white font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-md shadow-lg hover:bg-[#c14a27] hover:scale-105 transition-all duration-300"
               >
                 I'm Interested
               </button>
@@ -247,7 +247,7 @@ export default function Dinner() {
                   </div>
                   <button
                     onClick={() => setIsInterestOpen(true)}
-                    className="bg-[var(--text-main)] text-white font-body uppercase text-base md:text-lg font-extrabold tracking-widest px-8 py-3.5 rounded-xl shadow-xl hover:bg-[#1a130f] hover:scale-105 active:scale-95 border-2 border-[#ffffff]/20 transition-all duration-300 z-20 cursor-pointer"
+                    className="bg-[var(--text-main)] text-white font-body uppercase text-base md:text-lg font-extrabold tracking-widest px-8 py-3.5 rounded-md shadow-xl hover:bg-[#1a130f] hover:scale-105 active:scale-95 border-2 border-[#ffffff]/20 transition-all duration-300 z-20 cursor-pointer"
                   >
                     JOIN WAITLIST (I'M INTERESTED)
                   </button>
@@ -258,14 +258,14 @@ export default function Dinner() {
               ) : canReserve ? (
                 <button
                   onClick={() => setIsBookingOpen(true)}
-                  className="bg-[var(--accent-primary)] text-white font-body uppercase text-base md:text-lg font-extrabold tracking-widest px-8 py-3.5 rounded-xl shadow-xl hover:bg-[#c14a27] hover:scale-105 active:scale-95 border-2 border-[#ffffff]/20 transition-all duration-300 z-20 cursor-pointer"
+                  className="bg-[var(--accent-primary)] text-white font-body uppercase text-base md:text-lg font-extrabold tracking-widest px-8 py-3.5 rounded-md shadow-xl hover:bg-[#c14a27] hover:scale-105 active:scale-95 border-2 border-[#ffffff]/20 transition-all duration-300 z-20 cursor-pointer"
                 >
                   RESERVE YOUR SEAT
                 </button>
               ) : (
                 <button
                   onClick={() => setIsInterestOpen(true)}
-                  className="bg-[var(--accent-primary)] text-white font-body uppercase text-base md:text-lg font-extrabold tracking-widest px-8 py-3.5 rounded-xl shadow-xl hover:bg-[#c14a27] hover:scale-105 active:scale-95 border-2 border-[#ffffff]/20 transition-all duration-300 z-20 cursor-pointer"
+                  className="bg-[var(--accent-primary)] text-white font-body uppercase text-base md:text-lg font-extrabold tracking-widest px-8 py-3.5 rounded-md shadow-xl hover:bg-[#c14a27] hover:scale-105 active:scale-95 border-2 border-[#ffffff]/20 transition-all duration-300 z-20 cursor-pointer"
                 >
                   I'M INTERESTED
                 </button>

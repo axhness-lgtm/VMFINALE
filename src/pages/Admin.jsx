@@ -16,7 +16,7 @@ class AdminErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-[var(--bg-secondary)] pt-32 pb-16 px-8 font-body">
+        <div className="admin-dashboard min-h-screen bg-[var(--bg-secondary)] pt-32 pb-16 px-8">
           <div className="max-w-4xl mx-auto p-8 bg-red-50 border-2 border-red-500 text-red-900 rounded-2xl shadow-xl font-mono">
             <h2 className="text-3xl font-heading font-bold mb-4 flex items-center gap-2">
               <span>🚨</span>
@@ -436,7 +436,7 @@ function AdminDashboardContent() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-[var(--bg-primary)] flex items-center justify-center">
+      <div className="admin-dashboard min-h-screen bg-[var(--bg-primary)] flex items-center justify-center">
         <form onSubmit={handleLogin} className="p-8 bg-white shadow-xl rounded-lg border border-[var(--text-main)]/10 w-full max-w-md">
           <h2 className="text-3xl font-heading mb-6 text-center text-[var(--text-main)]">Founder Login</h2>
           <input 
@@ -454,7 +454,7 @@ function AdminDashboardContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg-secondary)] pt-32 pb-16 px-8 font-body">
+    <div className="admin-dashboard min-h-screen bg-[var(--bg-secondary)] pt-32 pb-16 px-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div className="flex items-center gap-4">
