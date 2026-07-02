@@ -13,6 +13,7 @@ module.exports = {
         body: ['"The Seasons"', 'sans-serif'],
         heading: ['"The Seasons"', 'serif'],
         logo: ['"Apricot"', 'cursive'],
+        hibernate: ['"Hibernate"', 'sans-serif'],
       },
       colors: {
         cream: '#efe9e1',

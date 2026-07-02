@@ -256,10 +256,10 @@ export default function Journal() {
       <EdgeDivider src="/edge5.png" />
 
       {/* 1.5. RECIPES WE LOVE (FITS 1366x768 RELATIVE SCREEN, BIGGER ITEMS, CLOSE DESCRIPTION) */}
-      <section className="relative w-full max-w-[1366px] h-[768px] mx-auto flex flex-col items-center justify-center bg-[var(--bg-primary)] overflow-hidden z-[5]">
+      <section className="relative w-full max-w-[1100px] h-[780px] mx-auto flex flex-col items-center justify-center bg-[var(--bg-primary)] overflow-hidden z-[5]">
         <div className="absolute inset-0 paper-texture opacity-30 mix-blend-multiply pointer-events-none" />
 
-        <div className="absolute top-12 md:top-16 left-1/2 -translate-x-1/2 text-center z-20 w-full px-6 pointer-events-none">
+        <div className="absolute top-24 md:top-32 left-1/2 -translate-x-1/2 text-center z-20 w-full px-6 pointer-events-none">
           <span className="font-body italic text-3xl md:text-4xl text-[var(--accent-primary)] block mb-1 font-logo">Our Favorites</span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading text-[var(--text-main)] mb-1 transition-all duration-500">
             {hoveredRecipe ? hoveredRecipe.title : "Recipes we love."}
@@ -279,7 +279,7 @@ export default function Journal() {
         </div>
 
         {/* Rotating Arc/Ring with increased menu item size */}
-        <div className="absolute bottom-[-260px] md:bottom-[-320px] left-1/2 -translate-x-1/2 z-10 w-full flex items-center justify-center pointer-events-none">
+        <div className="absolute bottom-[-280px] md:bottom-[-350px] left-1/2 -translate-x-1/2 z-10 w-full flex items-center justify-center pointer-events-none">
           <div className={`relative flex items-center justify-center animate-spin-arc ${hoveredRecipe ? 'pause-anim' : ''}`}>
             {displayRecipes.map((recipe, idx, arr) => {
               const angle = idx * (360 / arr.length);
@@ -293,7 +293,7 @@ export default function Journal() {
                   style={{ '--angle': `${angle}deg` }}
                 >
                   <div 
-                    className={`w-48 h-48 md:w-64 md:h-64 cursor-pointer group transition-all duration-500 rounded-full pointer-events-auto flex items-center justify-center ${
+                    className={`w-60 h-60 md:w-80 md:h-80 cursor-pointer group transition-all duration-500 rounded-full pointer-events-auto flex items-center justify-center ${
                       isThisHovered 
                         ? 'opacity-100 scale-125 -translate-y-6 drop-shadow-2xl z-50' 
                         : isAnyHovered 

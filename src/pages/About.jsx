@@ -8,7 +8,7 @@ export default function About() {
     <div className="w-full relative bg-[var(--bg-primary)]">
       
       {/* 1. HERO SECTION */}
-      <section className="relative w-full min-h-screen hidden md:flex flex-col items-center justify-center overflow-hidden bg-[var(--accent-primary)] pt-20 pb-12">
+      <section className="relative w-full min-h-screen hidden md:flex flex-col items-center justify-center overflow-hidden bg-[var(--bg-primary)] pt-20 pb-12">
         {/* Background Texture */}
         <div className="absolute inset-0 pointer-events-none z-0">
           <img
@@ -41,8 +41,8 @@ export default function About() {
               transition={{ delay: 2.6, duration: 1 }}
               className="w-full"
             >
-              <h2 className="text-lg md:text-xl font-body tracking-widest uppercase text-[#efe8db] mb-1 font-bold">The World Has</h2>
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-logo text-white drop-shadow-sm">Seven Wonders.</h1>
+              <h2 className="text-lg md:text-xl font-body tracking-widest uppercase text-[var(--accent-primary)] mb-1 font-bold">The World Has</h2>
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-logo text-[var(--text-main)] drop-shadow-sm">Seven Wonders.</h1>
             </motion.div>
           </div>
 
@@ -93,7 +93,7 @@ export default function About() {
       </section>
 
       {/* Mobile Fallback */}
-      <section className="relative md:hidden flex flex-col items-center justify-center pt-32 pb-20 px-6 bg-[var(--accent-primary)] overflow-hidden min-h-screen">
+      <section className="relative md:hidden flex flex-col items-center justify-center pt-32 pb-20 px-6 bg-[var(--bg-primary)] overflow-hidden min-h-screen">
         <div className="absolute inset-0 pointer-events-none z-0">
           <img
             src="/texture.png"
@@ -102,23 +102,25 @@ export default function About() {
           />
         </div>
         <div className="relative z-10 text-center w-full mb-12">
-          <h2 className="text-lg font-body tracking-widest uppercase text-[#efe8db] mb-1 font-bold">The World Has</h2>
-          <h1 className="text-5xl font-logo text-white drop-shadow-sm">Seven Wonders.</h1>
+          <h2 className="text-lg font-body tracking-widest uppercase text-[var(--accent-primary)] mb-1 font-bold">The World Has</h2>
+          <h1 className="text-5xl font-logo text-[var(--text-main)] drop-shadow-sm">Seven Wonders.</h1>
         </div>
         <motion.img initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2, duration: 1 }} src="/eight.png" alt="The Table" className="w-[90%] h-auto object-contain relative z-10 drop-shadow-xl mb-8" />
       </section>
 
       <EdgeDivider src="/edge4.png" />
 
-      {/* 2. WHY VANTAMMAYILU? */}
-      <section className="py-20 md:py-24 bg-[var(--bg-secondary)] relative overflow-hidden">
-        <div className="container mx-auto px-6 max-w-4xl">
-          <div className="text-center mb-16">
-            <h2 className="text-5xl md:text-6xl font-heading text-[var(--text-main)]">Why Vantammayilu?</h2>
+      {/* 2. WHAT IS VANTAMMAYILU? */}
+      <section className="min-h-screen py-24 md:py-32 bg-[var(--accent-primary)] relative overflow-hidden flex flex-col items-center justify-center">
+        <div className="absolute inset-0 paper-texture opacity-20 mix-blend-multiply pointer-events-none" />
+        <div className="container mx-auto px-4 md:px-8 max-w-6xl relative z-10 w-full flex-1 flex flex-col justify-center">
+          <div className="text-center mb-14">
+            <h2 className="text-5xl md:text-7xl font-heading text-white drop-shadow-sm">What is Vantammayilu?</h2>
           </div>
 
-          <div className="max-w-2xl mx-auto bg-[var(--bg-primary)] p-8 md:p-12 rounded-3xl shadow-xl border border-[var(--text-main)]/10 relative stitched-border">
-            <div className="masking-tape w-24 h-6 -top-3 left-1/2 -translate-x-1/2 rotate-1" />
+          <div className="w-full max-w-5xl mx-auto bg-[var(--bg-primary)] p-10 md:p-20 rounded-3xl shadow-2xl border-2 border-[var(--text-main)]/15 relative stitched-border overflow-hidden">
+            <div className="absolute inset-0 paper-texture opacity-40 mix-blend-multiply pointer-events-none" />
+            <div className="masking-tape w-32 h-8 -top-4 left-1/2 -translate-x-1/2 rotate-1" />
             
             {/* Sketched Arrow pointing to question */}
             <div className="absolute top-8 -left-20 hidden lg:block rotate-12 opacity-80">
@@ -130,19 +132,19 @@ export default function About() {
             </div>
             
             {/* Coffee Stain */}
-            <div className="absolute bottom-4 right-4 w-24 h-24 bg-[url('data:image/svg+xml;utf8,%3Csvg opacity=%220.08%22 xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22none%22 stroke=%22%234b2e21%22 stroke-width=%224%22 stroke-dasharray=%2210 2 20 4%22/%3E%3Ccircle cx=%2248%22 cy=%2252%22 r=%2238%22 fill=%22none%22 stroke=%22%234b2e21%22 stroke-width=%221%22 opacity=%220.5%22/%3E%3C/svg%3E')] bg-no-repeat bg-contain pointer-events-none" />
+            <div className="absolute bottom-6 right-6 w-32 h-32 bg-[url('data:image/svg+xml;utf8,%3Csvg opacity=%220.08%22 xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22none%22 stroke=%22%234b2e21%22 stroke-width=%224%22 stroke-dasharray=%2210 2 20 4%22/%3E%3Ccircle cx=%2248%22 cy=%2252%22 r=%2238%22 fill=%22none%22 stroke=%22%234b2e21%22 stroke-width=%221%22 opacity=%220.5%22/%3E%3C/svg%3E')] bg-no-repeat bg-contain pointer-events-none" />
 
-            <div className="font-body text-xl md:text-2xl text-[var(--text-main)]/90 space-y-8 leading-relaxed italic relative z-10">
+            <div className="font-body text-xl md:text-2xl lg:text-3xl text-[var(--text-main)]/95 space-y-6 md:space-y-8 leading-relaxed not-italic relative z-10 font-normal">
               <p>"Growing up, food was never just about eating.</p>
               <p>It was how stories were told.</p>
               <p>How people stayed longer.</p>
               <p>How strangers became guests, and guests felt at home.</p>
               <p>Over time, that feeling grew into a question:</p>
-              <p className="font-heading text-3xl text-[var(--accent-primary)] not-italic mt-6 pt-6 border-t border-[var(--text-main)]/10">
+              <p className="font-heading text-3xl md:text-4xl lg:text-5xl text-[var(--accent-primary)] not-italic mt-8 pt-8 border-t border-[var(--text-main)]/15 font-normal">
                 What if more people had a place to experience that?
               </p>
-              <p className="not-italic text-[var(--text-main)] font-semibold text-lg md:text-xl pt-2">
-                That's how Vantammayilu began."
+              <p className="not-italic text-[var(--text-main)] font-bold text-xl md:text-2xl pt-2">
+                That's what Vantammayilu is."
               </p>
             </div>
           </div>
@@ -152,7 +154,7 @@ export default function About() {
       <EdgeDivider src="/edge2.png" />
 
       {/* 4. MEET THE HOST (HYNDAVI) */}
-      <section className="py-20 md:py-24 bg-[var(--accent-primary)] relative overflow-hidden">
+      <section className="py-20 md:py-24 bg-[var(--bg-primary)] relative overflow-hidden">
         <div className="container mx-auto px-6 max-w-5xl">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-16 items-center">
             
@@ -167,24 +169,24 @@ export default function About() {
               >
                 <img src="/herofordinner.jpeg" alt="Hyndavi Onimi" className="w-full h-full object-cover" />
               </motion.div>
-              <span className="handwritten-annotation absolute -bottom-8 right-0 -rotate-6 z-20 text-3xl text-[#fcf8f2]">Hyndavi</span>
+              <span className="handwritten-annotation absolute -bottom-8 right-0 -rotate-6 z-20 text-3xl text-[var(--accent-primary)]">Hyndavi</span>
               {/* Pressed flower illustration instead of emoji sticker */}
               <div className="absolute -top-8 -left-8 w-24 h-24 z-20 rotate-[-15deg] opacity-80 select-none pointer-events-none">
                 <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M50 80 Q52 50 48 20" stroke="#fcf8f2" strokeWidth="2" strokeLinecap="round" opacity="0.6"/>
-                  <path d="M50 50 Q70 40 50 30 Q30 40 50 50" fill="#fcf8f2" fillOpacity="0.8"/>
-                  <path d="M50 50 Q65 60 45 65 Q35 50 50 50" fill="#fcf8f2" fillOpacity="0.8"/>
-                  <path d="M50 50 Q30 40 40 25 Q55 35 50 50" fill="#fcf8f2" fillOpacity="0.8"/>
+                  <path d="M50 80 Q52 50 48 20" stroke="var(--text-main)" strokeWidth="2" strokeLinecap="round" opacity="0.6"/>
+                  <path d="M50 50 Q70 40 50 30 Q30 40 50 50" fill="var(--text-main)" fillOpacity="0.8"/>
+                  <path d="M50 50 Q65 60 45 65 Q35 50 50 50" fill="var(--text-main)" fillOpacity="0.8"/>
+                  <path d="M50 50 Q30 40 40 25 Q55 35 50 50" fill="var(--text-main)" fillOpacity="0.8"/>
                 </svg>
               </div>
             </div>
 
             {/* Right side: Biography */}
             <div className="md:col-span-7 flex flex-col justify-center">
-              <span className="font-body italic text-3xl text-[#fcf8f2] -rotate-1 mb-4 block font-logo">The Founder</span>
-              <h2 className="text-5xl font-heading text-[#fcf8f2] mb-8">Meet the host.</h2>
+              <span className="font-body italic text-3xl text-[var(--accent-primary)] -rotate-1 mb-4 block font-logo">The Founder</span>
+              <h2 className="text-5xl font-heading text-[var(--text-main)] mb-8">Meet the host.</h2>
               
-              <div className="font-body text-lg leading-relaxed space-y-6 text-[#fcf8f2]/90 max-w-xl">
+              <div className="font-body text-lg leading-relaxed space-y-6 text-[var(--text-main)]/85 max-w-xl">
                 <p>Hi, I'm Hyndavi.</p>
                 <p>
                   I started Vantammayilu because I wanted to create the kind of evenings I wished existed.
@@ -197,8 +199,8 @@ export default function About() {
               </div>
 
               {/* Signature touch */}
-              <div className="mt-8 pt-6 border-t border-[#fcf8f2]/30">
-                <p className="font-body italic text-2xl text-[#fcf8f2]">— Hyndavi Onimi</p>
+              <div className="mt-8 pt-6 border-t border-[var(--text-main)]/15">
+                <p className="font-body italic text-2xl text-[var(--text-main)]">— Hyndavi Onimi</p>
               </div>
             </div>
 

@@ -26,6 +26,26 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
   const [guestPhone, setGuestPhone] = useState('');
   const [customerQuery, setCustomerQuery] = useState('');
 
+  // Second person details when 2 seats selected
+  const [secondGuestName, setSecondGuestName] = useState('');
+  const [secondGuestEmail, setSecondGuestEmail] = useState('');
+  const [secondGuestPhone, setSecondGuestPhone] = useState('');
+
+  const getFormattedQuery = () => {
+    let q = customerQuery.trim();
+    if (seats === 2 && (secondGuestName.trim() || secondGuestEmail.trim() || secondGuestPhone.trim())) {
+      const parts = [
+        secondGuestName.trim() && `Name: ${secondGuestName.trim()}`,
+        secondGuestEmail.trim() && `Email: ${secondGuestEmail.trim()}`,
+        secondGuestPhone.trim() && `Phone: ${secondGuestPhone.trim()}`
+      ].filter(Boolean).join(', ');
+      if (parts) {
+        q = (q ? q + '\n\n' : '') + `[Second Guest Details] ${parts}`;
+      }
+    }
+    return q || null;
+  };
+
   // Track how many finalize attempts have been made (for auto-retry)
   const [finalizeAttempts, setFinalizeAttempts] = useState(0);
   const [stepAnim, setStepAnim] = useState(true);
@@ -181,12 +201,21 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
             }
           },
           handler: async (response) => {
-            // Payment success — verify then go straight to dietary notes
+            // Payment success — immediately confirm in backend
             try {
               const verifyRes = await fetch('/api/bookings/confirm', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...response, token, seats, occurrence_id: dinner.id })
+                body: JSON.stringify({
+                  ...response,
+                  token,
+                  seats,
+                  occurrence_id: dinner.id,
+                  user_id: guestUserId,
+                  email: guestEmail,
+                  phone: guestPhone,
+                  customer_query: getFormattedQuery()
+                })
               });
               const verifyData = await verifyRes.json();
               if (!verifyRes.ok) throw new Error(verifyData.details || verifyData.error);
@@ -194,6 +223,7 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
               setBookingId(verifyData.booking_id);
               clearInterval(lockTimerRef.current);
               setLoading(false);
+              onBookingComplete?.();
               goStep('details');
             } catch (err) {
               setError('Payment verified by Razorpay but confirmation failed: ' + err.message);
@@ -211,14 +241,40 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
         goStep('lock');
         rzp.open();
       } else {
-        // Dev mode — skip payment
+        // Dev mode — immediately confirm in backend
         console.warn('DEV MODE: Simulating payment success');
         goStep('lock');
-        setTimeout(() => {
-          clearInterval(lockTimerRef.current);
-          setBookingId(`mock_${Date.now()}`);
-          setLoading(false);
-          goStep('details');
+        setTimeout(async () => {
+          try {
+            const mockOrderId = orderId || `dev_order_${Date.now()}`;
+            const verifyRes = await fetch('/api/bookings/confirm', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_payment_id: `dev_pay_${Date.now()}`,
+                razorpay_order_id: mockOrderId,
+                token,
+                seats,
+                occurrence_id: dinner.id,
+                user_id: guestUserId,
+                email: guestEmail,
+                phone: guestPhone,
+                customer_query: getFormattedQuery()
+              })
+            });
+            const verifyData = await verifyRes.json();
+            if (!verifyRes.ok) throw new Error(verifyData.details || verifyData.error);
+
+            setBookingId(verifyData.booking_id || mockOrderId);
+            clearInterval(lockTimerRef.current);
+            setLoading(false);
+            onBookingComplete?.();
+            goStep('details');
+          } catch (err) {
+            console.error('Dev mode confirm error:', err);
+            setError('Dev confirmation failed: ' + err.message);
+            setLoading(false);
+          }
         }, 1500);
       }
     } catch (err) {
@@ -228,7 +284,7 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
   };
 
   const fmtTime = (s) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
-  const price = (dinner?.price_inr ?? 450000) * seats / 100;
+  const price = (dinner?.price_inr ?? 260000) * seats / 100;
 
   if (!isOpen) return null;
 
@@ -282,7 +338,7 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
                 </div>
               )}
 
-              <div className="bm-field-group" style={{ marginBottom: '24px' }}>
+              <div className="bm-field-group" style={{ marginBottom: seats === 2 ? '12px' : '24px' }}>
                 <label className="bm-label">Select Seats (Max 2)</label>
                 <select
                   className="bm-input bm-select font-mono"
@@ -290,10 +346,51 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
                   onChange={e => setSeats(parseInt(e.target.value))}
                   disabled={availableSeats < 1}
                 >
-                  <option value="1" disabled={availableSeats < 1}>1 seat — ₹{((dinner?.price_inr ?? 450000) / 100).toLocaleString('en-IN')}</option>
-                  <option value="2" disabled={availableSeats < 2}>2 seats — ₹{(((dinner?.price_inr ?? 450000) * 2) / 100).toLocaleString('en-IN')}</option>
+                  <option value="1" disabled={availableSeats < 1}>1 seat — ₹{((dinner?.price_inr ?? 260000) / 100).toLocaleString('en-IN')}</option>
+                  <option value="2" disabled={availableSeats < 2}>2 seats — ₹{(((dinner?.price_inr ?? 260000) * 2) / 100).toLocaleString('en-IN')}</option>
                 </select>
               </div>
+
+              {seats === 2 && (
+                <div className="mb-6 p-4 bg-[var(--accent-primary)]/5 border border-[var(--accent-primary)]/20 rounded-xl text-left space-y-3">
+                  <div className="flex items-center justify-between border-b border-[var(--accent-primary)]/15 pb-2">
+                    <span className="text-xs text-[var(--accent-primary)] font-bold uppercase tracking-wider flex items-center gap-1.5">
+                      <span>👥</span> Second Person's Details (Optional)
+                    </span>
+                    <span className="text-[10px] text-[var(--text-main)]/60">Can also fill after payment</span>
+                  </div>
+                  <div className="bm-field-group">
+                    <label className="bm-label">Second Person's Name</label>
+                    <input
+                      type="text"
+                      className="bm-input font-body text-sm"
+                      placeholder="Partner or Friend's Name"
+                      value={secondGuestName}
+                      onChange={e => setSecondGuestName(e.target.value)}
+                    />
+                  </div>
+                  <div className="bm-field-group">
+                    <label className="bm-label">Second Person's Email</label>
+                    <input
+                      type="email"
+                      className="bm-input font-body text-sm"
+                      placeholder="friend@example.com"
+                      value={secondGuestEmail}
+                      onChange={e => setSecondGuestEmail(e.target.value)}
+                    />
+                  </div>
+                  <div className="bm-field-group">
+                    <label className="bm-label">Second Person's Phone</label>
+                    <input
+                      type="tel"
+                      className="bm-input font-body text-sm"
+                      placeholder="+91 9876543210"
+                      value={secondGuestPhone}
+                      onChange={e => setSecondGuestPhone(e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
 
               {error && <div className="bm-error">{error}</div>}
 
@@ -328,8 +425,46 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
               <div className="bm-step-tag font-body italicwritten">Booking — Step 3</div>
               <h2 className="bm-title">Payment Successful!</h2>
               <p className="font-body text-[var(--text-main)]/80 mb-6 text-sm leading-relaxed">
-                Your payment has been received. Any dietary requirements? Let us know below, then confirm your seat.
+                <span className="font-bold text-[var(--accent-primary)]">Your seat is instantly confirmed!</span> Any dietary requirements or guest details? Let us know below.
               </p>
+
+              {seats === 2 && (
+                <div className="mb-6 p-4 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl space-y-3">
+                  <span className="text-xs text-[var(--accent-primary)] font-bold uppercase tracking-wider block mb-1">
+                    👥 Second Guest Details
+                  </span>
+                  <div className="bm-field-group">
+                    <label className="bm-label">Second Person's Name</label>
+                    <input
+                      type="text"
+                      className="bm-input font-body text-sm"
+                      placeholder="Partner or Friend's Name"
+                      value={secondGuestName}
+                      onChange={e => setSecondGuestName(e.target.value)}
+                    />
+                  </div>
+                  <div className="bm-field-group">
+                    <label className="bm-label">Second Person's Email</label>
+                    <input
+                      type="email"
+                      className="bm-input font-body text-sm"
+                      placeholder="friend@example.com"
+                      value={secondGuestEmail}
+                      onChange={e => setSecondGuestEmail(e.target.value)}
+                    />
+                  </div>
+                  <div className="bm-field-group">
+                    <label className="bm-label">Second Person's Phone</label>
+                    <input
+                      type="tel"
+                      className="bm-input font-body text-sm"
+                      placeholder="+91 9876543210"
+                      value={secondGuestPhone}
+                      onChange={e => setSecondGuestPhone(e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
 
               <div className="bm-field-group mb-6">
                 <label className="bm-label">Dietary Restrictions / Queries (Optional)</label>
@@ -361,11 +496,11 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
                     guestUserIdVal: guestUserId,
                     guestEmailVal: guestEmail,
                     seatsVal: seats,
-                    queryVal: customerQuery
+                    queryVal: getFormattedQuery()
                   });
                 }}
               >
-                {loading ? 'Confirming...' : finalizeAttempts > 0 ? 'Retry Confirm Seat →' : 'Confirm My Seat →'}
+                {loading ? 'Saving...' : finalizeAttempts > 0 ? 'Retry Saving Notes →' : 'Save Dietary Notes & Finish →'}
               </button>
             </div>
           )}

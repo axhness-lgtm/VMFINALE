@@ -10,7 +10,7 @@ import EdgeDivider from '../components/EdgeDivider';
 const CURRENT_DINNER = {
   id: 'vietnam-dinner-01',
   title: 'A night in Vietnam',
-  price_inr: 450000, // ₹4,500
+  price_inr: 260000, // ₹2,600
   event_date: '2026-07-25',
   status: 'collecting_interests',
 };
@@ -30,15 +30,15 @@ const faqs = [
   },
   {
     q: "What does the contribution include?",
-    a: "The contribution is ₹4,500 per guest. This includes the full five-course curated tasting menu, custom mocktails, and the entire table experience."
+    a: "The contribution is ₹2,600 per guest. This includes the full five-course curated tasting menu, custom mocktails, and the entire table experience."
   },
   {
     q: "What is the cancellation/refund policy?",
-    a: "Because we only have eight seats, all bookings are final and non-refundable. However, you can transfer your seat to a friend if you cannot make it."
+    a: "Because we only have eight seats, all bookings are final and non-refundable. However, you can transfer your seat to a friend if you cannot make it, or contact the host directly for any help with cancellation or emergencies."
   },
   {
     q: "Is the menu vegetarian-friendly?",
-    a: "Yes, we accommodate vegetarian requests. Please let us know your dietary preferences during the checkout details screen."
+    a: "Yes, we accommodate vegetarian requests. Please let us know your dietary preferences during the checkout details screen. Also note that we host dedicated 100% vegetarian dinners separately, so keep an eye out for those!"
   },
   {
     q: "How is the secret location shared?",
@@ -210,11 +210,9 @@ export default function Dinner() {
             </div>
 
             {/* Stacked Big Heading */}
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[5rem] font-heading leading-[0.96] text-[#2c2b29] mb-5 tracking-tight">
-              Good<br />
-              food.<br />
-              Great<br />
-              company.
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[5rem] font-heading leading-[1.02] text-[#2c2b29] mb-5 tracking-tight">
+              Good food.<br />
+              <span className="block pl-10 sm:pl-14 md:pl-20 lg:pl-24 italic text-[var(--accent-primary)]">Great company.</span>
             </h1>
 
             {/* Description */}
@@ -485,11 +483,7 @@ export default function Dinner() {
       <section className="py-20 md:py-24 relative overflow-hidden">
         <div className="container mx-auto px-6 max-w-7xl">
           <div className="text-center mb-20">
-            <span className="font-body italic text-3xl text-[var(--accent-primary)] block mb-2 font-logo">- Alignment -</span>
             <h2 className="text-5xl md:text-6xl font-heading text-[var(--text-main)]">Who's this for?</h2>
-            <p className="font-body text-xl italic text-[var(--text-main)]/60 mt-4">
-              Not everyone. And that's okay.
-            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
@@ -514,7 +508,7 @@ export default function Dinner() {
                 <div className="w-full aspect-square mb-6 relative flex items-center justify-center">
                   <img src={item.img} alt={`Guest ${idx + 1}`} loading="lazy" decoding="async" className="w-full h-full object-contain grayscale group-hover:grayscale-0 transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] scale-[1.5] group-hover:scale-[1.6]" />
                 </div>
-                <p className="font-body text-xl md:text-2xl text-[var(--text-main)]/85 leading-relaxed mt-4">
+                <p className="font-body text-sm md:text-base text-[var(--text-main)]/85 leading-relaxed mt-2">
                   {item.text}
                 </p>
               </motion.div>
@@ -532,8 +526,7 @@ export default function Dinner() {
 
           <div className="flex flex-col gap-16">
             <div className="text-center mb-4">
-              <span className="font-body italic text-4xl text-[var(--bg-primary)] block mb-4 font-logo -rotate-2">- Logistics -</span>
-              <h2 className="text-5xl md:text-6xl font-heading text-white drop-shadow-sm">What to expect</h2>
+              <h2 className="text-5xl md:text-6xl font-heading text-white drop-shadow-sm">House Rules</h2>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -547,7 +540,7 @@ export default function Dinner() {
               ].map((item, idx) => (
                 <div
                   key={idx}
-                  className="p-8 bg-[#faf8f5] text-[#1a1918] border border-[var(--text-main)]/10 shadow-md rounded-lg flex flex-col justify-between hover:-translate-y-2 hover:rotate-[1deg] hover:border-[var(--accent-primary)]/50 transition-all duration-300"
+                  className="p-8 bg-[var(--bg-primary)] text-[#1a1918] border border-[var(--text-main)]/10 shadow-md rounded-lg flex flex-col justify-between hover:-translate-y-2 hover:rotate-[1deg] hover:border-[var(--accent-primary)]/50 transition-all duration-300"
                 >
                   <div className="flex items-center gap-3 text-[#c14a27] mb-6 border-b border-[#1a1918]/10 pb-2">
                     <span className="font-body text-sm uppercase tracking-widest text-[#c14a27] font-bold">{item.label}</span>

@@ -116,6 +116,7 @@ export default async function handler(req, res) {
     };
 
     let bookingId;
+    let wasFreshInsert = false;
 
     const { data: insertedBooking, error: insertError } = await supabase
       .from('bookings')
@@ -146,9 +147,10 @@ export default async function handler(req, res) {
       bookingId = updatedBooking?.id;
     } else {
       bookingId = insertedBooking?.id;
+      wasFreshInsert = true;
     }
 
-    console.log('[finalize] Booking saved, id:', bookingId);
+    console.log('[finalize] Booking saved, id:', bookingId, '| wasFreshInsert:', wasFreshInsert);
 
     // ── 5. Cleanup ─────────────────────────────────────────────────────────
     await supabase.from('seat_locks').delete().eq('user_id', user_id).eq('occurrence_id', occurrence_id);
@@ -157,8 +159,8 @@ export default async function handler(req, res) {
       .eq('user_id', user_id)
       .eq('occurrence_id', occurrence_id);
 
-    // ── 6. Confirmation email (non-blocking) ──────────────────────────────
-    if (process.env.SENDGRID_API_KEY) {
+    // ── 6. Confirmation email (non-blocking, only if fresh insert) ─────────
+    if (wasFreshInsert && process.env.SENDGRID_API_KEY) {
       const msg = {
         to: email,
         from: process.env.SENDGRID_FROM_EMAIL || 'hyndavio@vantammayilu.com',

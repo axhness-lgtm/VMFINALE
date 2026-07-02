@@ -123,19 +123,19 @@ export default function Home() {
 
         <div className="container mx-auto max-w-7xl relative z-10 flex flex-col items-center justify-center text-center h-full">
 
-          <div className="flex flex-col items-center relative z-20 max-w-2xl">
-            <span className="reveal-item text-orange font-body tracking-[0.2em] uppercase text-[10px] mb-4 block font-bold" style={{ WebkitTextStroke: '0.5px var(--accent-primary)' }}>
+          <div className="flex flex-col items-center relative z-20 max-w-4xl">
+            <span className="reveal-item text-orange font-body tracking-[0.25em] uppercase text-xs md:text-sm mb-4 block font-bold" style={{ WebkitTextStroke: '0.5px var(--accent-primary)' }}>
               Visakhapatnam, India
             </span>
-            <h1 className="reveal-item text-3xl md:text-4xl lg:text-5xl font-heading leading-[1.1] text-cream mb-6 drop-shadow-[0_4px_6px_rgba(59,43,36,0.9)]">
+            <h1 className="reveal-item text-4xl md:text-6xl lg:text-7xl font-heading leading-[1.08] text-cream mb-6 drop-shadow-[0_4px_6px_rgba(59,43,36,0.9)]">
               For people who love <span className="text-orange italic drop-shadow-[1px_1.5px_0.5px_rgba(255,255,255,1)]">discovering the world.</span>
             </h1>
-            <p className="reveal-item font-body text-sm md:text-base text-cream/90 mb-4 max-w-lg leading-relaxed drop-shadow-[0_4px_6px_rgba(59,43,36,0.9)]">
-              Every month, eight strangers gather around one table to explore a different cuisine, share stories, and leave with something more than a good meal.
+            <p className="reveal-item font-body text-base md:text-lg text-cream/90 mb-6 max-w-xl leading-relaxed drop-shadow-[0_4px_6px_rgba(59,43,36,0.9)]">
+              Every week, eight strangers gather around one table to explore a different cuisine, share stories, and leave with something more than a good meal.
             </p>
 
             <div className="reveal-item flex flex-col sm:flex-row gap-6 items-center justify-center mt-2">
-              <Link to="/dinner" className="group relative btn-paper !overflow-visible bg-cream text-[var(--text-main)] border-[var(--text-main)] border hover:bg-orange hover:text-[var(--bg-primary)] hover:border-orange transition-colors text-sm px-6 py-3 drop-shadow-md rounded-full font-[Hibernate] tracking-normal z-10">
+              <Link to="/dinner" className="group relative btn-paper !overflow-visible bg-cream text-[var(--text-main)] border-[var(--text-main)] border hover:bg-orange hover:text-[var(--bg-primary)] hover:border-orange transition-colors text-sm px-6 py-3 drop-shadow-md rounded-full font-hibernate tracking-normal z-10">
                 <img
                   src="/assets/d2.png"
                   alt="doodle"
@@ -143,7 +143,7 @@ export default function Home() {
                 />
                 Upcoming dinner
               </Link>
-              <Link to="/about" className="group relative btn-paper !overflow-visible bg-cream text-[var(--text-main)] border-[var(--text-main)] border hover:bg-orange hover:text-[var(--bg-primary)] hover:border-orange transition-colors text-sm px-6 py-3 drop-shadow-md rounded-full font-[Hibernate] tracking-normal z-10">
+              <Link to="/about" className="group relative btn-paper !overflow-visible bg-cream text-[var(--text-main)] border-[var(--text-main)] border hover:bg-orange hover:text-[var(--bg-primary)] hover:border-orange transition-colors text-sm px-6 py-3 drop-shadow-md rounded-full font-hibernate tracking-normal z-10">
                 <img
                   src="/assets/d1.png"
                   alt="doodle"
@@ -183,8 +183,10 @@ export default function Home() {
       {/* 3. WHAT USUALLY HAPPENS */}
       <section className="relative bg-[var(--bg-primary)] py-20 md:py-24 px-2 md:px-4 w-full">
         <div className="text-center mb-16 relative z-50">
-          <span className="font-body italic text-2xl md:text-3xl text-[var(--accent-primary)] -rotate-2 block mb-2 font-logo drop-shadow-sm">The evening flow</span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading text-[var(--text-main)]">What usually happens.</h2>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading text-[var(--text-main)] flex flex-wrap items-center justify-center gap-2 md:gap-4">
+            <span className="font-logo text-5xl md:text-6xl lg:text-7xl text-[var(--accent-primary)] font-normal -rotate-2 inline-block">Glimpses</span>
+            <span className="font-heading">from the table</span>
+          </h2>
         </div>
 
         <div className="w-full relative z-10">
@@ -221,7 +223,6 @@ export default function Home() {
             <h2 className="text-7xl md:text-8xl lg:text-9xl font-heading text-[var(--bg-primary)] leading-[0.9] tracking-tight mb-4 drop-shadow-sm">
               Eight<br /><span className="text-white italic">seats.</span>
             </h2>
-            <div className="absolute -bottom-12 -right-8 text-3xl text-white/80 font-logo -rotate-6 hidden md:block">No more, no less.</div>
           </div>
           
           <div className="w-full md:w-7/12 relative mt-8 md:mt-0">
@@ -375,14 +376,14 @@ export default function Home() {
                   <img 
                     src={`/c${num}.png`} 
                     alt={`Artifact ${num}`} 
-                    className="h-40 md:h-64 lg:h-80 w-auto object-contain pointer-events-auto drop-shadow-2xl" 
+                    className="h-56 md:h-80 lg:h-96 w-auto object-contain pointer-events-auto drop-shadow-2xl" 
                   />
                 </motion.div>
               ))}
             </div>
 
             {/* Row 2 */}
-            <div className="flex justify-center items-end relative z-20 space-x-4 md:space-x-8 w-full mt-4 md:mt-8">
+            <div className="flex justify-center items-end relative z-20 space-x-4 md:space-x-8 w-full -mt-10 md:-mt-16 lg:-mt-20">
               {[4, 5, 6].map((num, i) => (
                 <motion.div
                   key={num}
@@ -396,7 +397,7 @@ export default function Home() {
                   <img 
                     src={`/c${num}.png`} 
                     alt={`Artifact ${num}`} 
-                    className="h-40 md:h-64 lg:h-80 w-auto object-contain pointer-events-auto drop-shadow-2xl" 
+                    className="h-56 md:h-80 lg:h-96 w-auto object-contain pointer-events-auto drop-shadow-2xl" 
                   />
                 </motion.div>
               ))}
@@ -414,6 +415,10 @@ export default function Home() {
 
         <div className="container mx-auto px-6 max-w-3xl relative z-10">
           <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
             whileHover={{ scale: 1.05, rotate: -2 }}
             className="inline-block"
           >
@@ -423,10 +428,10 @@ export default function Home() {
           </motion.div>
 
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.15 }}
+            transition={{ delay: 1.5, duration: 0.8 }}
             className="font-logo text-3xl md:text-4xl text-white mb-14 drop-shadow-sm -rotate-2"
           >
             We'll take care of the rest.
@@ -436,7 +441,7 @@ export default function Home() {
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
+            transition={{ delay: 1.8 }}
             className="relative z-20"
           >
             <Link

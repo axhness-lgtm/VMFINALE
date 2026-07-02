@@ -141,7 +141,7 @@ const HtmlOverlay = () => {
 
       {/* SECTION 8 — FINAL INVITATION FOOTER */}
       <section className="relative w-full h-[100vh] flex flex-col items-center justify-center bg-[#050b14] text-[#efe9e1]">
-        <h2 className="font-heading italic text-4xl md:text-6xl mb-12">The table returns next month.</h2>
+        <h2 className="font-heading italic text-4xl md:text-6xl mb-12">The table returns next week.</h2>
         <div className="flex items-center border-b border-[#efe9e1]/30 pb-2 w-64 group pointer-events-auto">
           <input 
             type="email" 
