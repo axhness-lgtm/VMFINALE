@@ -158,34 +158,23 @@ export default function About() {
 
       {/* 4. MEET THE HOST (HYNDAVI) */}
       <section className="py-20 md:py-24 bg-[var(--bg-primary)] relative overflow-hidden">
-        <div className="container mx-auto px-6 max-w-5xl">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-16 items-center">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-16 items-center">
             
-            {/* Left side: Photo card */}
-            <div className="md:col-span-5 relative">
-              <div className="masking-tape w-24 h-6 -top-2 left-1/2 -translate-x-1/2 rotate-1 z-30 opacity-80" />
+            {/* Left side: Photo graphic */}
+            <div className="md:col-span-6 relative flex justify-center">
               <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                className="aspect-[3/4] overflow-hidden torn-edge shadow-2xl filter grayscale hover:grayscale-0 transition-all duration-700 relative z-10 polaroid-frame hover-lift"
+                className="w-full max-w-lg overflow-hidden shadow-2xl relative z-10 rounded-2xl hover:scale-[1.02] transition-all duration-500"
               >
-                <img src="/host.png" alt="Hyndavi Onimi" className="w-full h-full object-cover" />
+                <img src="/host.png" alt="Hyndavi Onimi" className="w-full h-auto object-contain" />
               </motion.div>
-              <span className="handwritten-annotation absolute -bottom-8 right-0 -rotate-6 z-20 text-3xl text-[var(--accent-primary)]">Hyndavi</span>
-              {/* Pressed flower illustration instead of emoji sticker */}
-              <div className="absolute -top-8 -left-8 w-24 h-24 z-20 rotate-[-15deg] opacity-80 select-none pointer-events-none">
-                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M50 80 Q52 50 48 20" stroke="var(--text-main)" strokeWidth="2" strokeLinecap="round" opacity="0.6"/>
-                  <path d="M50 50 Q70 40 50 30 Q30 40 50 50" fill="var(--text-main)" fillOpacity="0.8"/>
-                  <path d="M50 50 Q65 60 45 65 Q35 50 50 50" fill="var(--text-main)" fillOpacity="0.8"/>
-                  <path d="M50 50 Q30 40 40 25 Q55 35 50 50" fill="var(--text-main)" fillOpacity="0.8"/>
-                </svg>
-              </div>
             </div>
 
             {/* Right side: Biography */}
-            <div className="md:col-span-7 flex flex-col justify-center">
+            <div className="md:col-span-6 flex flex-col justify-center">
               <span className="font-body italic text-3xl text-[var(--accent-primary)] -rotate-1 mb-4 block font-logo">The Founder</span>
               <h2 className="text-5xl font-heading text-[var(--text-main)] mb-8">Meet the host.</h2>
               
