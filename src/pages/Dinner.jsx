@@ -572,14 +572,14 @@ export default function Dinner() {
               ].map((item, idx) => (
                 <div
                   key={idx}
-                  className="p-8 bg-[var(--bg-primary)] text-[#1a1918] border border-[var(--text-main)]/10 shadow-md rounded-lg flex flex-col justify-between hover:-translate-y-2 hover:rotate-[1deg] hover:border-[var(--accent-primary)]/50 transition-all duration-300"
+                  className="p-8 bg-[var(--bg-primary)] text-[var(--text-main)] border border-[var(--text-main)]/10 shadow-md rounded-lg flex flex-col justify-between hover:-translate-y-2 hover:rotate-[1deg] hover:border-[var(--accent-primary)]/50 transition-all duration-300"
                 >
-                  <div className="flex items-center gap-3 text-[#c14a27] mb-6 border-b border-[#1a1918]/10 pb-2">
+                  <div className="flex items-center gap-3 text-[#c14a27] mb-6 border-b border-[var(--text-main)]/10 pb-2">
                     <span className="font-body text-sm uppercase tracking-widest text-[#c14a27] font-bold">{item.label}</span>
                   </div>
                   <div>
-                    <span className="font-heading text-3xl text-[#1a1918] font-bold block leading-tight mb-2">{item.value}</span>
-                    <p className="font-body text-base text-[#4a4642] font-medium italic">{item.note}</p>
+                    <span className="font-heading text-3xl text-[var(--text-main)] font-bold block leading-tight mb-2">{item.value}</span>
+                    <p className="font-body text-base text-[var(--text-main)]/80 font-medium italic">{item.note}</p>
                   </div>
                 </div>
               ))}

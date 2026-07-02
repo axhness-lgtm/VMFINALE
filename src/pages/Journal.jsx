@@ -181,7 +181,7 @@ export default function Journal() {
             <span className="text-[#c16e4f] font-body tracking-[0.2em] uppercase text-xs mb-4 block font-bold">
               THE JOURNAL
             </span>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-body leading-[1.1] text-[#2c2b29] mb-8">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-body leading-[1.1] text-[var(--text-main)] mb-8">
               The evening doesn't end <br className="hidden md:inline" />
               <span className="relative inline-block mt-2 md:mt-0">
                 when everyone leaves.
@@ -190,14 +190,14 @@ export default function Journal() {
                 </svg>
               </span>
             </h1>
-            <p className="font-body text-xl md:text-[1.35rem] text-[#2c2b29] max-w-md leading-relaxed mb-10">
+            <p className="font-body text-xl md:text-[1.35rem] text-[var(--text-main)] max-w-md leading-relaxed mb-10">
               Stories, recipes, places, conversations and little things worth holding on to.
             </p>
             
             <div>
               <a 
                 href="#selected-works" 
-                className="inline-block bg-[#efe8db] text-[#2c2b29] border border-[#2c2b29]/10 shadow-sm hover:shadow-md transition-all duration-300 rounded-full px-6 py-3 font-body text-[1.05rem]"
+                className="inline-block bg-[#efe8db] text-[var(--text-main)] border border-[var(--text-main)]/15 shadow-sm hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] transition-all duration-300 rounded-md px-8 py-3.5 font-body font-bold text-[1.05rem] uppercase tracking-wider"
               >
                 Read the latest entry
               </a>
@@ -370,8 +370,8 @@ export default function Journal() {
 
         {/* Left Side: Vertical Arc Container */}
         <div className="absolute top-1/2 left-[calc(0px-700px)] md:left-[calc(0px-850px)] w-0 h-0 z-10">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[#3b2b24]/20 pointer-events-none" style={{ width: '2700px', height: '2700px' }} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[#3b2b24]/20 pointer-events-none" style={{ width: '3100px', height: '3100px' }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[var(--text-main)]/20 pointer-events-none" style={{ width: '2700px', height: '2700px' }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[var(--text-main)]/20 pointer-events-none" style={{ width: '3100px', height: '3100px' }} />
           
           <motion.div 
             className="absolute top-1/2 left-1/2 w-0 h-0 cursor-grab active:cursor-grabbing touch-none"
@@ -434,7 +434,7 @@ export default function Journal() {
             className="group relative block transition-all duration-300 hover:scale-125 hover:-translate-y-2 drop-shadow-2xl"
           >
             <img src="/ass2.png" alt="Vantammayilu Instagram" className="w-36 h-36 md:w-44 md:h-44 object-contain filter drop-shadow-[0_10px_15px_rgba(0,0,0,0.2)]" />
-            <span className="absolute -bottom-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-[#3b2b24] text-cream text-[10px] font-mono uppercase px-3 py-1 rounded-full whitespace-nowrap shadow-md pointer-events-none">
+            <span className="absolute -bottom-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--text-main)] text-cream text-[10px] font-mono uppercase px-3 py-1 rounded-full whitespace-nowrap shadow-md pointer-events-none">
               @vantammayilu ↗
             </span>
           </a>
@@ -447,7 +447,7 @@ export default function Journal() {
             className="group relative block transition-all duration-300 hover:scale-125 hover:-translate-y-2 drop-shadow-2xl"
           >
             <img src="/ass1.png" alt="Vantabbayilu Instagram" className="w-36 h-36 md:w-44 md:h-44 object-contain filter drop-shadow-[0_10px_15px_rgba(0,0,0,0.2)]" />
-            <span className="absolute -bottom-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-[#3b2b24] text-cream text-[10px] font-mono uppercase px-3 py-1 rounded-full whitespace-nowrap shadow-md pointer-events-none">
+            <span className="absolute -bottom-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--text-main)] text-cream text-[10px] font-mono uppercase px-3 py-1 rounded-full whitespace-nowrap shadow-md pointer-events-none">
               @vantabbayilu ↗
             </span>
           </a>
@@ -535,12 +535,12 @@ export default function Journal() {
               exit={{ scale: 0.95, y: 20 }}
               onClick={(e) => e.stopPropagation()}
               data-lenis-prevent="true"
-              className="bg-[#fcf8f2] text-[#3b2b24] max-w-3xl w-full max-h-[85vh] overflow-y-auto rounded-3xl p-6 md:p-12 shadow-2xl relative border border-[#3b2b24]/10"
+              className="bg-[#fcf8f2] text-[var(--text-main)] max-w-3xl w-full max-h-[85vh] overflow-y-auto rounded-3xl p-6 md:p-12 shadow-2xl relative border border-[var(--text-main)]/10"
               style={{ backgroundImage: "url('/texture.png')", backgroundSize: "cover", backgroundBlendMode: "multiply", overscrollBehavior: "contain" }}
             >
               <button 
                 onClick={() => setActiveBlogRead(null)}
-                className="absolute top-6 right-6 p-2 rounded-full bg-[#efe8db] hover:bg-[#e86321] hover:text-white transition-colors text-[#3b2b24]"
+                className="absolute top-6 right-6 p-2 rounded-full bg-[#efe8db] hover:bg-[#e86321] hover:text-white transition-colors text-[var(--text-main)]"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -553,7 +553,7 @@ export default function Journal() {
                 <span>{activeBlogRead.author}</span>
               </div>
 
-              <h2 className="text-3xl md:text-5xl font-heading text-[#3b2b24] mb-8 leading-tight">
+              <h2 className="text-3xl md:text-5xl font-heading text-[var(--text-main)] mb-8 leading-tight">
                 {activeBlogRead.title}
               </h2>
 
@@ -561,7 +561,7 @@ export default function Journal() {
                 <img src={activeBlogRead.img} alt={activeBlogRead.title} className="w-full h-full object-contain" />
               </div>
 
-              <div className="space-y-6 font-body text-lg md:text-xl text-[#3b2b24]/90 leading-relaxed">
+              <div className="space-y-6 font-body text-lg md:text-xl text-[var(--text-main)]/90 leading-relaxed">
                 {activeBlogRead.content ? (
                   activeBlogRead.content.map((para, idx) => (
                     <p key={idx}>{para}</p>
@@ -571,11 +571,11 @@ export default function Journal() {
                 )}
               </div>
 
-              <div className="mt-12 pt-8 border-t border-[#3b2b24]/10 flex justify-between items-center">
+              <div className="mt-12 pt-8 border-t border-[var(--text-main)]/10 flex justify-between items-center">
                 <span className="font-logo text-3xl text-[#e86321]">Vantammayilu Journal</span>
                 <button 
                   onClick={() => setActiveBlogRead(null)}
-                  className="bg-[#3b2b24] text-[#fcf8f2] px-6 py-2 rounded-full text-sm hover:bg-[#e86321] transition-colors"
+                  className="bg-[var(--text-main)] text-[#fcf8f2] px-6 py-2 rounded-md text-sm hover:bg-[#e86321] transition-colors"
                 >
                   Close Article
                 </button>

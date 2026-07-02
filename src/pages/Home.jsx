@@ -226,7 +226,7 @@ export default function Home() {
           </div>
           
           <div className="w-full md:w-7/12 relative mt-8 md:mt-0">
-            <div className="bg-[#fcfbf9] text-[var(--text-main)] p-10 md:p-14 shadow-2xl border border-[#3b2b24]/5 hover-lift relative group -rotate-1 z-10 transition-transform duration-500 rounded-2xl">
+            <div className="bg-[#fcfbf9] text-[var(--text-main)] p-10 md:p-14 shadow-2xl border border-[var(--text-main)]/10 hover-lift relative group -rotate-1 z-10 transition-transform duration-500 rounded-2xl">
               <div className="masking-tape w-24 h-6 -top-3 left-1/2 -translate-x-1/2 rotate-[-2deg]" />
               <div className="absolute top-6 right-6 stamp rotate-12 opacity-60 scale-75 border-[var(--accent-primary)] text-[var(--accent-primary)]">INTIMATE</div>
               
@@ -246,7 +246,7 @@ export default function Home() {
             </div>
             
             {/* Background offset card for depth */}
-            <div className="absolute inset-0 bg-[#efe8db] border border-[#3b2b24]/10 shadow-lg translate-x-3 translate-y-3 rotate-2 z-0 hidden md:block pointer-events-none rounded-2xl" />
+            <div className="absolute inset-0 bg-[#efe8db] border border-[var(--text-main)]/10 shadow-lg translate-x-3 translate-y-3 rotate-2 z-0 hidden md:block pointer-events-none rounded-2xl" />
           </div>
           
         </div>
@@ -281,7 +281,7 @@ export default function Home() {
             {/* Structured Polaroid Grid */}
             <div className="lg:col-span-7 relative mt-16 lg:mt-0">
               {/* Background decorative square */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[120%] bg-[#f4ebd9]/80 border border-[#3b2b24]/5 rounded-[3rem] -rotate-1 z-0 shadow-inner hidden md:block" />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[120%] bg-[#f4ebd9]/80 border border-[var(--text-main)]/10 rounded-[3rem] -rotate-1 z-0 shadow-inner hidden md:block" />
               
               <div className="grid grid-cols-2 gap-6 md:gap-10 relative z-10 p-4 md:p-10">
                 
@@ -446,7 +446,7 @@ export default function Home() {
           >
             <Link
               to="/dinner"
-              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-white hover:text-[var(--accent-primary)] px-12 py-5 text-xl font-bold tracking-[0.15em] rounded-full shadow-2xl transition-all duration-300 hover:scale-105 uppercase"
+              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-white hover:text-[var(--accent-primary)] px-12 py-5 text-xl font-bold tracking-[0.15em] rounded-md shadow-2xl transition-all duration-300 hover:scale-105 uppercase"
             >
               Join the next evening
             </Link>
