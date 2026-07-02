@@ -392,6 +392,20 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
                 </div>
               )}
 
+              <div className="bm-field-group mb-6 text-left">
+                <label className="bm-label flex items-center justify-between">
+                  <span>Dietary Restrictions / Special Queries</span>
+                  <span className="text-[10px] text-[var(--accent-primary)] font-normal">Taken before payment</span>
+                </label>
+                <textarea
+                  className="bm-input font-body text-sm"
+                  rows="2"
+                  placeholder="e.g., Vegetarian, allergic to nuts, non-alcoholic preference..."
+                  value={customerQuery}
+                  onChange={e => setCustomerQuery(e.target.value)}
+                />
+              </div>
+
               {error && <div className="bm-error">{error}</div>}
 
               <button

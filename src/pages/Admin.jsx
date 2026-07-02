@@ -1096,12 +1096,38 @@ function AdminDashboardContent() {
                       <span className="font-bold text-[var(--text-main)]/60 uppercase text-xs">Order ID:</span>
                       <span className="col-span-2 font-mono text-xs">{viewModalGuest.razorpay_order_id || 'N/A'}</span>
                     </div>
-                    {viewModalGuest.customer_query && (
-                      <div className="grid grid-cols-3 gap-2 py-1 border-b border-[var(--text-main)]/5">
-                        <span className="font-bold text-[var(--text-main)]/60 uppercase text-xs">Dietary Notes:</span>
-                        <span className="col-span-2 italic bg-[var(--accent-primary)]/5 p-2 rounded border border-[var(--accent-primary)]/20">{viewModalGuest.customer_query}</span>
-                      </div>
-                    )}
+                    <div className="grid grid-cols-3 gap-2 py-1 border-b border-[var(--text-main)]/5">
+                      <span className="font-bold text-[var(--text-main)]/60 uppercase text-xs">Seats Booked:</span>
+                      <span className="col-span-2 font-bold text-[var(--accent-primary)]">{viewModalGuest.seats || 1} Seat(s)</span>
+                    </div>
+                    {(() => {
+                      const q = viewModalGuest.customer_query || '';
+                      let secondInfo = '';
+                      if (q.includes('[Second Guest Details]')) {
+                        secondInfo = q.split('[Second Guest Details]')[1]?.trim();
+                      }
+                      if (!secondInfo && (viewModalGuest.seats || 1) >= 2) {
+                        secondInfo = '2 Seats reserved (Guest details pending)';
+                      }
+                      if (!secondInfo) return null;
+                      return (
+                        <div className="grid grid-cols-3 gap-2 py-2 border-b border-[var(--accent-primary)]/20 bg-[var(--accent-primary)]/10 px-2 rounded">
+                          <span className="font-bold text-[var(--accent-primary)] uppercase text-xs flex items-center">👥 2nd Guest:</span>
+                          <span className="col-span-2 font-mono text-xs text-[var(--text-main)] font-semibold whitespace-pre-wrap">{secondInfo}</span>
+                        </div>
+                      );
+                    })()}
+                    {(() => {
+                      const q = viewModalGuest.customer_query || '';
+                      const primaryQuery = q.includes('[Second Guest Details]') ? q.split('[Second Guest Details]')[0].trim() : q.trim();
+                      if (!primaryQuery) return null;
+                      return (
+                        <div className="grid grid-cols-3 gap-2 py-1 border-b border-[var(--text-main)]/5">
+                          <span className="font-bold text-[var(--text-main)]/60 uppercase text-xs">Dietary Notes:</span>
+                          <span className="col-span-2 italic bg-[var(--accent-primary)]/5 p-2 rounded border border-[var(--accent-primary)]/20 whitespace-pre-wrap">{primaryQuery}</span>
+                        </div>
+                      );
+                    })()}
                   </>
                 )}
               </div>

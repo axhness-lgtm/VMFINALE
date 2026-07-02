@@ -48,7 +48,7 @@ const faqs = [
 
 
 
-const ReserveSection = ({ onReserveClick, onInterestClick, canReserve }) => {
+const ReserveSection = ({ onReserveClick, onInterestClick, canReserve, isSoldOut }) => {
   return (
     <section className="relative w-full bg-[var(--bg-primary)] flex flex-col items-center pt-24 pb-0 overflow-hidden">
       {/* Background Texture */}
@@ -64,8 +64,23 @@ const ReserveSection = ({ onReserveClick, onInterestClick, canReserve }) => {
           <p className="font-body italic text-lg md:text-xl text-[var(--text-main)] mb-4">
             Good food. Warm company.<br />Stories that stay with you.
           </p>
-          <div className="flex flex-col sm:flex-row items-center gap-4 relative z-40">
-            {canReserve ? (
+          <div className="flex flex-col items-center gap-3 relative z-40">
+            {isSoldOut ? (
+              <>
+                <div className="bg-red-500/10 text-red-600 border border-red-500/30 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 animate-pulse">
+                  <span>🔴</span> SOLD OUT — 0 SEATS REMAINING
+                </div>
+                <button
+                  onClick={onInterestClick}
+                  className="bg-[var(--text-main)] text-white font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-full shadow-lg hover:bg-[#1a130f] hover:scale-105 transition-all duration-300"
+                >
+                  Join Waitlist (I'm Interested)
+                </button>
+                <p className="text-xs text-[var(--text-main)]/70 max-w-md text-center">
+                  If seats open up due to payment window expiration or cancellations, selected guests from this active waitlist will be emailed an invitation.
+                </p>
+              </>
+            ) : canReserve ? (
               <button
                 onClick={onReserveClick}
                 className="bg-[var(--accent-primary)] text-white font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-full shadow-lg hover:bg-[#c14a27] hover:scale-105 transition-all duration-300"
@@ -113,6 +128,8 @@ export default function Dinner() {
   // Only users with a valid magic link token can reserve.
   // Occurrence status does NOT globally open booking for everyone.
   const canReserve = Boolean(token);
+  const availableSeats = activeDinner ? (activeDinner.total_seats ?? 8) - (activeDinner.sold_seats ?? 0) : null;
+  const isSoldOut = availableSeats !== null && availableSeats <= 0;
 
   useEffect(() => {
     // Fetch the latest active occurrence
@@ -222,8 +239,23 @@ export default function Dinner() {
             </p>
 
             {/* Reserve or Interest Button */}
-            <div className="flex flex-wrap items-center gap-3 my-3">
-              {canReserve ? (
+            <div className="flex flex-col items-start gap-2 my-3">
+              {isSoldOut ? (
+                <>
+                  <div className="bg-red-500/10 text-red-600 border border-red-500/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 animate-pulse">
+                    <span>🔴</span> SOLD OUT — 0 SEATS REMAINING
+                  </div>
+                  <button
+                    onClick={() => setIsInterestOpen(true)}
+                    className="bg-[var(--text-main)] text-white font-body uppercase text-base md:text-lg font-extrabold tracking-widest px-8 py-3.5 rounded-xl shadow-xl hover:bg-[#1a130f] hover:scale-105 active:scale-95 border-2 border-[#ffffff]/20 transition-all duration-300 z-20 cursor-pointer"
+                  >
+                    JOIN WAITLIST (I'M INTERESTED)
+                  </button>
+                  <p className="text-xs text-[var(--text-main)]/70 max-w-sm">
+                    If seats open up due to payment window closing or cancellations, selected guests from the active waitlist will be emailed an invitation.
+                  </p>
+                </>
+              ) : canReserve ? (
                 <button
                   onClick={() => setIsBookingOpen(true)}
                   className="bg-[var(--accent-primary)] text-white font-body uppercase text-base md:text-lg font-extrabold tracking-widest px-8 py-3.5 rounded-xl shadow-xl hover:bg-[#c14a27] hover:scale-105 active:scale-95 border-2 border-[#ffffff]/20 transition-all duration-300 z-20 cursor-pointer"
@@ -610,6 +642,7 @@ export default function Dinner() {
         onReserveClick={() => setIsBookingOpen(true)} 
         onInterestClick={() => setIsInterestOpen(true)}
         canReserve={canReserve}
+        isSoldOut={isSoldOut}
       />
 
       <EdgeDivider src="/edge4.png" />
