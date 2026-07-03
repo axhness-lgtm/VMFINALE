@@ -18,9 +18,10 @@ const CURRENT_DINNER = {
 const menuItems = [
   { course: "Starter", title: "Moroccan Mezze Platter", desc: "Warm, flaky m'semen & dips", dish: "MOROCCAN MEZZE PLATTER — Smoky Zaalouk, tangy Matbucha, and earthy Bissara served with warm, flaky m'semen for scooping and sharing.", img: "/fo1.png" },
   { course: "Small Plates", title: "Seafood Briouats", desc: "Crisp golden spiced cigars", dish: "SEAFOOD BRIOUATS — Crisp golden Cigars filled with spiced fish and shrimp, paired with creamy garlic Toum for a bold, savoury bite.", img: "/fo2.png" },
-  { course: "Main Course", title: "Charmoula Chicken Tajine", desc: "Slow-cooked infused tajine", dish: "CHARMOULA CHICKEN TAJINE — Slow-cooked chicken infused with fragrant Ras el Hanout, seasonal vegetables, and olives, served with soft Khobz.", img: "/fo3.png" },
-  { course: "Dessert", title: "Shhh... Yalla Helwa!", desc: "Quietly decadent & soul of Morocco", dish: "SHHH... YALLA HELWA! — This one prefers not to be explained. Crunchy, creamy, and quietly decadent, with the unmistakable soul of Morocco.", img: "/fo4.png" },
-  { course: "Drinks", title: "Moroccan Mint Tea & Cucumber Cooler", desc: "Fresh mint tea & refreshing cooler", dish: "MOROCCAN MINT TEA & CUCUMBER COOLER — Aka 'Atay' is fresh mint brewed with the OG Gunpowder green tea, poured warm. Paired with a light, refreshing Cucumber Cooler balance.", img: "/fo5.png" }
+  { course: "Main Course", title: "Charmoula Chicken Tajine", desc: "Slow-cooked infused tajine", dish: "CHARMOULA CHICKEN TAJINE — Slow-cooked chicken infused with fragrant Ras el Hanout, seasonal vegetables, and olives, served with soft Khobz.", img: null },
+  { course: "Dessert", title: "Shhh... Yalla Helwa!", desc: "Quietly decadent & soul of Morocco", dish: "SHHH... YALLA HELWA! — This one prefers not to be explained. Crunchy, creamy, and quietly decadent, with the unmistakable soul of Morocco.", img: "/fo3.png" },
+  { course: "Drinks", title: "Moroccan Mint Tea", desc: "Fresh mint brewed with OG green tea", dish: "MOROCCAN MINT TEA — Aka 'Atay' is fresh mint brewed with the OG Gunpowder green tea, gently sweetened and poured warm.", img: "/fo5.png" },
+  { course: "Drinks", title: "Cucumber Cooler", desc: "Light, refreshing balance", dish: "CUCUMBER COOLER — A light, refreshing balance to the warm spices of the table.", img: "/fo4.png" }
 ];
 
 const faqs = [
