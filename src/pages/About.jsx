@@ -42,50 +42,50 @@ export default function About() {
             >
               <h2 className="text-lg md:text-xl font-body tracking-widest uppercase text-[var(--accent-primary)] mb-1 font-bold">The World Has</h2>
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-logo text-[var(--text-main)] drop-shadow-sm">Seven Wonders.</h1>
-              <p className="text-2xl md:text-3xl lg:text-4xl font-heading italic text-[var(--accent-primary)] mt-1 font-bold drop-shadow-sm">
+              <p className="text-2xl md:text-3xl lg:text-4xl font-heading italic text-[var(--accent-primary)] mt-4 md:mt-6 font-bold drop-shadow-sm">
                 We Believe there is an Eighth!
               </p>
             </motion.div>
           </div>
 
           {/* 1. Great Wall (Top Left) */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2, duration: 0.8 }} className="absolute top-[16%] left-[6%] w-[22%] max-w-[260px] z-20">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2, duration: 0.8 }} className="absolute top-[12%] left-[6%] w-[22%] max-w-[260px] z-20">
             <img src="/a1.png" alt="Wonder 1" className="w-full h-auto object-contain hover:scale-105 transition-transform drop-shadow-md" />
           </motion.div>
 
           {/* 2. Petra (Mid Left) */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.8 }} className="absolute top-[43%] left-[2%] w-[20%] max-w-[235px] z-20">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.8 }} className="absolute top-[36%] left-[2%] w-[20%] max-w-[235px] z-20">
             <img src="/a2.png" alt="Wonder 2" className="w-full h-auto object-contain hover:scale-105 transition-transform drop-shadow-md" />
           </motion.div>
 
           {/* 3. Christ Redeemer (Bottom Left) */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8, duration: 0.8 }} className="absolute bottom-[11%] left-[9%] w-[19%] max-w-[220px] z-20">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8, duration: 0.8 }} className="absolute bottom-[20%] left-[9%] w-[19%] max-w-[220px] z-20">
             <img src="/a3.png" alt="Wonder 3" className="w-full h-auto object-contain hover:scale-105 transition-transform drop-shadow-md" />
           </motion.div>
 
           {/* 4. Machu Picchu (Bottom Mid-Left) */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1, duration: 0.8 }} className="absolute bottom-[9%] left-[27%] w-[20%] max-w-[240px] z-20">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1, duration: 0.8 }} className="absolute bottom-[18%] left-[27%] w-[20%] max-w-[240px] z-20">
             <img src="/a4.png" alt="Wonder 4" className="w-full h-auto object-contain hover:scale-105 transition-transform drop-shadow-md" />
           </motion.div>
 
           {/* 5. Chichen Itza (Bottom Mid-Right) */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4, duration: 0.8 }} className="absolute bottom-[9%] right-[27%] w-[20%] max-w-[240px] z-20">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4, duration: 0.8 }} className="absolute bottom-[18%] right-[27%] w-[20%] max-w-[240px] z-20">
             <img src="/a5.png" alt="Wonder 5" className="w-full h-auto object-contain hover:scale-105 transition-transform drop-shadow-md" />
           </motion.div>
 
           {/* 6. Colosseum (Bottom Right) */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.7, duration: 0.8 }} className="absolute bottom-[11%] right-[9%] w-[21%] max-w-[250px] z-20">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.7, duration: 0.8 }} className="absolute bottom-[20%] right-[9%] w-[21%] max-w-[250px] z-20">
             <img src="/a7.png" alt="Wonder 6" className="w-full h-auto object-contain hover:scale-105 transition-transform drop-shadow-md" />
           </motion.div>
 
           {/* 7. Taj Mahal (Mid Right) */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.0, duration: 0.8 }} className="absolute top-[23%] right-[4%] w-[22%] max-w-[260px] z-20">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.0, duration: 0.8 }} className="absolute top-[18%] right-[4%] w-[22%] max-w-[260px] z-20">
             <img src="/a8.png" alt="Wonder 7" className="w-full h-auto object-contain hover:scale-105 transition-transform drop-shadow-md" />
           </motion.div>
 
 
           {/* 8. The Table (Center) */}
-          <div className="absolute top-[50%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[34%] max-w-[390px] z-10">
+          <div className="absolute top-[44%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[34%] max-w-[390px] z-10">
             <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 2.3, duration: 1 }} className="w-full">
               <img src="/a9.png" alt="The Eighth Wonder - Table" className="w-full h-auto object-contain drop-shadow-xl" />
             </motion.div>
