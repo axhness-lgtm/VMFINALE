@@ -18,7 +18,7 @@ const CURRENT_DINNER = {
 const menuItems = [
   { course: "Starter", title: "Moroccan Mezze Platter", desc: "Warm, flaky m'semen & dips", dish: "MOROCCAN MEZZE PLATTER — Smoky Zaalouk, tangy Matbucha, and earthy Bissara served with warm, flaky m'semen for scooping and sharing.", img: "/fo1.png" },
   { course: "Small Plates", title: "Seafood Briouats", desc: "Crisp golden spiced cigars", dish: "SEAFOOD BRIOUATS — Crisp golden Cigars filled with spiced fish and shrimp, paired with creamy garlic Toum for a bold, savoury bite.", img: "/fo2.png" },
-  { course: "Main Course", title: "Charmoula Chicken Tajine", desc: "Slow-cooked infused tajine", dish: "CHARMOULA CHICKEN TAJINE — Slow-cooked chicken infused with fragrant Ras el Hanout, seasonal vegetables, and olives, served with soft Khobz.", img: null },
+  { course: "Main Course", title: "Charmoula Chicken Tajine", desc: "Slow-cooked infused tajine", dish: "CHARMOULA CHICKEN TAJINE — Slow-cooked chicken infused with fragrant Ras el Hanout, seasonal vegetables, and olives, served with soft Khobz.", img: "/a10.png" },
   { course: "Dessert", title: "Shhh... Yalla Helwa!", desc: "Quietly decadent & soul of Morocco", dish: "SHHH... YALLA HELWA! — This one prefers not to be explained. Crunchy, creamy, and quietly decadent, with the unmistakable soul of Morocco.", img: "/fo3.png" },
   { course: "Drinks", title: "Moroccan Mint Tea", desc: "Fresh mint brewed with OG green tea", dish: "MOROCCAN MINT TEA — Aka 'Atay' is fresh mint brewed with the OG Gunpowder green tea, gently sweetened and poured warm.", img: "/fo5.png" },
   { course: "Drinks", title: "Cucumber Cooler", desc: "Light, refreshing balance", dish: "CUCUMBER COOLER — A light, refreshing balance to the warm spices of the table.", img: "/fo4.png" }
@@ -465,27 +465,27 @@ export default function Dinner() {
                   </div>
 
                   {/* Revealed part (always laid out at full desktop width, unmasked/unclipped smoothly) */}
-                  <div className={`flex-1 flex flex-col md:flex-row items-center justify-between w-full h-full transition-opacity duration-500 ${revealedItems[idx] ? 'opacity-100 pointer-events-auto delay-100' : 'opacity-0 pointer-events-none'}`}>
-                    {/* Center Dish Image & Name */}
-                    <div className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 text-center sm:text-left md:border-l md:border-r border-[#2c2b29]/10 px-6 py-4 w-full h-full">
-                      {item.img && (
+                  <div className={`flex-1 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 w-full h-full transition-opacity duration-500 ${revealedItems[idx] ? 'opacity-100 pointer-events-auto delay-100' : 'opacity-0 pointer-events-none'}`}>
+                    {/* Big Hero Image */}
+                    {item.img && (
+                      <div className="flex items-center justify-center md:border-l border-[#2c2b29]/10 md:px-8 py-2 flex-shrink-0">
                         <img 
                           src={item.img} 
                           alt={item.dish.split('—')[0].trim()} 
-                          className="w-24 h-24 sm:w-28 sm:h-28 object-contain drop-shadow-md flex-shrink-0 transition-transform duration-500 hover:scale-105" 
+                          className="w-44 h-44 sm:w-52 sm:h-52 md:w-60 md:h-60 object-contain drop-shadow-xl transition-transform duration-500 hover:scale-105" 
                         />
-                      )}
-                      <h4 className="font-heading text-3xl lg:text-4xl text-[var(--accent-primary)] leading-tight">
+                      </div>
+                    )}
+
+                    {/* Supporting Text (Title + Description) */}
+                    <div className={`flex-1 flex flex-col justify-center text-center md:text-left ${!item.img ? 'md:border-l border-[#2c2b29]/10 md:pl-8' : ''} pr-2`}>
+                      <h4 className="font-heading text-2xl sm:text-3xl lg:text-4xl text-[var(--accent-primary)] leading-tight mb-2">
                         {item.dish.split('—')[0].trim()}
                       </h4>
-                    </div>
-
-                    {/* Right Description */}
-                    <div className="flex-1 md:pl-8 flex flex-col justify-center text-center md:text-left mt-4 md:mt-0 w-full h-full min-w-[260px]">
-                      <p className="font-body text-lg text-[#2c2b29]/90 italic font-medium leading-relaxed">
+                      <p className="font-body text-base sm:text-lg text-[#2c2b29]/90 italic font-medium leading-relaxed">
                         {item.dish.split('—')[1]?.trim()}
                       </p>
-                      <p className="font-body text-sm text-[#2c2b29]/70 mt-2 uppercase tracking-widest font-bold">
+                      <p className="font-body text-xs sm:text-sm text-[#2c2b29]/60 mt-3 uppercase tracking-widest font-bold">
                         {item.desc}
                       </p>
                     </div>
