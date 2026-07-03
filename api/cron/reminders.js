@@ -61,7 +61,22 @@ export default async function handler(req, res) {
                 clickTracking: { enable: false, enableText: false },
                 openTracking: { enable: false }
               },
-              html: `<p>Hi ${interest.users.name},</p><p>A seat has just opened up for <strong>${occ.title}</strong>.</p><p>Click your original invite link to book it before someone else does!</p>`
+              html: `
+                <div style="font-family: 'The Seasons', Georgia, serif; max-width: 600px; margin: 0 auto; background-color: #efe8db; padding: 40px 30px; border-radius: 12px; color: #2c2b29; border: 1px solid rgba(44,43,41,0.15); line-height: 1.7;">
+                  <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid rgba(232,99,33,0.3); padding-bottom: 20px;">
+                    <h1 style="font-family: 'Apricot', Georgia, cursive; color: #e86321; font-size: 34px; margin: 0; letter-spacing: 1px;">Vantammayilu</h1>
+                    <p style="font-family: 'The Seasons', Georgia, serif; font-style: italic; font-size: 16px; margin-top: 6px; color: #555;">The Supper Social</p>
+                  </div>
+                  <h2 style="font-family: 'Apricot', Georgia, cursive; color: #e86321; font-size: 26px; margin-bottom: 16px;">A Seat Has Opened.</h2>
+                  <p style="font-size: 16px;">Hi ${interest.users.name},</p>
+                  <p style="font-size: 16px;">Serendipity has smiled upon our table. A seat has just opened up for <strong>${occ.title}</strong>.</p>
+                  <p style="font-size: 16px; margin-bottom: 24px;">Please return to your invitation link immediately to reserve this place before another guest claims it.</p>
+                  <div style="margin-top: 36px; border-top: 1px solid rgba(44,43,41,0.1); text-align: center; padding-top: 20px;">
+                    <p style="font-style: italic; font-size: 16px; margin-bottom: 4px; color: #555;">Warmly,</p>
+                    <p style="font-family: 'Apricot', Georgia, cursive; font-size: 22px; color: #e86321; margin: 0;">Hyndavi & Artee</p>
+                  </div>
+                </div>
+              `
             }));
             if (process.env.SENDGRID_API_KEY) {
               await sgMail.send(msgs);
@@ -117,7 +132,25 @@ export default async function handler(req, res) {
                     clickTracking: { enable: false, enableText: false },
                     openTracking: { enable: false }
                   },
-                  html: `<p>Hi ${booking.users.name},</p><p>We look forward to seeing you tomorrow at <strong>${occ.title}</strong>.</p><p>Your token is ${booking.token_name}.</p>`
+                  html: `
+                    <div style="font-family: 'The Seasons', Georgia, serif; max-width: 600px; margin: 0 auto; background-color: #efe8db; padding: 40px 30px; border-radius: 12px; color: #2c2b29; border: 1px solid rgba(44,43,41,0.15); line-height: 1.7;">
+                      <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid rgba(232,99,33,0.3); padding-bottom: 20px;">
+                        <h1 style="font-family: 'Apricot', Georgia, cursive; color: #e86321; font-size: 34px; margin: 0; letter-spacing: 1px;">Vantammayilu</h1>
+                        <p style="font-family: 'The Seasons', Georgia, serif; font-style: italic; font-size: 16px; margin-top: 6px; color: #555;">The Supper Social</p>
+                      </div>
+                      <h2 style="font-family: 'Apricot', Georgia, cursive; color: #e86321; font-size: 26px; margin-bottom: 16px;">Tomorrow Evening Awaits.</h2>
+                      <p style="font-size: 16px;">Hi ${booking.users.name},</p>
+                      <p style="font-size: 16px;">We eagerly anticipate welcoming you tomorrow evening for <strong>${occ.title}</strong>.</p>
+                      <div style="background-color: #faf8f5; padding: 20px; border-radius: 8px; margin: 24px 0; border-left: 4px solid #e86321;">
+                        <p style="margin: 0; font-size: 16px; color: #555;">Your Secret Identity Token: <strong style="color: #e86321;">${booking.token_name}</strong></p>
+                      </div>
+                      <p style="font-size: 15px;">Please check your WhatsApp for coordinates and arrival details.</p>
+                      <div style="margin-top: 36px; border-top: 1px solid rgba(44,43,41,0.1); text-align: center; padding-top: 20px;">
+                        <p style="font-style: italic; font-size: 16px; margin-bottom: 4px; color: #555;">Warmly,</p>
+                        <p style="font-family: 'Apricot', Georgia, cursive; font-size: 22px; color: #e86321; margin: 0;">Hyndavi & Artee</p>
+                      </div>
+                    </div>
+                  `
                 });
               }
 

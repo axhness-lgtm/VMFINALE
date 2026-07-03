@@ -34,8 +34,10 @@ export default async function handler(req, res) {
         phone = decoded.phone;
         email = decoded.email;
       } catch (e) {
-        phone = req.body.phone || '9999999999';
-        email = req.body.email || 'guest@vantammayilu.com';
+        return res.status(401).json({
+          error: 'You have crossed the 4 hour time limit to reserve your seat, please register again to get a chance to reserve your seat again.',
+          expired: true
+        });
       }
     } else {
       user_id = req.body.user_id;

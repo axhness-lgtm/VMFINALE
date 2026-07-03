@@ -16,11 +16,11 @@ const CURRENT_DINNER = {
 };
 
 const menuItems = [
-  { course: "Course I", title: "A bright beginning.", desc: "Fresh. Crisp. Unexpected.", dish: "Gỏi Cuốn — Fresh summer rolls with herbs & peanut dipping sauce" },
-  { course: "Course II", title: "Comfort in a bowl.", desc: "Fragrant star anise broth.", dish: "Phở Chay — A comforting, slow-simmered herb noodle soup" },
-  { course: "Course III", title: "The heart of the evening.", desc: "Bold, rich flavor pairings.", dish: "Bánh Xèo — Sizzling crispy rice pancakes with savory mushroom filling" },
-  { course: "Course IV", title: "Made for sharing.", desc: "Smoky claypot eggplant.", dish: "Cà Tím Nướng — Grilled eggplant with scallion oil & garlic soy" },
-  { course: "Course V", title: "A sweet ending...", desc: "Banana coconut soup.", dish: "Chè Chuối — Warm banana coconut sweet soup with toasted sesame" }
+  { course: "Starter", title: "Moroccan Mezze Platter", desc: "Warm, flaky m'semen & dips", dish: "MOROCCAN MEZZE PLATTER — Smoky Zaalouk, tangy Matbucha, and earthy Bissara served with warm, flaky m'semen for scooping and sharing.", img: "/fo1.png" },
+  { course: "Small Plates", title: "Seafood Briouats", desc: "Crisp golden spiced cigars", dish: "SEAFOOD BRIOUATS — Crisp golden Cigars filled with spiced fish and shrimp, paired with creamy garlic Toum for a bold, savoury bite.", img: "/fo2.png" },
+  { course: "Main Course", title: "Charmoula Chicken Tajine", desc: "Slow-cooked infused tajine", dish: "CHARMOULA CHICKEN TAJINE — Slow-cooked chicken infused with fragrant Ras el Hanout, seasonal vegetables, and olives, served with soft Khobz.", img: "/fo3.png" },
+  { course: "Dessert", title: "Shhh... Yalla Helwa!", desc: "Quietly decadent & soul of Morocco", dish: "SHHH... YALLA HELWA! — This one prefers not to be explained. Crunchy, creamy, and quietly decadent, with the unmistakable soul of Morocco.", img: "/fo4.png" },
+  { course: "Drinks", title: "Moroccan Mint Tea & Cucumber Cooler", desc: "Fresh mint tea & refreshing cooler", dish: "MOROCCAN MINT TEA & CUCUMBER COOLER — Aka 'Atay' is fresh mint brewed with the OG Gunpowder green tea, poured warm. Paired with a light, refreshing Cucumber Cooler balance.", img: "/fo5.png" }
 ];
 
 const faqs = [
@@ -48,7 +48,7 @@ const faqs = [
 
 
 
-const ReserveSection = ({ onReserveClick, onInterestClick, canReserve, isSoldOut }) => {
+const ReserveSection = ({ onReserveClick, onInterestClick, canReserve, isSoldOut, isTokenExpired }) => {
   return (
     <section className="relative w-full bg-[var(--bg-primary)] flex flex-col items-center pt-24 pb-0 overflow-hidden">
       {/* Background Texture */}
@@ -80,6 +80,18 @@ const ReserveSection = ({ onReserveClick, onInterestClick, canReserve, isSoldOut
                   If seats open up due to payment window expiration or cancellations, selected guests from this active waitlist will be emailed an invitation.
                 </p>
               </>
+            ) : isTokenExpired ? (
+              <div className="flex flex-col items-center gap-3 max-w-lg text-center bg-red-500/10 border border-red-500/30 p-5 rounded-xl shadow-sm">
+                <p className="text-red-600 font-bold text-sm md:text-base leading-relaxed">
+                  You have crossed the 4 hour time limit to reserve your seat, please register again to get a chance to reserve your seat again.
+                </p>
+                <button
+                  onClick={onInterestClick}
+                  className="bg-[var(--accent-primary)] text-white font-heading text-base md:text-lg tracking-wider px-6 py-2.5 rounded-md shadow hover:bg-[#c14a27] transition-all"
+                >
+                  Register Again (I'm Interested)
+                </button>
+              </div>
             ) : canReserve ? (
               <button
                 onClick={onReserveClick}
@@ -124,10 +136,25 @@ export default function Dinner() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
 
+  let isTokenExpired = false;
+  if (token) {
+    try {
+      const parts = token.split('.');
+      if (parts.length === 3) {
+        const payload = JSON.parse(atob(parts[1]));
+        if (payload && payload.exp && Date.now() >= payload.exp * 1000) {
+          isTokenExpired = true;
+        }
+      }
+    } catch (e) {
+      // ignore decode error
+    }
+  }
+
   const [activeDinner, setActiveDinner] = useState(CURRENT_DINNER);
   // Only users with a valid magic link token can reserve.
   // Occurrence status does NOT globally open booking for everyone.
-  const canReserve = Boolean(token);
+  const canReserve = Boolean(token) && !isTokenExpired;
   const availableSeats = activeDinner ? (activeDinner.total_seats ?? 8) - (activeDinner.sold_seats ?? 0) : null;
   const isSoldOut = availableSeats !== null && availableSeats <= 0;
 
@@ -255,6 +282,18 @@ export default function Dinner() {
                     If seats open up due to payment window closing or cancellations, selected guests from the active waitlist will be emailed an invitation.
                   </p>
                 </>
+              ) : isTokenExpired ? (
+                <div className="flex flex-col items-center gap-3 max-w-lg text-center bg-red-500/10 border border-red-500/30 p-4 rounded-xl shadow-sm z-20">
+                  <p className="text-red-600 font-bold text-sm md:text-base leading-relaxed">
+                    You have crossed the 4 hour time limit to reserve your seat, please register again to get a chance to reserve your seat again.
+                  </p>
+                  <button
+                    onClick={() => setIsInterestOpen(true)}
+                    className="bg-[var(--accent-primary)] text-white font-body uppercase text-sm md:text-base font-extrabold tracking-widest px-6 py-2.5 rounded-md shadow hover:bg-[#c14a27] transition-all cursor-pointer"
+                  >
+                    REGISTER AGAIN (I'M INTERESTED)
+                  </button>
+                </div>
               ) : canReserve ? (
                 <button
                   onClick={() => setIsBookingOpen(true)}
@@ -381,7 +420,10 @@ export default function Dinner() {
             {menuItems.map((item, idx) => (
               <div
                 key={idx}
-                className={`relative bg-[var(--bg-primary)] text-[#2c2b29] p-6 md:p-8 rounded-2xl shadow-sm border border-[#2c2b29]/10 overflow-hidden hover:shadow-md ${revealedItems[idx] ? 'w-full' : 'w-full md:w-1/2 lg:w-[40%]'} transition-[width] duration-600 ease-[cubic-bezier(0.25,1,0.5,1)] origin-left min-h-[220px] md:min-h-[180px] flex items-center`}
+                onClick={() => {
+                  if (!revealedItems[idx]) toggleReveal(idx);
+                }}
+                className={`relative bg-[var(--bg-primary)] text-[#2c2b29] p-6 md:p-8 rounded-2xl shadow-sm border border-[#2c2b29]/10 overflow-hidden hover:shadow-md ${revealedItems[idx] ? 'w-full' : 'w-full md:w-1/2 lg:w-[40%] cursor-pointer'} transition-[width] duration-600 ease-[cubic-bezier(0.25,1,0.5,1)] origin-left min-h-[220px] md:min-h-[180px] flex items-center`}
               >
                 {!revealedItems[idx] && (
                   <motion.div
@@ -392,6 +434,10 @@ export default function Dinner() {
                       if (offset.x > 50 || velocity.x > 300) {
                         toggleReveal(idx);
                       }
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleReveal(idx);
                     }}
                     className="absolute top-0 right-0 bottom-0 w-24 z-20 cursor-grab active:cursor-grabbing flex items-center justify-end pr-6 bg-gradient-to-l from-[var(--bg-primary)] to-transparent"
                   >
@@ -412,22 +458,31 @@ export default function Dinner() {
 
                     {!revealedItems[idx] && (
                       <div className="mt-4 font-body text-xs uppercase tracking-widest text-[#2c2b29]/50 flex items-center gap-2 absolute bottom-6 md:bottom-8">
-                        <span>Pull right edge to reveal</span>
+                        <span>Click or pull right edge to reveal</span>
                       </div>
                     )}
                   </div>
 
                   {/* Revealed part (always laid out at full desktop width, unmasked/unclipped smoothly) */}
-                  <div className={`flex-1 flex flex-col md:flex-row items-center w-full h-full transition-opacity duration-500 ${revealedItems[idx] ? 'opacity-100 pointer-events-auto delay-100' : 'opacity-0 pointer-events-none'}`}>
-                    {/* Center Dish Name */}
-                    <div className="flex-1 flex items-center justify-center text-center md:border-l md:border-r border-[#2c2b29]/10 px-6 py-4 w-full h-full">
-                      <h4 className="font-heading text-3xl lg:text-4xl text-[var(--accent-primary)] leading-tight whitespace-nowrap md:whitespace-normal">{item.dish.split('—')[0]}</h4>
+                  <div className={`flex-1 flex flex-col md:flex-row items-center justify-between w-full h-full transition-opacity duration-500 ${revealedItems[idx] ? 'opacity-100 pointer-events-auto delay-100' : 'opacity-0 pointer-events-none'}`}>
+                    {/* Center Dish Image & Name */}
+                    <div className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 text-center sm:text-left md:border-l md:border-r border-[#2c2b29]/10 px-6 py-4 w-full h-full">
+                      {item.img && (
+                        <img 
+                          src={item.img} 
+                          alt={item.dish.split('—')[0].trim()} 
+                          className="w-24 h-24 sm:w-28 sm:h-28 object-contain drop-shadow-md flex-shrink-0 transition-transform duration-500 hover:scale-105" 
+                        />
+                      )}
+                      <h4 className="font-heading text-3xl lg:text-4xl text-[var(--accent-primary)] leading-tight">
+                        {item.dish.split('—')[0].trim()}
+                      </h4>
                     </div>
 
                     {/* Right Description */}
-                    <div className="flex-1 md:pl-8 flex flex-col justify-center text-center md:text-left mt-4 md:mt-0 w-full h-full min-w-[280px]">
+                    <div className="flex-1 md:pl-8 flex flex-col justify-center text-center md:text-left mt-4 md:mt-0 w-full h-full min-w-[260px]">
                       <p className="font-body text-lg text-[#2c2b29]/90 italic font-medium leading-relaxed">
-                        {item.dish.split('—')[1]}
+                        {item.dish.split('—')[1]?.trim()}
                       </p>
                       <p className="font-body text-sm text-[#2c2b29]/70 mt-2 uppercase tracking-widest font-bold">
                         {item.desc}
@@ -440,6 +495,12 @@ export default function Dinner() {
                 <div className="absolute inset-0 bg-[var(--accent-primary)]/5 opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
               </div>
             ))}
+          </div>
+
+          <div className="mt-8 text-center">
+            <p className="font-body text-xs md:text-sm tracking-widest text-[#2c2b29]/70 uppercase font-bold">
+              ### MENU CONTAINS EGGPLANT, NUTS, SOY, GLUTEN, DAIRY & SHRIMP
+            </p>
           </div>
         </div>
       </section>
@@ -643,6 +704,7 @@ export default function Dinner() {
         onInterestClick={() => setIsInterestOpen(true)}
         canReserve={canReserve}
         isSoldOut={isSoldOut}
+        isTokenExpired={isTokenExpired}
       />
 
       <EdgeDivider src="/edge4.png" />

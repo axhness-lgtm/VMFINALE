@@ -31,11 +31,68 @@ export default async function handler(req, res) {
 
     if (action === 'list') {
       try {
-        const { data, error } = await supabase.from('users').select('*').order('created_at', { ascending: false }).limit(2000);
+        const { data: allUsers, error } = await supabase.from('users').select('*').order('created_at', { ascending: false }).limit(2000);
         if (error) throw error;
-        return res.status(200).json({ success: true, users: data || [] });
+
+        const { data: bookings } = await supabase.from('bookings').select('user_id').eq('status', 'confirmed');
+        const { data: interests } = await supabase.from('occurrence_interests').select('user_id, status');
+
+        const attendedSet = new Set((bookings || []).map(b => b.user_id));
+        const rejectedSet = new Set((interests || []).filter(i => i.status === 'rejected').map(i => i.user_id));
+        const activeSet = new Set((interests || []).map(i => i.user_id));
+
+        const enrichedUsers = (allUsers || []).map(u => {
+          let computedTag = 'general';
+          if (attendedSet.has(u.id)) {
+            computedTag = 'attended';
+          } else if (rejectedSet.has(u.id)) {
+            computedTag = 'rejected';
+          } else if (activeSet.has(u.id)) {
+            computedTag = 'general';
+          } else {
+            const match = (u.instagram_handle || '').match(/^\[Tag:\s*(.*?)\]/i);
+            computedTag = match ? match[1].toLowerCase() : 'general';
+          }
+          return { ...u, segregation_tag: computedTag };
+        });
+
+        return res.status(200).json({ success: true, users: enrichedUsers });
       } catch (error) {
         return res.status(500).json({ error: 'Failed to fetch community list', details: error.message });
+      }
+    }
+
+    if (action === 'delete') {
+      const { user_ids, occurrence_id } = req.body;
+      if (!user_ids || !Array.isArray(user_ids) || user_ids.length === 0) {
+        return res.status(400).json({ error: 'No user IDs provided for deletion.' });
+      }
+      try {
+        if (occurrence_id) {
+          await supabase.from('occurrence_interests').delete().eq('occurrence_id', occurrence_id).in('user_id', user_ids);
+        } else {
+          await supabase.from('occurrence_interests').delete().in('user_id', user_ids);
+          await supabase.from('users').delete().in('id', user_ids);
+        }
+        return res.status(200).json({ success: true, message: `Successfully deleted ${user_ids.length} guest(s).` });
+      } catch (err) {
+        return res.status(500).json({ error: 'Failed to delete guests', details: err.message });
+      }
+    }
+
+    if (action === 'reject') {
+      const { user_ids, occurrence_id } = req.body;
+      if (!user_ids || !Array.isArray(user_ids) || user_ids.length === 0 || !occurrence_id) {
+        return res.status(400).json({ error: 'Missing user_ids or occurrence_id for rejection.' });
+      }
+      try {
+        await supabase.from('occurrence_interests')
+          .update({ status: 'rejected' })
+          .eq('occurrence_id', occurrence_id)
+          .in('user_id', user_ids);
+        return res.status(200).json({ success: true, message: `Marked ${user_ids.length} guest(s) as rejected.` });
+      } catch (err) {
+        return res.status(500).json({ error: 'Failed to mark rejected', details: err.message });
       }
     }
 
@@ -116,7 +173,7 @@ export default async function handler(req, res) {
 
         const formattedMessage = custom_message
           ? custom_message.replace(/\n/g, '<br/>')
-          : `We are thrilled to announce our upcoming gathering: <strong>${occ.title}</strong>.<br/><br/>As a member of our cherished community waitlist, you are receiving this announcement first. Visit our website below to click "I'm Interested" to join the active list for this dinner!`;
+          : `We are delighted to announce our upcoming gathering: <strong>${occ.title}</strong>.<br/><br/>As a cherished member of our community waitlist, you receive this secret announcement before the doors open to the world. A table filled with warm candlelight, shared laughter, and culinary storytelling awaits.`;
 
         const posterHtml = poster_url
           ? `<div style="margin-bottom: 24px;"><img src="${poster_url}" alt="${occ.title}" style="width: 100%; max-width: 600px; border-radius: 8px; display: block;" /></div>`
@@ -133,16 +190,23 @@ export default async function handler(req, res) {
             openTracking: { enable: false }
           },
           html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #1a1a1a; line-height: 1.6;">
+            <div style="font-family: 'The Seasons', Georgia, serif; max-width: 600px; margin: 0 auto; background-color: #efe8db; padding: 40px 30px; border-radius: 12px; color: #2c2b29; border: 1px solid rgba(44,43,41,0.15); line-height: 1.7;">
+              <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid rgba(232,99,33,0.3); padding-bottom: 20px;">
+                <h1 style="font-family: 'Apricot', Georgia, cursive; color: #e86321; font-size: 34px; margin: 0; letter-spacing: 1px;">Vantammayilu</h1>
+                <p style="font-family: 'The Seasons', Georgia, serif; font-style: italic; font-size: 16px; margin-top: 6px; color: #555;">The Supper Social</p>
+              </div>
               ${posterHtml}
-              <h2 style="color: #e86321; font-size: 24px; margin-bottom: 16px;">An Invitation to the Table.</h2>
-              <p>Hi ${user.name},</p>
-              <p style="margin-bottom: 24px;">${formattedMessage}</p>
-              <div style="margin: 32px 0;">
+              <h2 style="font-family: 'Apricot', Georgia, cursive; color: #e86321; font-size: 28px; margin-bottom: 16px;">An Invitation to the Table.</h2>
+              <p style="font-size: 16px;">Hi ${user.name},</p>
+              <p style="font-size: 16px; margin-bottom: 24px;">${formattedMessage}</p>
+              <div style="margin: 32px 0; text-align: center;">
                 <a href="${interestLink}" style="background-color: #e86321; color: white; padding: 14px 28px; text-decoration: none; font-weight: bold; border-radius: 6px; display: inline-block; font-size: 16px;">Express Interest Now</a>
               </div>
-              <p style="font-size: 14px; color: #666;">Seats are limited. Only guests who click "I'm Interested" will be curated for the active invite list.</p>
-              <p style="margin-top: 32px;">Warmly,<br/><strong>Vantammayilu</strong></p>
+              <p style="font-size: 14px; color: #666; font-style: italic;">Only guests who express interest will be curated for the active guest list.</p>
+              <div style="margin-top: 36px; border-top: 1px solid rgba(44,43,41,0.1); text-align: center; padding-top: 20px;">
+                <p style="font-style: italic; font-size: 16px; margin-bottom: 4px; color: #555;">Warmly,</p>
+                <p style="font-family: 'Apricot', Georgia, cursive; font-size: 22px; color: #e86321; margin: 0;">Hyndavi & Artee</p>
+              </div>
             </div>
           `
         }));

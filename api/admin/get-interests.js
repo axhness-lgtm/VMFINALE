@@ -76,7 +76,7 @@ export default async function handler(req, res) {
       const token = jwt.sign(
         { user_id: u.id, email: u.email, phone: u.phone, occurrence_id },
         JWT_SECRET,
-        { expiresIn: '24h' }
+        { expiresIn: '4h' }
       );
       return {
         ...item,

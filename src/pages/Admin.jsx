@@ -60,6 +60,9 @@ function AdminDashboardContent() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState('dispatch'); // 'dispatch' | 'occurrences' | 'community'
   const [selectedUsers, setSelectedUsers] = useState(new Set());
+  const [selectedCommunityUsers, setSelectedCommunityUsers] = useState(new Set());
+  const [waitlistSearchQuery, setWaitlistSearchQuery] = useState('');
+  const [communitySearchQuery, setCommunitySearchQuery] = useState('');
 
   // Data state
   const [occurrences, setOccurrences] = useState([]);
@@ -202,6 +205,79 @@ function AdminDashboardContent() {
     if (newSelection.has(userId)) newSelection.delete(userId);
     else newSelection.add(userId);
     setSelectedUsers(newSelection);
+  };
+
+  const toggleCommunityUserSelection = (userId) => {
+    const newSelection = new Set(selectedCommunityUsers);
+    if (newSelection.has(userId)) newSelection.delete(userId);
+    else newSelection.add(userId);
+    setSelectedCommunityUsers(newSelection);
+  };
+
+  const handleDeleteWaitlistUsers = async (userIds) => {
+    if (!userIds || userIds.length === 0) return;
+    if (!confirm(`Delete ${userIds.length} guest(s) from waitlist?`)) return;
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/community', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'delete', password, user_ids: userIds, occurrence_id: selectedOccurrenceId })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.details || data.error || 'Failed to delete');
+      alert(data.message);
+      setSelectedUsers(new Set());
+      fetchInterests(selectedOccurrenceId);
+    } catch (err) {
+      alert('Error: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRejectWaitlistUsers = async (userIds) => {
+    if (!userIds || userIds.length === 0) return;
+    if (!confirm(`Mark ${userIds.length} guest(s) as Rejected?`)) return;
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/community', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'reject', password, user_ids: userIds, occurrence_id: selectedOccurrenceId })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.details || data.error || 'Failed to reject');
+      alert(data.message);
+      setSelectedUsers(new Set());
+      fetchInterests(selectedOccurrenceId);
+    } catch (err) {
+      alert('Error: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteCommunityUsers = async (userIds) => {
+    if (!userIds || userIds.length === 0) return;
+    if (!confirm(`Permanently delete ${userIds.length} member(s) from Community Directory?`)) return;
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/community', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'delete', password, user_ids: userIds })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.details || data.error || 'Failed to delete');
+      alert(data.message);
+      setSelectedCommunityUsers(new Set());
+      fetchCommunityList();
+    } catch (err) {
+      alert('Error: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Supabase file upload helper
@@ -718,9 +794,36 @@ function AdminDashboardContent() {
 
                       {/* Waitlist Guests Table */}
                       <div>
-                        <h3 className="text-lg font-bold text-[var(--text-main)] mb-3 flex items-center gap-2">
-                          <span>⏳ Waitlist & Interested Guests</span>
-                        </h3>
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+                          <h3 className="text-lg font-bold text-[var(--text-main)] flex items-center gap-2">
+                            <span>⏳ Waitlist & Interested Guests</span>
+                          </h3>
+                          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                            <input
+                              type="text"
+                              placeholder="Search name, email, phone..."
+                              value={waitlistSearchQuery}
+                              onChange={e => setWaitlistSearchQuery(e.target.value)}
+                              className="p-2 border rounded text-xs bg-[var(--bg-secondary)] w-full sm:w-64"
+                            />
+                            {selectedUsers.size > 0 && (
+                              <>
+                                <button
+                                  onClick={() => handleRejectWaitlistUsers(Array.from(selectedUsers))}
+                                  className="bg-orange-600 text-white px-3 py-1.5 rounded text-xs font-bold hover:bg-orange-700 shadow-sm"
+                                >
+                                  🚫 Reject ({selectedUsers.size})
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteWaitlistUsers(Array.from(selectedUsers))}
+                                  className="bg-red-600 text-white px-3 py-1.5 rounded text-xs font-bold hover:bg-red-700 shadow-sm"
+                                >
+                                  🗑️ Delete ({selectedUsers.size})
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </div>
                         {waitlistGuests.length === 0 ? (
                           <p className="text-sm text-[var(--text-main)]/50 italic bg-[var(--bg-secondary)] p-4 rounded-lg border border-[var(--text-main)]/5">No unconfirmed waitlist guests.</p>
                         ) : (
@@ -732,37 +835,55 @@ function AdminDashboardContent() {
                                   <th className="py-3 px-3">Guest</th>
                                   <th className="py-3 px-3">Contact</th>
                                   <th className="py-3 px-3">Status</th>
-                                  <th className="py-3 px-3">Link</th>
+                                  <th className="py-3 px-3">Actions</th>
                                 </tr>
                               </thead>
                               <tbody>
-                                {(waitlistGuests || []).map(item => {
-                                  const u = (item && item.users) || {};
-                                  return (
-                                    <tr key={item?.id || Math.random()} className="border-b border-[var(--text-main)]/5 hover:bg-[var(--text-main)]/5 text-sm">
-                                      <td className="py-3 px-3">
-                                        <input 
-                                          type="checkbox" 
-                                          checked={selectedUsers.has(u?.id)}
-                                          onChange={() => u?.id && toggleUserSelection(u.id)}
-                                          className="w-4 h-4 accent-[var(--accent-primary)]"
-                                        />
-                                      </td>
-                                      <td className="py-3 px-3 font-bold">{u?.name || 'Anonymous Guest'}</td>
-                                      <td className="py-3 px-3 text-xs font-mono">{u?.email || 'N/A'}<br/>{u?.phone || ''}</td>
-                                      <td className="py-3 px-3">
-                                        <span className="px-2.5 py-1 rounded text-xs uppercase font-extrabold tracking-wider bg-orange-100 text-orange-800">
-                                          {String((item && item.status) || 'pending').replace(/_/g, ' ')}
-                                        </span>
-                                      </td>
-                                      <td className="py-3 px-3">
-                                        <button onClick={() => setViewModalGuest(item)} className="bg-[var(--bg-secondary)] hover:bg-[var(--accent-primary)] hover:text-white text-[var(--text-main)] px-3 py-1.5 rounded border border-[var(--text-main)]/20 text-xs font-bold transition-all shadow-sm">
-                                          👁️ View & Link
-                                        </button>
-                                      </td>
-                                    </tr>
-                                  );
-                                })}
+                                {(waitlistGuests || [])
+                                  .filter(item => {
+                                    if (!waitlistSearchQuery) return true;
+                                    const u = item?.users || {};
+                                    const q = waitlistSearchQuery.toLowerCase();
+                                    return (
+                                      (u?.name && u.name.toLowerCase().includes(q)) ||
+                                      (u?.email && u.email.toLowerCase().includes(q)) ||
+                                      (u?.phone && u.phone.toLowerCase().includes(q))
+                                    );
+                                  })
+                                  .map(item => {
+                                    const u = (item && item.users) || {};
+                                    return (
+                                      <tr key={item?.id || Math.random()} className="border-b border-[var(--text-main)]/5 hover:bg-[var(--text-main)]/5 text-sm">
+                                        <td className="py-3 px-3">
+                                          <input 
+                                            type="checkbox" 
+                                            checked={selectedUsers.has(u?.id)}
+                                            onChange={() => u?.id && toggleUserSelection(u.id)}
+                                            className="w-4 h-4 accent-[var(--accent-primary)]"
+                                          />
+                                        </td>
+                                        <td className="py-3 px-3 font-bold">{u?.name || 'Anonymous Guest'}</td>
+                                        <td className="py-3 px-3 text-xs font-mono">{u?.email || 'N/A'}<br/>{u?.phone || ''}</td>
+                                        <td className="py-3 px-3">
+                                          <span className={`px-2.5 py-1 rounded text-xs uppercase font-extrabold tracking-wider ${item?.status === 'rejected' ? 'bg-red-100 text-red-800' : 'bg-orange-100 text-orange-800'}`}>
+                                            {String((item && item.status) || 'pending').replace(/_/g, ' ')}
+                                          </span>
+                                        </td>
+                                        <td className="py-3 px-3 flex items-center gap-2">
+                                          <button onClick={() => setViewModalGuest(item)} className="bg-[var(--bg-secondary)] hover:bg-[var(--accent-primary)] hover:text-white text-[var(--text-main)] px-3 py-1.5 rounded border border-[var(--text-main)]/20 text-xs font-bold transition-all shadow-sm">
+                                            👁️ View & Link
+                                          </button>
+                                          <button
+                                            onClick={() => u?.id && handleDeleteWaitlistUsers([u.id])}
+                                            className="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white px-2 py-1.5 rounded border border-red-200 text-xs font-bold transition-all"
+                                            title="Delete guest"
+                                          >
+                                            🗑️
+                                          </button>
+                                        </td>
+                                      </tr>
+                                    );
+                                  })}
                               </tbody>
                             </table>
                           </div>
@@ -981,22 +1102,40 @@ function AdminDashboardContent() {
                   <h2 className="text-xl font-bold text-[var(--text-main)]">👥 Community Waitlist Directory ({(communityList || []).length})</h2>
                   <p className="text-xs text-[var(--text-main)]/60">Filter and view all guests added via manual paste or CSV.</p>
                 </div>
-                <div className="flex items-center gap-2 w-full sm:w-auto">
+                <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                  <input
+                    type="text"
+                    placeholder="Search community members..."
+                    value={communitySearchQuery}
+                    onChange={e => setCommunitySearchQuery(e.target.value)}
+                    className="p-2 border rounded text-xs bg-[var(--bg-secondary)] w-full sm:w-56"
+                  />
                   <span className="text-xs font-bold uppercase text-[var(--text-main)]/60 whitespace-nowrap">Filter Tag:</span>
                   <select 
-                    className="p-2 border rounded text-xs font-bold bg-[var(--bg-secondary)] w-full sm:w-48"
+                    className="p-2 border rounded text-xs font-bold bg-[var(--bg-secondary)] w-full sm:w-44"
                     value={listFilterTag}
                     onChange={e => setListFilterTag(e.target.value)}
                   >
-                    <option value="ALL">All Segregation Tags ({(communityList || []).length})</option>
+                    <option value="ALL">All Tags ({(communityList || []).length})</option>
+                    <option value="attended">Attended</option>
+                    <option value="rejected">Rejected</option>
+                    <option value="general">General</option>
                     {Array.from(new Set((communityList || []).map(u => {
                       const handle = (u && u.instagram_handle) || '';
                       const match = handle.match(/^\[Tag:\s*(.*?)\]/i);
-                      return match ? match[1] : 'Untagged / General';
+                      return match ? match[1] : null;
                     }))).filter(Boolean).map(tag => (
                       <option key={tag} value={tag}>{tag}</option>
                     ))}
                   </select>
+                  {selectedCommunityUsers.size > 0 && (
+                    <button
+                      onClick={() => handleDeleteCommunityUsers(Array.from(selectedCommunityUsers))}
+                      className="bg-red-600 text-white px-3 py-1.5 rounded text-xs font-bold hover:bg-red-700 shadow-sm"
+                    >
+                      🗑️ Delete ({selectedCommunityUsers.size})
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -1009,39 +1148,73 @@ function AdminDashboardContent() {
                   <table className="w-full text-left border-collapse text-sm">
                     <thead>
                       <tr className="border-b border-[var(--text-main)]/10 text-xs uppercase tracking-widest text-[var(--text-main)]/50 sticky top-0 bg-[var(--bg-primary)]">
+                        <th className="py-3 px-3">Select</th>
                         <th className="py-3 px-3">Name</th>
                         <th className="py-3 px-3">Email</th>
                         <th className="py-3 px-3">Segregation Tag</th>
                         <th className="py-3 px-3">Phone / Info</th>
                         <th className="py-3 px-3">Added Date</th>
+                        <th className="py-3 px-3">Action</th>
                       </tr>
                     </thead>
                     <tbody>
                       {(communityList || [])
                         .filter(u => {
                           if (!u) return false;
+                          if (communitySearchQuery) {
+                            const q = communitySearchQuery.toLowerCase();
+                            const matchesSearch = (u?.name && u.name.toLowerCase().includes(q)) ||
+                              (u?.email && u.email.toLowerCase().includes(q)) ||
+                              (u?.phone && u.phone.toLowerCase().includes(q));
+                            if (!matchesSearch) return false;
+                          }
                           if (listFilterTag === 'ALL') return true;
+                          const tag = u.segregation_tag || 'general';
                           const handle = u.instagram_handle || '';
                           const match = handle.match(/^\[Tag:\s*(.*?)\]/i);
-                          const tag = match ? match[1] : 'Untagged / General';
-                          return tag === listFilterTag;
+                          const handleTag = match ? match[1] : 'general';
+                          return tag.toLowerCase() === listFilterTag.toLowerCase() || handleTag.toLowerCase() === listFilterTag.toLowerCase();
                         })
                         .map(u => {
+                          const tag = u.segregation_tag || 'general';
                           const handle = u?.instagram_handle || '';
                           const match = handle.match(/^\[Tag:\s*(.*?)\]/i);
-                          const tag = match ? match[1] : 'General';
+                          const displayTag = match ? match[1] : tag;
                           const cleanHandle = handle.replace(/^\[Tag:\s*.*?\]\s*/i, '');
+
+                          let tagColor = 'bg-blue-100 text-blue-800 border-blue-200';
+                          if (displayTag === 'attended') tagColor = 'bg-green-100 text-green-800 border-green-200';
+                          else if (displayTag === 'rejected') tagColor = 'bg-red-100 text-red-800 border-red-200';
+                          else if (displayTag !== 'general') tagColor = 'bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border-[var(--accent-primary)]/20';
+
                           return (
                             <tr key={u?.id || Math.random()} className="border-b border-[var(--text-main)]/5 hover:bg-[var(--text-main)]/5">
+                              <td className="py-3 px-3">
+                                <input 
+                                  type="checkbox" 
+                                  checked={selectedCommunityUsers.has(u?.id)}
+                                  onChange={() => u?.id && toggleCommunityUserSelection(u.id)}
+                                  className="w-4 h-4 accent-[var(--accent-primary)]"
+                                />
+                              </td>
                               <td className="py-3 px-3 font-bold">{u?.name || 'Anonymous'}</td>
                               <td className="py-3 px-3 font-mono text-xs">{u?.email || 'N/A'}</td>
                               <td className="py-3 px-3">
-                                <span className="px-2.5 py-1 rounded text-xs font-bold uppercase bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20">
-                                  🏷️ {tag}
+                                <span className={`px-2.5 py-1 rounded text-xs font-bold uppercase border ${tagColor}`}>
+                                  🏷️ {displayTag}
                                 </span>
                               </td>
                               <td className="py-3 px-3 text-xs font-mono text-[var(--text-main)]/70">{cleanHandle || u?.phone || 'N/A'}</td>
                               <td className="py-3 px-3 text-xs text-[var(--text-main)]/50">{u?.created_at ? new Date(u.created_at).toLocaleDateString() : 'N/A'}</td>
+                              <td className="py-3 px-3">
+                                <button
+                                  onClick={() => u?.id && handleDeleteCommunityUsers([u.id])}
+                                  className="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white px-2 py-1 rounded border border-red-200 text-xs font-bold transition-all"
+                                  title="Delete member"
+                                >
+                                  🗑️
+                                </button>
+                              </td>
                             </tr>
                           );
                         })}

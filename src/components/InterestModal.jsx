@@ -18,14 +18,14 @@ export default function InterestModal({ isOpen, onClose, dinner }) {
     setLoading(true);
     setError('');
     
-    // Normalize phone — add +91 if bare 10-digit Indian number
-    let normalizedPhone = phone.replace(/\s/g, '');
-    if (/^[6-9]\d{9}$/.test(normalizedPhone)) normalizedPhone = '+91' + normalizedPhone;
-    if (!/^\+?[0-9]{10,15}$/.test(normalizedPhone)) {
-      setError('Enter a valid phone number (e.g. 9876543210)');
+    // Enforce 10-digit phone number
+    const cleanPhone = phone.replace(/\D/g, '');
+    if (cleanPhone.length !== 10) {
+      setError('Enter a valid 10-digit mobile number');
       setLoading(false);
       return;
     }
+    const normalizedPhone = '+91' + cleanPhone;
 
     try {
       const res = await fetch('/api/interests', {
@@ -57,32 +57,45 @@ export default function InterestModal({ isOpen, onClose, dinner }) {
         <div className="bm-step-wrapper step-in">
           {success ? (
              <div className="bm-step bm-confirmed-step">
-               <div className="bm-step-tag font-body italicwritten">Interest — Received</div>
-               <h2 className="bm-title">You're on the list.</h2>
-               <p className="bm-subtitle">
-                 We've noted your interest for {dinner?.title || 'this occurrence'}. If you're selected, we'll email you a private booking link when seats open.
+               <div className="bm-step-tag uppercase tracking-[0.2em] font-normal" style={{ fontFamily: 'Hibernate, sans-serif', letterSpacing: '0.2em', lineHeight: '1.8' }}>INTEREST — RECEIVED</div>
+               <h2 className="bm-title uppercase" style={{ fontFamily: 'Hibernate, sans-serif', letterSpacing: '0.12em', lineHeight: '1.4', fontSize: '32px' }}>YOU'RE ON THE LIST.</h2>
+               <p className="bm-subtitle font-body text-base mt-2" style={{ textTransform: 'none', letterSpacing: 'normal', opacity: 0.9 }}>
+                 Keep an eye on your mail, your private booking link will be sent there personally from us.
                </p>
                <button className="bm-btn-primary mt-8" onClick={onClose}>Close</button>
              </div>
           ) : (
-            <form className="bm-step" onSubmit={handleSubmit}>
-              <div className="bm-step-tag font-body italicwritten">Step 01 — Express Interest</div>
-              <h2 className="bm-title">Join the active list.</h2>
-              <p className="bm-subtitle">Let us know you're available for {dinner?.title || 'this occurrence'}. We'll curate the final guest list from here.</p>
+            <form className="bm-step" onSubmit={handleSubmit} style={{ gap: '24px' }}>
+              <div>
+                <div className="bm-step-tag uppercase tracking-[0.2em] font-normal mb-1" style={{ fontFamily: 'Hibernate, sans-serif', letterSpacing: '0.2em', lineHeight: '1.8' }}>STEP 01 — EXPRESS INTEREST</div>
+                <h2 className="bm-title uppercase" style={{ fontFamily: 'Hibernate, sans-serif', letterSpacing: '0.12em', lineHeight: '1.4', fontSize: '36px' }}>JOIN THE ACTIVE LIST.</h2>
+                <p className="bm-subtitle uppercase text-sm mt-1" style={{ fontFamily: 'Hibernate, sans-serif', letterSpacing: '0.12em', lineHeight: '1.6' }}>Let us know you're available for {dinner?.title || 'this occurrence'}.</p>
+              </div>
               
-              <div className="bm-field-group">
+              <div className="bm-field-group" style={{ marginBottom: '8px' }}>
                 <label className="bm-label">Your Name</label>
-                <input className="bm-input" placeholder="Full name" value={name} onChange={e => setName(e.target.value)} required />
+                <input className="bm-input font-sans text-base" placeholder="Full name" value={name} onChange={e => setName(e.target.value)} required />
               </div>
-              <div className="bm-field-group">
+              <div className="bm-field-group" style={{ marginBottom: '8px' }}>
                 <label className="bm-label">Phone number</label>
-                <input className="bm-input" type="tel" placeholder="+91 98765 43210" value={phone} onChange={e => setPhone(e.target.value)} required />
+                <div className="flex items-center gap-2 border-b-2 border-[#002fa7] py-1">
+                  <span className="font-mono font-bold text-[#002fa7] text-base px-2 py-0.5 bg-[#002fa7]/10 rounded select-none">+91</span>
+                  <input
+                    className="bg-transparent border-none outline-none font-sans text-base text-[#002fa7] w-full"
+                    type="tel"
+                    maxLength={10}
+                    placeholder="9876543210"
+                    value={phone}
+                    onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                    required
+                  />
+                </div>
               </div>
-              <div className="bm-field-group">
+              <div className="bm-field-group" style={{ marginBottom: '8px' }}>
                 <label className="bm-label">Email address</label>
-                <input className="bm-input" type="email" placeholder="name@server.com" value={email} onChange={e => setEmail(e.target.value)} required />
+                <input className="bm-input font-sans text-base" type="email" placeholder="name@server.com" value={email} onChange={e => setEmail(e.target.value)} required />
               </div>
-              <div className="bm-field-group">
+              <div className="bm-field-group" style={{ marginBottom: '8px' }}>
                 <label className="bm-label">Preferred Social Profile</label>
                 <div className="flex gap-2 mb-2">
                   {['Instagram', 'Facebook', 'LinkedIn'].map(p => (
@@ -96,12 +109,12 @@ export default function InterestModal({ isOpen, onClose, dinner }) {
                     </button>
                   ))}
                 </div>
-                <input className="bm-input" placeholder={`Your ${platform} Handle / Profile URL`} value={instagram} onChange={e => setInstagram(e.target.value)} required />
+                <input className="bm-input font-sans text-base" placeholder={`Your ${platform} Handle / Profile URL`} value={instagram} onChange={e => setInstagram(e.target.value)} required />
               </div>
 
               {error && <div className="bm-error">{error}</div>}
               
-              <button className="bm-btn-primary mt-4" type="submit" disabled={loading}>
+              <button className="bm-btn-primary mt-2" type="submit" disabled={loading}>
                 {loading ? 'Adding...' : 'I\'m Interested →'}
               </button>
             </form>

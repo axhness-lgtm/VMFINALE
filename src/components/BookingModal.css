@@ -198,25 +198,24 @@
   background: transparent;
   border: none;
   border-bottom: 2px solid #002fa7;
-  padding: 10px 0;
-  font-family: 'Mistrully', cursive;
-  font-size: 18px;
-  font-weight: 400;
+  padding: 6px 0;
+  font-family: Helvetica, Arial, sans-serif !important;
+  font-size: 16px !important;
+  font-weight: 500;
   color: #002fa7;
   outline: none;
   width: 100%;
   box-sizing: border-box;
   transition: border-color 0.15s;
 }
-/* Use heading font for typing in phone and email inputs for extreme visibility */
 .bm-input[type="tel"],
 .bm-input[type="email"] {
-  font-family: var(--font-heading) !important;
-  font-size: 32px !important;
-  letter-spacing: 0.05em;
+  font-family: Helvetica, Arial, sans-serif !important;
+  font-size: 16px !important;
+  letter-spacing: normal;
   text-transform: none;
 }
-.bm-input::placeholder { color: rgba(0,47,167,0.35); }
+.bm-input::placeholder { color: rgba(0,47,167,0.35); font-weight: 400; }
 .bm-input:focus { border-color: #e86321; }
 
 .bm-select {

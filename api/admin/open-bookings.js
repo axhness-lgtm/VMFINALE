@@ -61,43 +61,50 @@ export default async function handler(req, res) {
       const token = jwt.sign(
         { user_id: user.id, email: user.email, phone: user.phone, occurrence_id },
         JWT_SECRET,
-        { expiresIn: '24h' } // Token expires in 24 hours
+        { expiresIn: '4h' } // Token expires strictly in 4 hours
       );
 
       const magicLink = `${DOMAIN}/dinner?token=${token}`;
 
       const formattedMessage = custom_message
         ? custom_message.replace(/\n/g, '<br/>')
-        : `We've curated the list for <strong>${occurrence.title}</strong>, and we'd love for you to join us.<br/><br/>Please use the private link below to secure your seat. Bookings are on a first-come, first-served basis for the selected active list.`;
+        : `We have thoughtfully curated the guest list for <strong>${occurrence.title}</strong>, and a place at our table has been reserved for you.<br/><br/>Please use your private invitation link below within the next <strong>4 hours</strong> to reserve your seat. Candlelight, conversation, and culinary art await.`;
 
       const posterHtml = poster_url
         ? `<div style="margin-bottom: 24px;"><img src="${poster_url}" alt="Poster for ${occurrence.title}" style="width: 100%; max-width: 600px; border-radius: 8px; display: block;" /></div>`
         : '';
 
       const menuHtml = menu_url
-        ? `<div style="margin: 32px 0;"><h3 style="color: #e86321; font-size: 18px; margin-bottom: 12px;">Curated Menu</h3><img src="${menu_url}" alt="Menu for ${occurrence.title}" style="width: 100%; max-width: 600px; border-radius: 8px; display: block;" /></div>`
+        ? `<div style="margin: 32px 0;"><h3 style="font-family: 'Apricot', Georgia, cursive; color: #e86321; font-size: 24px; margin-bottom: 12px;">Curated Menu</h3><img src="${menu_url}" alt="Menu for ${occurrence.title}" style="width: 100%; max-width: 600px; border-radius: 8px; display: block;" /></div>`
         : '';
 
       const msg = {
         to: user.email,
         from: process.env.SENDGRID_FROM_EMAIL || 'hyndavio@vantammayilu.com',
-        subject: custom_subject || `You're invited: ${occurrence.title}`,
+        subject: custom_subject || `Your Private Invitation: ${occurrence.title}`,
         trackingSettings: {
           clickTracking: { enable: false, enableText: false },
           openTracking: { enable: false }
         },
         html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #1a1a1a; line-height: 1.6;">
-            ${posterHtml}
-            <h2 style="color: #e86321; font-size: 24px; margin-bottom: 16px;">You're invited to the table.</h2>
-            <p>Hi ${user.name},</p>
-            <p style="margin-bottom: 24px;">${formattedMessage}</p>
-            ${menuHtml}
-            <div style="margin: 32px 0;">
-              <a href="${magicLink}" style="background-color: #e86321; color: white; padding: 14px 28px; text-decoration: none; font-weight: bold; border-radius: 6px; display: inline-block; font-size: 16px;">Secure Your Seat</a>
+          <div style="font-family: 'The Seasons', Georgia, serif; max-width: 600px; margin: 0 auto; background-color: #efe8db; padding: 40px 30px; border-radius: 12px; color: #2c2b29; border: 1px solid rgba(44,43,41,0.15); line-height: 1.7;">
+            <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid rgba(232,99,33,0.3); padding-bottom: 20px;">
+              <h1 style="font-family: 'Apricot', Georgia, cursive; color: #e86321; font-size: 34px; margin: 0; letter-spacing: 1px;">Vantammayilu</h1>
+              <p style="font-family: 'The Seasons', Georgia, serif; font-style: italic; font-size: 16px; margin-top: 6px; color: #555;">The Supper Social</p>
             </div>
-            <p style="font-size: 14px; color: #666;">If you don't book within the availability, your seat may be passed to the next person on the list.</p>
-            <p style="margin-top: 32px;">Warmly,<br/><strong>Vantammayilu</strong></p>
+            ${posterHtml}
+            <h2 style="font-family: 'Apricot', Georgia, cursive; color: #e86321; font-size: 28px; margin-bottom: 16px;">An Invitation to the Table.</h2>
+            <p style="font-size: 16px;">Hi ${user.name},</p>
+            <p style="font-size: 16px; margin-bottom: 24px;">${formattedMessage}</p>
+            ${menuHtml}
+            <div style="margin: 32px 0; text-align: center;">
+              <a href="${magicLink}" style="background-color: #e86321; color: white; padding: 14px 28px; text-decoration: none; font-weight: bold; border-radius: 6px; display: inline-block; font-size: 16px;">Reserve Your Seat Now</a>
+            </div>
+            <p style="font-size: 14px; color: #b91c1c; font-style: italic;">Note: This private invitation link is active for 4 hours from the time of sending. After 4 hours, expired seats will be offered to the next guest on the waitlist.</p>
+            <div style="margin-top: 36px; border-top: 1px solid rgba(44,43,41,0.1); text-align: center; padding-top: 20px;">
+              <p style="font-style: italic; font-size: 16px; margin-bottom: 4px; color: #555;">Warmly,</p>
+              <p style="font-family: 'Apricot', Georgia, cursive; font-size: 22px; color: #e86321; margin: 0;">Hyndavi & Artee</p>
+            </div>
           </div>
         `,
       };

@@ -58,15 +58,25 @@ export default async function handler(req, res) {
         openTracking: { enable: false }
       },
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <p>Hi ${customerName},</p>
-          <p>Thank you for reaching out with your question:</p>
-          <blockquote style="border-left: 3px solid #ccc; padding-left: 10px; font-style: italic;">
-            ${booking.customer_query}
+        <div style="font-family: 'The Seasons', Georgia, serif; max-width: 600px; margin: 0 auto; background-color: #efe8db; padding: 40px 30px; border-radius: 12px; color: #2c2b29; border: 1px solid rgba(44,43,41,0.15); line-height: 1.7;">
+          <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid rgba(232,99,33,0.3); padding-bottom: 20px;">
+            <h1 style="font-family: 'Apricot', Georgia, cursive; color: #e86321; font-size: 34px; margin: 0; letter-spacing: 1px;">Vantammayilu</h1>
+            <p style="font-family: 'The Seasons', Georgia, serif; font-style: italic; font-size: 16px; margin-top: 6px; color: #555;">The Supper Social</p>
+          </div>
+          <h2 style="font-family: 'Apricot', Georgia, cursive; color: #e86321; font-size: 26px; margin-bottom: 16px;">A Note From Your Hosts.</h2>
+          <p style="font-size: 16px;">Hi ${customerName},</p>
+          <p style="font-size: 16px;">Thank you for sharing your thoughts and dietary inquiry with us:</p>
+          <blockquote style="border-left: 3px solid #e86321; padding-left: 14px; font-style: italic; margin: 20px 0; color: #555;">
+            "${booking.customer_query}"
           </blockquote>
-          <p><strong>Here is the reply from the founder:</strong></p>
-          <p style="white-space: pre-wrap;">${reply_text}</p>
-          <p>Warmly,<br/>Vantammayilu Founder</p>
+          <p style="font-size: 16px;"><strong>Here is our reply:</strong></p>
+          <div style="background-color: #faf8f5; padding: 20px; border-radius: 8px; margin: 16px 0;">
+            <p style="white-space: pre-wrap; margin: 0; font-size: 16px; color: #2c2b29;">${reply_text}</p>
+          </div>
+          <div style="margin-top: 36px; border-top: 1px solid rgba(44,43,41,0.1); text-align: center; padding-top: 20px;">
+            <p style="font-style: italic; font-size: 16px; margin-bottom: 4px; color: #555;">Warmly,</p>
+            <p style="font-family: 'Apricot', Georgia, cursive; font-size: 22px; color: #e86321; margin: 0;">Hyndavi & Artee</p>
+          </div>
         </div>
       `,
     };

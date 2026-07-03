@@ -48,7 +48,10 @@ export default async function handler(req, res) {
       if (!email) email = decoded.email;
       if (!occurrence_id) occurrence_id = decoded.occurrence_id;
     } catch (e) {
-      console.log('[confirm] JWT decode failed, using body fields:', e.message);
+      return res.status(401).json({
+        error: 'You have crossed the 4 hour time limit to reserve your seat, please register again to get a chance to reserve your seat again.',
+        expired: true
+      });
     }
   }
 
@@ -169,22 +172,22 @@ export default async function handler(req, res) {
           openTracking: { enable: false }
         },
         html: `
-          <div style="font-family: 'Georgia', serif; max-width: 600px; margin: 0 auto; background-color: #efe8db; padding: 40px 30px; border-radius: 12px; color: #2c2b29; border: 1px solid rgba(44,43,41,0.15);">
+          <div style="font-family: 'The Seasons', Georgia, serif; max-width: 600px; margin: 0 auto; background-color: #efe8db; padding: 40px 30px; border-radius: 12px; color: #2c2b29; border: 1px solid rgba(44,43,41,0.15); line-height: 1.7;">
             <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid rgba(232,99,33,0.3); padding-bottom: 20px;">
-              <h1 style="font-family: 'Courier New', monospace; color: #e86321; font-size: 32px; margin: 0; letter-spacing: 2px;">VANTAMMAYILU</h1>
-              <p style="font-style: italic; font-size: 16px; margin-top: 6px; color: #555;">Long Table Society</p>
+              <h1 style="font-family: 'Apricot', Georgia, cursive; color: #e86321; font-size: 34px; margin: 0; letter-spacing: 1px;">Vantammayilu</h1>
+              <p style="font-family: 'The Seasons', Georgia, serif; font-style: italic; font-size: 16px; margin-top: 6px; color: #555;">The Supper Social</p>
             </div>
-            <h2 style="color: #2c2b29; font-size: 26px; margin-bottom: 16px;">Your Seat is Secured.</h2>
-            <p style="font-size: 16px; line-height: 1.6;">We are delighted to confirm your reservation. The table is set, and a chair waits for you.</p>
+            <h2 style="font-family: 'Apricot', Georgia, cursive; color: #e86321; font-size: 28px; margin-bottom: 16px;">Your Seat is Secured.</h2>
+            <p style="font-size: 16px;">We are overjoyed to confirm your reservation. A space at our table has been prepared expressly for you.</p>
             <div style="background-color: #faf8f5; padding: 24px; border-radius: 8px; margin: 28px 0; border-left: 4px solid #e86321;">
-              <p style="margin: 0; font-size: 16px; color: #555;">Seats Booked: <strong>${finalSeats}</strong></p>
+              <p style="margin: 0; font-size: 16px; color: #555;">Seats Reserved: <strong>${finalSeats}</strong></p>
               ${customer_query ? `<p style="margin: 8px 0 0 0; font-size: 14px; color: #555;">Notes: <em>${customer_query}</em></p>` : ''}
             </div>
-            <p style="font-size: 15px; line-height: 1.6;">Exact coordinates and arrival instructions will be shared via WhatsApp and Email exactly 24 hours before the evening.</p>
-            <p style="font-size: 15px; line-height: 1.6; margin-top: 24px;">Bring your curiosity and an appetite for stories.</p>
+            <p style="font-size: 15px;">Exact coordinates and arrival secrets will be whispered via WhatsApp and Email 24 hours before the gathering begins.</p>
+            <p style="font-size: 15px; margin-top: 24px; font-style: italic;">Bring your curiosity and an appetite for stories.</p>
             <div style="margin-top: 36px; border-top: 1px solid rgba(44,43,41,0.1); text-align: center; padding-top: 20px;">
-              <p style="font-style: italic; font-size: 16px; margin-bottom: 4px;">Warmly,</p>
-              <p style="font-weight: bold; font-size: 18px; color: #e86321; margin: 0;">Vantammayilu Founder</p>
+              <p style="font-style: italic; font-size: 16px; margin-bottom: 4px; color: #555;">Warmly,</p>
+              <p style="font-family: 'Apricot', Georgia, cursive; font-size: 22px; color: #e86321; margin: 0;">Hyndavi & Artee</p>
             </div>
           </div>
         `
