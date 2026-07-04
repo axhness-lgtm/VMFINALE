@@ -270,7 +270,7 @@ export default function Dinner() {
                   </div>
                   <button
                     onClick={() => setIsInterestOpen(true)}
-                    className="bg-[var(--text-main)] text-white border border-[var(--text-main)] font-body uppercase text-base md:text-lg font-extrabold tracking-widest px-8 py-3.5 rounded-md shadow-xl hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] active:bg-[var(--accent-primary)] active:text-white hover:scale-105 active:scale-95 transition-all duration-300 z-20 cursor-pointer"
+                    className="bg-[var(--accent-primary)] text-white border border-[var(--accent-primary)] font-body uppercase text-base md:text-lg font-extrabold tracking-widest px-8 py-3.5 rounded-md shadow-xl hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] active:bg-[var(--text-main)] active:text-white hover:scale-105 active:scale-95 transition-all duration-300 z-20 cursor-pointer"
                   >
                     JOIN WAITLIST (I'M INTERESTED)
                   </button>
@@ -285,7 +285,7 @@ export default function Dinner() {
                   </p>
                   <button
                     onClick={() => setIsInterestOpen(true)}
-                    className="bg-[var(--text-main)] text-white border border-[var(--text-main)] font-body uppercase text-sm md:text-base font-extrabold tracking-widest px-6 py-2.5 rounded-md shadow hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] active:bg-[var(--accent-primary)] active:text-white transition-all cursor-pointer"
+                    className="bg-[var(--accent-primary)] text-white border border-[var(--accent-primary)] font-body uppercase text-sm md:text-base font-extrabold tracking-widest px-6 py-2.5 rounded-md shadow hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] active:bg-[var(--text-main)] active:text-white transition-all cursor-pointer"
                   >
                     REGISTER AGAIN (I'M INTERESTED)
                   </button>
@@ -293,14 +293,14 @@ export default function Dinner() {
               ) : canReserve ? (
                 <button
                   onClick={() => setIsBookingOpen(true)}
-                  className="bg-[var(--text-main)] text-white border border-[var(--text-main)] font-body uppercase text-base md:text-lg font-extrabold tracking-widest px-8 py-3.5 rounded-md shadow-xl hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] active:bg-[var(--accent-primary)] active:text-white hover:scale-105 active:scale-95 transition-all duration-300 z-20 cursor-pointer"
+                  className="bg-[var(--accent-primary)] text-white border border-[var(--accent-primary)] font-body uppercase text-base md:text-lg font-extrabold tracking-widest px-8 py-3.5 rounded-md shadow-xl hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] active:bg-[var(--text-main)] active:text-white hover:scale-105 active:scale-95 transition-all duration-300 z-20 cursor-pointer"
                 >
                   RESERVE YOUR SEAT
                 </button>
               ) : (
                 <button
                   onClick={() => setIsInterestOpen(true)}
-                  className="bg-[var(--text-main)] text-white border border-[var(--text-main)] font-body uppercase text-base md:text-lg font-extrabold tracking-widest px-8 py-3.5 rounded-md shadow-xl hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] active:bg-[var(--accent-primary)] active:text-white hover:scale-105 active:scale-95 transition-all duration-300 z-20 cursor-pointer"
+                  className="bg-[var(--accent-primary)] text-white border border-[var(--accent-primary)] font-body uppercase text-base md:text-lg font-extrabold tracking-widest px-8 py-3.5 rounded-md shadow-xl hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] active:bg-[var(--text-main)] active:text-white hover:scale-105 active:scale-95 transition-all duration-300 z-20 cursor-pointer"
                 >
                   I'M INTERESTED
                 </button>

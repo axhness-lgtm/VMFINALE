@@ -85,16 +85,22 @@ export default function Community() {
       <EdgeDivider src="/edge4.png" />
 
       {/* 3. SNIPPET ECHOES SECTION */}
-      <section className="py-20 md:py-28 relative overflow-hidden bg-[var(--bg-primary)] flex flex-col items-center justify-center">
-        <div className="container mx-auto px-6 max-w-5xl text-center relative z-20 mb-8 md:mb-12">
-          <p className="font-logo text-3xl md:text-4xl lg:text-5xl text-[var(--accent-primary)] italic drop-shadow-sm">
-            "It's the thread that binds hearts together, that's what we stitch at Vantammayilu"
-          </p>
-        </div>
-        
-        {/* se.png as seamless background illustration */}
-        <div className="relative w-full max-w-6xl h-auto z-10 flex items-center justify-center pointer-events-none">
-          <img src="/se.png" alt="Snippet Echoes" className="w-full h-auto object-cover md:object-contain mix-blend-multiply" />
+      <section className="py-16 md:py-24 relative overflow-hidden bg-[var(--bg-primary)] flex flex-col items-center justify-center px-4">
+        <div className="relative w-full max-w-[850px] mx-auto flex flex-col items-center justify-center">
+          
+          {/* Text in Seasons font overlapping upper center of the image like a headline */}
+          <div className="absolute top-[6%] md:top-[8%] left-1/2 -translate-x-1/2 w-[90%] max-w-3xl text-center z-20 pointer-events-none">
+            <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-[2.6rem] text-[var(--accent-primary)] font-bold leading-tight drop-shadow-[0_2px_4px_rgba(243,219,189,0.9)]">
+              "It's the thread that binds hearts together, that's what we stitch at Vantammayilu"
+            </h2>
+          </div>
+          
+          {/* se.png image - width just enough to fit its border */}
+          <img 
+            src="/se.png" 
+            alt="Snippet Echoes" 
+            className="w-full h-auto object-contain shadow-2xl rounded-2xl border border-[var(--text-main)]/15" 
+          />
         </div>
       </section>
 
