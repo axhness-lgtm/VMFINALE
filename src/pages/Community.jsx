@@ -85,11 +85,16 @@ export default function Community() {
       <EdgeDivider src="/edge4.png" />
 
       {/* 3. SNIPPET ECHOES SECTION */}
-      <section className="py-20 md:py-28 relative overflow-hidden bg-[var(--bg-primary)] flex items-center justify-center">
+      <section className="py-20 md:py-28 relative overflow-hidden bg-[var(--bg-primary)] flex flex-col items-center justify-center">
+        <div className="container mx-auto px-6 max-w-4xl text-center relative z-10 mb-12">
+          <p className="font-logo text-3xl md:text-4xl lg:text-5xl text-[var(--accent-primary)] italic drop-shadow-sm">
+            "It's the thread that binds hearts together, that's what we stitch at Vantammayilu"
+          </p>
+        </div>
         
-        {/* snipecho.png slightly scaled down */}
-        <div className="relative w-full max-w-5xl h-auto pointer-events-none z-10 px-6 flex items-center justify-center">
-          <img src="/snipecho.png" alt="Snippet Echoes" className="w-[85%] md:w-[80%] max-w-[920px] h-auto object-contain shadow-xl rounded-lg drop-shadow-md" />
+        {/* se.png */}
+        <div className="relative w-full max-w-5xl h-auto z-10 px-6 flex items-center justify-center">
+          <img src="/se.png" alt="Snippet Echoes" className="w-[85%] md:w-[80%] max-w-[920px] h-auto object-contain shadow-xl rounded-lg drop-shadow-md hover:scale-102 transition-transform duration-500" />
         </div>
       </section>
 
