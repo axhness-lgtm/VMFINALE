@@ -8,7 +8,7 @@ export default function About() {
     <div className="w-full relative bg-[var(--bg-primary)]">
       
       {/* 1. HERO SECTION */}
-      <section className="relative w-full min-h-screen hidden md:flex flex-col items-center justify-center overflow-hidden bg-[var(--bg-primary)] pt-20 pb-12">
+      <section className="relative w-full min-h-screen hidden md:flex flex-col items-center justify-center overflow-hidden bg-[var(--bg-primary)] pt-20 pb-12 no-reveal">
 
         {/* Aspect Ratio Box container widened */}
         <div 
@@ -87,7 +87,7 @@ export default function About() {
       </section>
 
       {/* Mobile Fallback */}
-      <section className="relative md:hidden flex flex-col items-center justify-center pt-32 pb-20 px-6 bg-[var(--bg-primary)] overflow-hidden min-h-screen">
+      <section className="relative md:hidden flex flex-col items-center justify-center pt-32 pb-20 px-6 bg-[var(--bg-primary)] overflow-hidden min-h-screen no-reveal">
         <div className="relative z-10 text-center w-full mb-12">
           <h2 className="text-lg font-body tracking-widest uppercase text-[var(--accent-primary)] mb-1 font-bold">The World Has</h2>
           <h1 className="text-5xl font-logo text-[var(--text-main)] drop-shadow-sm">Seven Wonders.</h1>
@@ -214,7 +214,7 @@ export default function About() {
           >
             <Link
               to="/dinner"
-              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-[var(--accent-primary)] hover:text-[var(--bg-primary)] hover:border-[var(--bg-primary)] px-12 py-5 text-xl font-bold tracking-[0.1em] rounded-md shadow-2xl transition-all duration-300 hover:scale-105 uppercase"
+              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] px-12 py-5 text-xl font-bold tracking-[0.1em] rounded-md shadow-2xl transition-all duration-300 hover:scale-105 uppercase"
             >
               See upcoming dinners
             </Link>

@@ -167,20 +167,12 @@ export default function Journal() {
     <div className="w-full relative bg-[var(--bg-primary)]">
       
       {/* 1. HERO SECTION */}
-      <section className="relative min-h-screen w-full flex flex-col lg:flex-row items-center px-6 lg:px-16 overflow-hidden bg-[#f4ebd9] z-0 pt-24 pb-12 lg:py-0">
+      <section className="relative min-h-screen w-full flex flex-col lg:flex-row items-center px-6 lg:px-16 overflow-hidden bg-[#f4ebd9] z-0 pt-24 pb-12 lg:py-0 no-reveal">
         <div className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[var(--accent-primary)]/5 rounded-full filter blur-3xl pointer-events-none" />
 
         <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 relative z-10 w-full">
           
           <div className="flex flex-col justify-center relative pt-12 lg:pt-0 max-w-xl py-8">
-            {/* Scaled up doodles surrounding the text */}
-            <img src="/d1.png" className="absolute -top-12 -left-8 w-28 md:w-36 opacity-30 -rotate-12 pointer-events-none z-0" alt="doodle" />
-            <img src="/d3.png" className="absolute top-1/2 -right-10 w-24 md:w-32 opacity-25 rotate-45 pointer-events-none z-0 hidden sm:block" alt="doodle" />
-            <img src="/d4.png" className="absolute -bottom-10 left-10 w-20 md:w-28 opacity-35 rotate-12 pointer-events-none z-0" alt="doodle" />
-            <img src="/d5.png" className="absolute top-0 right-0 w-16 md:w-24 opacity-25 -rotate-6 pointer-events-none z-0" alt="doodle" />
-            <img src="/d6.png" className="absolute -bottom-16 right-12 w-32 md:w-40 opacity-30 rotate-6 pointer-events-none z-0" alt="doodle" />
-            <img src="/d7.png" className="absolute top-24 -left-12 w-28 md:w-36 opacity-25 -rotate-15 pointer-events-none z-0 hidden lg:block" alt="doodle" />
-
             <div className="absolute -top-8 left-4 md:-top-12 md:left-8 stamp rotate-[-8deg] opacity-70 border-dashed border-2 border-[#cc785c] text-[#cc785c] px-3 py-1 font-mono text-xs tracking-widest bg-transparent z-10">
               VOL 04 <br/> 2025
             </div>
@@ -199,7 +191,7 @@ export default function Journal() {
               <div>
                 <a 
                   href="#selected-works" 
-                  className="group relative inline-block bg-[var(--accent-primary)] text-white border-2 border-[var(--accent-primary)] shadow-md hover:shadow-xl transition-all duration-300 rounded-md px-8 py-3.5 font-body font-bold text-[1.05rem] uppercase tracking-wider hover:bg-[var(--bg-primary)] hover:text-[var(--accent-primary)] hover:border-[var(--accent-primary)] active:bg-[var(--bg-primary)] active:text-[var(--accent-primary)] cursor-pointer"
+                  className="group relative inline-block bg-[var(--accent-primary)] text-white border-2 border-[var(--accent-primary)] shadow-md hover:shadow-xl transition-all duration-300 rounded-md px-8 py-3.5 font-body font-bold text-[1.05rem] uppercase tracking-wider hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] active:bg-[var(--text-main)] active:text-white cursor-pointer"
                 >
                   Read the latest entry
                 </a>

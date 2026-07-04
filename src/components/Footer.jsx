@@ -15,7 +15,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="w-full bg-[var(--bg-primary)] border-t border-[var(--text-main)]/10 py-16 px-6 relative overflow-hidden">
+    <footer className="w-full bg-[var(--bg-primary)] border-t border-[var(--text-main)]/10 py-16 px-6 relative overflow-hidden no-reveal">
       <div className="container mx-auto max-w-6xl relative z-10 flex flex-col items-center text-center">
         <h2 className="font-logo text-5xl md:text-6xl text-[var(--accent-primary)] mb-6 drop-shadow-sm">Vantammayilu</h2>
         <div className="flex flex-wrap justify-center gap-6 md:gap-10 font-body italic text-xl md:text-2xl text-[var(--text-main)]/80 mb-12">

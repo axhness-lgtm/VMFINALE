@@ -51,7 +51,7 @@ const faqs = [
 
 const ReserveSection = ({ onReserveClick, onInterestClick, canReserve, isSoldOut, isTokenExpired }) => {
   return (
-    <section className="relative w-full bg-[var(--bg-primary)] flex flex-col items-center pt-24 pb-0 overflow-hidden">
+    <section className="relative w-full bg-[var(--bg-primary)] flex flex-col items-center pt-24 pb-0 overflow-hidden no-reveal">
       <div className="relative z-30 flex flex-col items-center w-full mx-auto">
 
         {/* Center Title and Subtitle */}
@@ -68,7 +68,7 @@ const ReserveSection = ({ onReserveClick, onInterestClick, canReserve, isSoldOut
                 </div>
                 <button
                   onClick={onInterestClick}
-                  className="bg-[var(--accent-primary)] text-white border-2 border-[var(--accent-primary)] font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-md shadow-lg hover:bg-[var(--bg-primary)] hover:text-[var(--accent-primary)] hover:border-[var(--accent-primary)] active:bg-[var(--bg-primary)] active:text-[var(--accent-primary)] hover:scale-105 transition-all duration-300 cursor-pointer"
+                  className="bg-[var(--accent-primary)] text-white border-2 border-[var(--accent-primary)] font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-md shadow-lg hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] active:bg-[var(--text-main)] active:text-white hover:scale-105 transition-all duration-300 cursor-pointer"
                 >
                   Join Waitlist (I'm Interested)
                 </button>
@@ -83,7 +83,7 @@ const ReserveSection = ({ onReserveClick, onInterestClick, canReserve, isSoldOut
                 </p>
                 <button
                   onClick={onInterestClick}
-                  className="bg-[var(--accent-primary)] text-white border-2 border-[var(--accent-primary)] font-heading text-base md:text-lg tracking-wider px-6 py-2.5 rounded-md shadow hover:bg-[var(--bg-primary)] hover:text-[var(--accent-primary)] hover:border-[var(--accent-primary)] active:bg-[var(--bg-primary)] active:text-[var(--accent-primary)] transition-all cursor-pointer"
+                  className="bg-[var(--accent-primary)] text-white border-2 border-[var(--accent-primary)] font-heading text-base md:text-lg tracking-wider px-6 py-2.5 rounded-md shadow hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] active:bg-[var(--text-main)] active:text-white transition-all cursor-pointer"
                 >
                   Register Again (I'm Interested)
                 </button>
@@ -91,14 +91,14 @@ const ReserveSection = ({ onReserveClick, onInterestClick, canReserve, isSoldOut
             ) : canReserve ? (
               <button
                 onClick={onReserveClick}
-                className="bg-[var(--accent-primary)] text-white border-2 border-[var(--accent-primary)] font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-md shadow-lg hover:bg-[var(--bg-primary)] hover:text-[var(--accent-primary)] hover:border-[var(--accent-primary)] active:bg-[var(--bg-primary)] active:text-[var(--accent-primary)] hover:scale-105 transition-all duration-300 cursor-pointer"
+                className="bg-[var(--accent-primary)] text-white border-2 border-[var(--accent-primary)] font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-md shadow-lg hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] active:bg-[var(--text-main)] active:text-white hover:scale-105 transition-all duration-300 cursor-pointer"
               >
                 Reserve Your Seat
               </button>
             ) : (
               <button
                 onClick={onInterestClick}
-                className="bg-[var(--accent-primary)] text-white border-2 border-[var(--accent-primary)] font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-md shadow-lg hover:bg-[var(--bg-primary)] hover:text-[var(--accent-primary)] hover:border-[var(--accent-primary)] active:bg-[var(--bg-primary)] active:text-[var(--accent-primary)] hover:scale-105 transition-all duration-300 cursor-pointer"
+                className="bg-[var(--accent-primary)] text-white border-2 border-[var(--accent-primary)] font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-md shadow-lg hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] active:bg-[var(--text-main)] active:text-white hover:scale-105 transition-all duration-300 cursor-pointer"
               >
                 I'm Interested
               </button>
@@ -615,7 +615,7 @@ export default function Dinner() {
 
           <div className="flex flex-col gap-16">
             <div className="text-center mb-4">
-              <h2 className="text-5xl md:text-6xl font-heading text-[var(--text-main)] drop-shadow-sm">House Rules</h2>
+              <h2 className="text-5xl md:text-6xl font-heading text-[var(--bg-primary)] drop-shadow-sm">House Rules</h2>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">

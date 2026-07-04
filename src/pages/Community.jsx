@@ -20,7 +20,7 @@ export default function Community() {
     <div className="w-full relative bg-[var(--bg-primary)]">
       
       {/* 1. HERO SECTION */}
-      <section className="relative pt-32 px-6 lg:px-16 overflow-hidden flex flex-col items-center">
+      <section className="relative pt-32 px-6 lg:px-16 overflow-hidden flex flex-col items-center no-reveal">
         {/* Soft background accents */}
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[var(--accent-primary)]/5 rounded-full filter blur-3xl pointer-events-none" />
 
@@ -124,7 +124,7 @@ export default function Community() {
           >
             <Link
               to="/dinner"
-              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-[var(--accent-primary)] hover:text-[var(--bg-primary)] hover:border-[var(--bg-primary)] px-12 py-5 text-xl font-bold tracking-[0.1em] rounded-md shadow-2xl transition-all duration-300 hover:scale-105 uppercase"
+              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] px-12 py-5 text-xl font-bold tracking-[0.1em] rounded-md shadow-2xl transition-all duration-300 hover:scale-105 uppercase"
             >
               Find your seat
             </Link>
