@@ -61,10 +61,6 @@ body {
   color: var(--text-main);
   font-family: var(--font-body);
   overflow-x: hidden;
-  background-image: url("/texture.png");
-  background-size: cover;
-  background-attachment: fixed;
-  background-blend-mode: multiply;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -415,31 +411,6 @@ p {
   border-radius: 50%;
 }
 
-/* Global Texture Rule for all natural cream backgrounds across all pages and sections */
-body,
-[class*="bg-[var(--bg-primary)]"],
-[class*="bg-[var(--bg-secondary)]"],
-[class*="bg-[#f3dbbd]"],
-[class*="bg-[#efe9e1]"],
-[class*="bg-[#efe8db]"],
-[class*="bg-[#fcfbf9]"],
-[class*="bg-[#fdfaf5]"],
-[class*="bg-[#fdfcfb]"],
-[class*="bg-[#f4ebd9]"],
-[class*="bg-[#faf8f5]"],
-[class*="bg-[#fcfbf7]"],
-[class*="bg-[#f8f5f0]"],
-[class*="bg-[#f5efe6]"],
-[class*="bg-[#eedcaf]"],
-[class*="bg-[#eedaaf]"],
-.polaroid,
-.polaroid-frame,
-.notebook-paper,
-.btn-paper {
-  background-image: url("/texture.png") !important;
-  background-size: cover !important;
-  background-blend-mode: multiply !important;
-}
 
 /* Global Slow Fade-In Scroll Reveal Animations */
 .reveal-init:not([style*="opacity"]) {

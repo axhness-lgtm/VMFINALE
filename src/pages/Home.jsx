@@ -135,7 +135,7 @@ export default function Home() {
             </p>
 
             <div className="reveal-item flex flex-col sm:flex-row gap-6 items-center justify-center mt-2">
-              <Link to="/dinner" className="group relative btn-paper !overflow-visible bg-cream text-[var(--text-main)] border-[var(--text-main)] border hover:bg-orange hover:text-[var(--bg-primary)] hover:border-orange transition-colors text-sm px-6 py-3 drop-shadow-md rounded-md font-body font-bold tracking-wider uppercase z-10">
+              <Link to="/dinner" className="group relative !overflow-visible bg-[var(--accent-primary)] text-white border-2 border-[var(--accent-primary)] hover:bg-[var(--bg-primary)] hover:text-[var(--accent-primary)] hover:border-[var(--accent-primary)] transition-all duration-300 text-sm px-8 py-3.5 drop-shadow-md rounded-md font-body font-bold tracking-wider uppercase z-10">
                 <img
                   src="/assets/d2.png"
                   alt="doodle"
@@ -143,7 +143,7 @@ export default function Home() {
                 />
                 Upcoming dinner
               </Link>
-              <Link to="/about" className="group relative btn-paper !overflow-visible bg-cream text-[var(--text-main)] border-[var(--text-main)] border hover:bg-orange hover:text-[var(--bg-primary)] hover:border-orange transition-colors text-sm px-6 py-3 drop-shadow-md rounded-md font-body font-bold tracking-wider uppercase z-10">
+              <Link to="/about" className="group relative !overflow-visible bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--accent-primary)] hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] transition-all duration-300 text-sm px-8 py-3.5 drop-shadow-md rounded-md font-body font-bold tracking-wider uppercase z-10">
                 <img
                   src="/assets/d1.png"
                   alt="doodle"
@@ -161,16 +161,6 @@ export default function Home() {
 
       {/* 2. NOT JUST DINNER */}
       <section className="bg-[var(--bg-primary)] relative py-20 md:py-28 flex flex-col justify-center items-center overflow-hidden">
-        {/* Background Texture */}
-        <div className="absolute inset-0 pointer-events-none z-0">
-          <img
-            src="/texture.png"
-            alt="paper texture"
-            className="absolute inset-0 w-full h-full object-cover z-0 opacity-60 mix-blend-multiply"
-            onError={(e) => { e.target.style.display = 'none'; }}
-          />
-        </div>
-
         <div className="relative z-10 flex flex-col items-center justify-center px-6">
           <h2 className="text-5xl md:text-7xl lg:text-8xl font-logo text-[var(--accent-primary)] drop-shadow-md text-center">
             Not just a dinner.
@@ -240,9 +230,6 @@ export default function Home() {
 
       {/* 5. EVERY DINNER BEGINS SOMEWHERE ELSE */}
       <section className="relative overflow-hidden bg-[var(--bg-primary)] w-full py-20 md:py-28 mx-auto">
-        {/* Background Paper Texture */}
-        <div className="absolute inset-0 paper-texture opacity-40 mix-blend-multiply z-0 pointer-events-none" />
-
         <div className="container mx-auto max-w-7xl px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
             
@@ -402,7 +389,7 @@ export default function Home() {
           >
             <Link
               to="/dinner"
-              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-white hover:text-[var(--accent-primary)] px-12 py-5 text-xl font-bold tracking-[0.15em] rounded-md shadow-2xl transition-all duration-300 hover:scale-105 uppercase"
+              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-[var(--accent-primary)] hover:text-[var(--bg-primary)] hover:border-[var(--bg-primary)] px-12 py-5 text-xl font-bold tracking-[0.15em] rounded-md shadow-2xl transition-all duration-300 hover:scale-105 uppercase"
             >
               Join the next evening
             </Link>

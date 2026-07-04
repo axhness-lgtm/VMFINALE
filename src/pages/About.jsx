@@ -9,14 +9,6 @@ export default function About() {
       
       {/* 1. HERO SECTION */}
       <section className="relative w-full min-h-screen hidden md:flex flex-col items-center justify-center overflow-hidden bg-[var(--bg-primary)] pt-20 pb-12">
-        {/* Background Texture */}
-        <div className="absolute inset-0 pointer-events-none z-0">
-          <img
-            src="/texture.png"
-            alt="paper texture"
-            className="absolute inset-0 w-full h-full object-cover z-0 opacity-30 mix-blend-multiply"
-          />
-        </div>
 
         {/* Aspect Ratio Box container widened */}
         <div 
@@ -96,13 +88,6 @@ export default function About() {
 
       {/* Mobile Fallback */}
       <section className="relative md:hidden flex flex-col items-center justify-center pt-32 pb-20 px-6 bg-[var(--bg-primary)] overflow-hidden min-h-screen">
-        <div className="absolute inset-0 pointer-events-none z-0">
-          <img
-            src="/texture.png"
-            alt="paper texture"
-            className="absolute inset-0 w-full h-full object-cover z-0 opacity-30 mix-blend-multiply"
-          />
-        </div>
         <div className="relative z-10 text-center w-full mb-12">
           <h2 className="text-lg font-body tracking-widest uppercase text-[var(--accent-primary)] mb-1 font-bold">The World Has</h2>
           <h1 className="text-5xl font-logo text-[var(--text-main)] drop-shadow-sm">Seven Wonders.</h1>
@@ -122,7 +107,6 @@ export default function About() {
           </div>
 
           <div className="w-full max-w-5xl mx-auto bg-[var(--bg-primary)] p-10 md:p-20 rounded-3xl shadow-2xl border-2 border-[var(--text-main)]/15 relative stitched-border overflow-hidden">
-            <div className="absolute inset-0 paper-texture opacity-40 mix-blend-multiply pointer-events-none" />
             <div className="masking-tape w-32 h-8 -top-4 left-1/2 -translate-x-1/2 rotate-1" />
             
             {/* Sketched Arrow pointing to question */}
@@ -230,7 +214,7 @@ export default function About() {
           >
             <Link
               to="/dinner"
-              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] px-12 py-5 text-xl font-bold tracking-[0.1em] rounded-md shadow-2xl transition-all duration-300 hover:scale-105 uppercase"
+              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-[var(--accent-primary)] hover:text-[var(--bg-primary)] hover:border-[var(--bg-primary)] px-12 py-5 text-xl font-bold tracking-[0.1em] rounded-md shadow-2xl transition-all duration-300 hover:scale-105 uppercase"
             >
               See upcoming dinners
             </Link>

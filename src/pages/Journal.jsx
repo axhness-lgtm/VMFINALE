@@ -168,7 +168,6 @@ export default function Journal() {
       
       {/* 1. HERO SECTION */}
       <section className="relative min-h-screen w-full flex flex-col lg:flex-row items-center px-6 lg:px-16 overflow-hidden bg-[#f4ebd9] z-0 pt-24 pb-12 lg:py-0">
-        <div className="absolute inset-0 paper-texture opacity-50 mix-blend-multiply pointer-events-none" />
         <div className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[var(--accent-primary)]/5 rounded-full filter blur-3xl pointer-events-none" />
 
         <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 relative z-10 w-full">
@@ -200,7 +199,7 @@ export default function Journal() {
               <div>
                 <a 
                   href="#selected-works" 
-                  className="group relative inline-block bg-[var(--text-main)] text-white border border-[var(--text-main)] shadow-md hover:shadow-xl transition-all duration-300 rounded-md px-8 py-3.5 font-body font-bold text-[1.05rem] uppercase tracking-wider hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] active:bg-[var(--accent-primary)] active:text-white cursor-pointer"
+                  className="group relative inline-block bg-[var(--accent-primary)] text-white border-2 border-[var(--accent-primary)] shadow-md hover:shadow-xl transition-all duration-300 rounded-md px-8 py-3.5 font-body font-bold text-[1.05rem] uppercase tracking-wider hover:bg-[var(--bg-primary)] hover:text-[var(--accent-primary)] hover:border-[var(--accent-primary)] active:bg-[var(--bg-primary)] active:text-[var(--accent-primary)] cursor-pointer"
                 >
                   Read the latest entry
                 </a>
@@ -261,7 +260,6 @@ export default function Journal() {
 
       {/* 1.5. RECIPES WE LOVE (FITS 1366x768 RELATIVE SCREEN, BIGGER ITEMS, CLOSE DESCRIPTION) */}
       <section className="relative w-full max-w-[1100px] h-[780px] mx-auto flex flex-col items-center justify-center bg-[var(--bg-primary)] overflow-hidden z-[5]">
-        <div className="absolute inset-0 paper-texture opacity-30 mix-blend-multiply pointer-events-none" />
 
         <div className="absolute top-24 md:top-32 left-1/2 -translate-x-1/2 text-center z-20 w-full px-6 pointer-events-none">
           <span className="font-body italic text-3xl md:text-4xl text-[var(--accent-primary)] block mb-1 font-logo">Our Favorites</span>
@@ -370,7 +368,6 @@ export default function Journal() {
         onMouseEnter={() => setIsHoveringWheel(true)}
         onMouseLeave={() => setIsHoveringWheel(false)}
       >
-        <div className="absolute inset-0 paper-texture opacity-50 mix-blend-multiply pointer-events-none z-0" />
 
         {/* Left Side: Vertical Arc Container */}
         <div className="absolute top-1/2 left-[calc(0px-700px)] md:left-[calc(0px-850px)] w-0 h-0 z-10">
@@ -540,7 +537,7 @@ export default function Journal() {
               onClick={(e) => e.stopPropagation()}
               data-lenis-prevent="true"
               className="bg-[#fcf8f2] text-[var(--text-main)] max-w-3xl w-full max-h-[85vh] overflow-y-auto rounded-3xl p-6 md:p-12 shadow-2xl relative border border-[var(--text-main)]/10"
-              style={{ backgroundImage: "url('/texture.png')", backgroundSize: "cover", backgroundBlendMode: "multiply", overscrollBehavior: "contain" }}
+              style={{ overscrollBehavior: "contain" }}
             >
               <button 
                 onClick={() => setActiveBlogRead(null)}

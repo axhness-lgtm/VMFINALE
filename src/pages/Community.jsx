@@ -43,7 +43,7 @@ export default function Community() {
           
           <Link 
             to="/dinner" 
-            className="group relative inline-block bg-[var(--text-main)] text-white border border-[var(--text-main)] shadow-md hover:shadow-xl transition-all duration-300 rounded-md px-10 py-4 font-body text-lg font-bold tracking-wide mt-8 mb-0 hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] active:bg-[var(--accent-primary)] active:text-white z-20"
+            className="group relative inline-block bg-[var(--accent-primary)] text-white border-2 border-[var(--accent-primary)] shadow-md hover:shadow-xl transition-all duration-300 rounded-md px-10 py-4 font-body text-lg font-bold tracking-wide mt-8 mb-0 hover:bg-[var(--bg-primary)] hover:text-[var(--accent-primary)] hover:border-[var(--accent-primary)] active:bg-[var(--bg-primary)] active:text-[var(--accent-primary)] z-20"
           >
             Join the next gathering
           </Link>
@@ -86,8 +86,6 @@ export default function Community() {
 
       {/* 3. SNIPPET ECHOES SECTION */}
       <section className="py-20 md:py-28 relative overflow-hidden bg-[var(--bg-primary)] flex items-center justify-center">
-        {/* Cream color & texture layer */}
-        <div className="absolute inset-0 paper-texture opacity-30 mix-blend-multiply pointer-events-none z-0" />
         
         {/* snipecho.png slightly scaled down */}
         <div className="relative w-full max-w-5xl h-auto pointer-events-none z-10 px-6 flex items-center justify-center">
@@ -126,7 +124,7 @@ export default function Community() {
           >
             <Link
               to="/dinner"
-              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] px-12 py-5 text-xl font-bold tracking-[0.1em] rounded-md shadow-2xl transition-all duration-300 hover:scale-105 uppercase"
+              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-[var(--accent-primary)] hover:text-[var(--bg-primary)] hover:border-[var(--bg-primary)] px-12 py-5 text-xl font-bold tracking-[0.1em] rounded-md shadow-2xl transition-all duration-300 hover:scale-105 uppercase"
             >
               Find your seat
             </Link>
