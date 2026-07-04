@@ -403,7 +403,7 @@ export default function Dinner() {
       {/* 2. WHAT'S ON THE TABLE? (MENU) */}
       <section id="menu" className="py-32 bg-[var(--accent-primary)] text-[#efe8db] relative overflow-hidden">
         <div className="absolute inset-0 paper-texture opacity-20 mix-blend-multiply pointer-events-none z-0" />
-        <div className="container mx-auto px-6 max-w-6xl relative z-10">
+        <div className="container mx-auto px-6 max-w-4xl relative z-10">
           <div className="text-center mb-20 max-w-3xl mx-auto">
             <span className="font-body italic text-3xl text-[var(--bg-primary)] block mb-2 font-logo">- Culinary -</span>
             <h2 className="text-5xl md:text-6xl font-heading text-white drop-shadow-sm">The menu</h2>
@@ -419,7 +419,7 @@ export default function Dinner() {
                 onClick={() => {
                   if (!revealedItems[idx]) toggleReveal(idx);
                 }}
-                className={`relative bg-[var(--bg-primary)] text-[#2c2b29] p-6 md:p-8 rounded-2xl shadow-sm border border-[#2c2b29]/10 overflow-hidden hover:shadow-md ${revealedItems[idx] ? 'w-full' : 'w-full md:w-1/2 lg:w-[40%] cursor-pointer'} transition-[width] duration-600 ease-[cubic-bezier(0.25,1,0.5,1)] origin-left min-h-[220px] md:min-h-[180px] flex items-center`}
+                className={`relative bg-[var(--bg-primary)] text-[#2c2b29] p-6 md:p-8 rounded-2xl shadow-sm border border-[#2c2b29]/10 overflow-hidden hover:shadow-md ${revealedItems[idx] ? 'w-full' : 'w-full md:w-3/5 lg:w-[50%] cursor-pointer'} transition-[width] duration-600 ease-[cubic-bezier(0.25,1,0.5,1)] origin-left min-h-[220px] md:min-h-[180px] flex items-center`}
               >
                 {!revealedItems[idx] && (
                   <motion.div
@@ -442,10 +442,10 @@ export default function Dinner() {
                 )}
 
                 {/* Fixed-width inner container guarantees ZERO text reflowing, wrapping, or squishing as clipping boundary moves */}
-                <div className="flex flex-col md:flex-row gap-6 items-center w-full md:min-w-[680px] lg:min-w-[960px] h-full justify-between">
+                <div className="flex flex-col md:flex-row gap-6 items-center w-full md:min-w-[600px] lg:min-w-[780px] h-full justify-between">
 
                   {/* Left part (always visible Course Title) */}
-                  <div className="flex flex-col justify-center h-full w-full md:w-72 lg:w-80 flex-shrink-0">
+                  <div className="flex flex-col justify-center h-full w-full md:w-64 lg:w-72 flex-shrink-0">
                     <div className="flex items-center gap-3 mb-2">
                       <span className="font-body text-xs uppercase tracking-widest text-[var(--accent-primary)] font-bold">Course</span>
                       <span className="font-heading text-2xl text-[#2c2b29]">{item.course}</span>
@@ -463,11 +463,11 @@ export default function Dinner() {
                   <div className={`flex-1 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 w-full h-full transition-opacity duration-500 ${revealedItems[idx] ? 'opacity-100 pointer-events-auto delay-100' : 'opacity-0 pointer-events-none'}`}>
                     {/* Big Hero Image */}
                     {item.img && (
-                      <div className="flex items-center justify-center md:border-l border-[#2c2b29]/10 md:px-8 py-2 flex-shrink-0">
+                      <div className="flex items-center justify-center md:border-l border-[#2c2b29]/10 md:px-6 py-2 flex-shrink-0">
                         <img 
                           src={item.img} 
                           alt={item.dish.split('—')[0].trim()} 
-                          className="w-56 h-56 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 object-contain drop-shadow-2xl transition-transform duration-500 hover:scale-105 -my-4" 
+                          className="w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 object-contain drop-shadow-2xl transition-transform duration-500 hover:scale-105 -my-4" 
                         />
                       </div>
                     )}

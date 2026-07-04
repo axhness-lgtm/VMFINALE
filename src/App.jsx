@@ -38,16 +38,16 @@ function GlobalFadeIn() {
           }
         });
       },
-      { threshold: 0.01, rootMargin: '0px 0px 0px 0px' }
+      { threshold: 0.05, rootMargin: '0px 0px -20px 0px' }
     );
 
     const observeElements = () => {
-      const elements = document.querySelectorAll('h2, h3, p');
+      const elements = document.querySelectorAll('h1, h2, h3, h4, h5, p, img:not([class*="absolute"]):not([class*="pointer-events-none"]), [class*="card"]:not(.no-reveal), .grid > div');
       elements.forEach((el) => {
         if (!el.classList.contains('reveal-init') && !el.closest('.no-reveal')) {
           const rect = el.getBoundingClientRect();
-          // If element is already in the top 85% of viewport on initial load, reveal immediately
-          if (rect.top < window.innerHeight * 0.85) {
+          // If element is already in the top 92% of viewport on initial load, reveal immediately
+          if (rect.top < window.innerHeight * 0.92 && rect.bottom > 0) {
             el.classList.add('reveal-init', 'reveal-visible');
           } else {
             el.classList.add('reveal-init');

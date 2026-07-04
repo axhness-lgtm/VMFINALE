@@ -121,18 +121,168 @@ export default function About() {
             {/* Coffee Stain */}
             <div className="absolute bottom-6 right-6 w-32 h-32 bg-[url('data:image/svg+xml;utf8,%3Csvg opacity=%220.08%22 xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22none%22 stroke=%22%234b2e21%22 stroke-width=%224%22 stroke-dasharray=%2210 2 20 4%22/%3E%3Ccircle cx=%2248%22 cy=%2252%22 r=%2238%22 fill=%22none%22 stroke=%22%234b2e21%22 stroke-width=%221%22 opacity=%220.5%22/%3E%3C/svg%3E')] bg-no-repeat bg-contain pointer-events-none" />
 
-            <div className="font-body text-xl md:text-2xl lg:text-3xl text-[var(--text-main)]/95 space-y-6 md:space-y-8 leading-relaxed not-italic relative z-10 font-normal">
-              <p>"Growing up, food was never just about eating.</p>
-              <p>It was how stories were told.</p>
-              <p>How people stayed longer.</p>
-              <p>How strangers became guests, and guests felt at home.</p>
-              <p>Over time, that feeling grew into a question:</p>
-              <p className="font-heading text-3xl md:text-4xl lg:text-5xl text-[var(--accent-primary)] not-italic mt-8 pt-8 border-t border-[var(--text-main)]/15 font-normal">
-                What if more people had a place to experience that?
-              </p>
-              <p className="not-italic text-[var(--text-main)] font-bold text-xl md:text-2xl pt-2">
-                That's what Vantammayilu is."
-              </p>
+            <div className="font-body text-lg md:text-xl lg:text-2xl text-[var(--text-main)]/95 space-y-4 md:space-y-5 leading-relaxed not-italic relative z-10 font-normal">
+              
+              {/* Headline */}
+              <motion.div 
+                initial={{ opacity: 0.2, y: 15 }} 
+                whileInView={{ opacity: 1, y: 0 }} 
+                viewport={{ once: false, margin: "-10%" }} 
+                transition={{ duration: 0.5 }}
+                className="font-heading text-2xl md:text-3xl lg:text-4xl text-[var(--accent-primary)] font-bold pb-2 border-b border-[var(--text-main)]/10"
+              >
+                Food is where it begins. Never where it ends.
+              </motion.div>
+
+              {/* Body Paragraphs */}
+              <motion.p 
+                initial={{ opacity: 0.2, y: 15 }} 
+                whileInView={{ opacity: 1, y: 0 }} 
+                viewport={{ once: false, margin: "-10%" }} 
+                transition={{ duration: 0.5 }}
+              >
+                Every month, we choose a different part of the world and bring it to one table.
+              </motion.p>
+
+              <motion.p 
+                initial={{ opacity: 0.2, y: 15 }} 
+                whileInView={{ opacity: 1, y: 0 }} 
+                viewport={{ once: false, margin: "-10%" }} 
+                transition={{ duration: 0.5 }}
+              >
+                Not just through its food, but through its stories, traditions, rituals and the people it inspires.
+              </motion.p>
+
+              <motion.p 
+                initial={{ opacity: 0.2, y: 15 }} 
+                whileInView={{ opacity: 1, y: 0 }} 
+                viewport={{ once: false, margin: "-10%" }} 
+                transition={{ duration: 0.5 }}
+              >
+                Because we've always believed that a meal is more than something you eat.
+              </motion.p>
+
+              <motion.p 
+                initial={{ opacity: 0.2, y: 15 }} 
+                whileInView={{ opacity: 1, y: 0 }} 
+                viewport={{ once: false, margin: "-10%" }} 
+                transition={{ duration: 0.5 }}
+                className="font-semibold text-[var(--accent-primary)]"
+              >
+                It's one of the oldest ways humans have connected.
+              </motion.p>
+
+              <motion.p 
+                initial={{ opacity: 0.2, y: 15 }} 
+                whileInView={{ opacity: 1, y: 0 }} 
+                viewport={{ once: false, margin: "-10%" }} 
+                transition={{ duration: 0.5 }}
+              >
+                Around every table, people arrive carrying different lives.
+              </motion.p>
+
+              <motion.div 
+                initial={{ opacity: 0.2, y: 15 }} 
+                whileInView={{ opacity: 1, y: 0 }} 
+                viewport={{ once: false, margin: "-10%" }} 
+                transition={{ duration: 0.5 }}
+                className="pl-6 border-l-2 border-[var(--accent-primary)]/40 italic space-y-1 my-3 text-base md:text-lg lg:text-xl text-[var(--text-main)]/85"
+              >
+                <p>Different childhoods.</p>
+                <p>Different cities.</p>
+                <p>Different cultures.</p>
+                <p>Different memories.</p>
+              </motion.div>
+
+              <motion.p 
+                initial={{ opacity: 0.2, y: 15 }} 
+                whileInView={{ opacity: 1, y: 0 }} 
+                viewport={{ once: false, margin: "-10%" }} 
+                transition={{ duration: 0.5 }}
+              >
+                Yet somehow, over a shared meal, those worlds begin to overlap.
+              </motion.p>
+
+              <motion.p 
+                initial={{ opacity: 0.2, y: 15 }} 
+                whileInView={{ opacity: 1, y: 0 }} 
+                viewport={{ once: false, margin: "-10%" }} 
+                transition={{ duration: 0.5 }}
+              >
+                A story reminds someone of home.
+              </motion.p>
+
+              <motion.p 
+                initial={{ opacity: 0.2, y: 15 }} 
+                whileInView={{ opacity: 1, y: 0 }} 
+                viewport={{ once: false, margin: "-10%" }} 
+                transition={{ duration: 0.5 }}
+              >
+                A flavour unlocks a forgotten memory.
+              </motion.p>
+
+              <motion.p 
+                initial={{ opacity: 0.2, y: 15 }} 
+                whileInView={{ opacity: 1, y: 0 }} 
+                viewport={{ once: false, margin: "-10%" }} 
+                transition={{ duration: 0.5 }}
+              >
+                A place you've never been suddenly feels familiar because someone across the table has lived it.
+              </motion.p>
+
+              <motion.p 
+                initial={{ opacity: 0.2, y: 15 }} 
+                whileInView={{ opacity: 1, y: 0 }} 
+                viewport={{ once: false, margin: "-10%" }} 
+                transition={{ duration: 0.5 }}
+              >
+                For a brief evening, eight different lives become part of the same conversation.
+              </motion.p>
+
+              <motion.p 
+                initial={{ opacity: 0.2, y: 15 }} 
+                whileInView={{ opacity: 1, y: 0 }} 
+                viewport={{ once: false, margin: "-10%" }} 
+                transition={{ duration: 0.5 }}
+              >
+                And when everyone leaves, they don't just carry home memories of the food.
+              </motion.p>
+
+              <motion.p 
+                initial={{ opacity: 0.2, y: 15 }} 
+                whileInView={{ opacity: 1, y: 0 }} 
+                viewport={{ once: false, margin: "-10%" }} 
+                transition={{ duration: 0.5 }}
+                className="font-medium"
+              >
+                They leave with new perspectives, new friendships, new stories, and one more thread woven into their own.
+              </motion.p>
+
+              <motion.div 
+                initial={{ opacity: 0.2, y: 15 }} 
+                whileInView={{ opacity: 1, y: 0 }} 
+                viewport={{ once: false, margin: "-10%" }} 
+                transition={{ duration: 0.5 }}
+                className="pt-4 space-y-1 font-semibold text-[var(--accent-primary)] text-xl md:text-2xl"
+              >
+                <p>That's what Vantammayilu is.</p>
+                <p className="font-normal text-base md:text-lg text-[var(--text-main)]/80">Not a dinner.</p>
+                <p className="font-normal text-base md:text-lg text-[var(--text-main)]/80">Not a restaurant.</p>
+                <p className="pt-1">But a place where people discover the world—and each other—one table at a time.</p>
+              </motion.div>
+
+              {/* Closing Statement */}
+              <motion.div 
+                initial={{ opacity: 0.2, y: 15 }} 
+                whileInView={{ opacity: 1, y: 0 }} 
+                viewport={{ once: false, margin: "-10%" }} 
+                transition={{ duration: 0.5 }}
+                className="mt-8 pt-6 border-t border-[var(--text-main)]/15 font-heading text-2xl md:text-3xl lg:text-4xl text-[var(--accent-primary)] italic leading-snug"
+              >
+                <p>The food brings us together.</p>
+                <p>The people are what stay with us.</p>
+              </motion.div>
+
             </div>
           </div>
         </div>
