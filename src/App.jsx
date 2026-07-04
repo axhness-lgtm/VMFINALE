@@ -35,20 +35,31 @@ function GlobalFadeIn() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('reveal-visible');
-            observer.unobserve(entry.target);
+            try { observer.unobserve(entry.target); } catch (e) {}
           }
         });
       },
-      { threshold: 0, rootMargin: '0px 0px 80px 0px' }
+      { threshold: 0, rootMargin: '0px 0px 150px 0px' }
     );
+
+    const checkVisible = () => {
+      const hiddenElements = document.querySelectorAll('.reveal-init:not(.reveal-visible)');
+      const triggerBottom = window.innerHeight + 150;
+      hiddenElements.forEach((el) => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < triggerBottom && rect.bottom > -50) {
+          el.classList.add('reveal-visible');
+          try { observer.unobserve(el); } catch (e) {}
+        }
+      });
+    };
 
     const observeElements = () => {
       const elements = document.querySelectorAll('h1, h2, h3, h4, h5, p, img:not([class*="absolute"]):not([class*="pointer-events-none"]), [class*="card"]:not(.no-reveal), .grid > div');
       elements.forEach((el) => {
         if (!el.classList.contains('reveal-init') && !el.closest('.no-reveal')) {
           const rect = el.getBoundingClientRect();
-          // If element is already in the viewport or within 60px of it, reveal immediately
-          if (rect.top < window.innerHeight + 60 && rect.bottom > 0) {
+          if (rect.top < window.innerHeight + 150 && rect.bottom > -50) {
             el.classList.add('reveal-init', 'reveal-visible');
           } else {
             el.classList.add('reveal-init');
@@ -59,15 +70,22 @@ function GlobalFadeIn() {
     };
 
     observeElements();
+    checkVisible();
+
     const mutationObserver = new MutationObserver(() => {
       observeElements();
+      checkVisible();
     });
-
     mutationObserver.observe(document.body, { childList: true, subtree: true });
+
+    window.addEventListener('scroll', checkVisible, { passive: true });
+    const intervalId = setInterval(checkVisible, 200);
 
     return () => {
       observer.disconnect();
       mutationObserver.disconnect();
+      window.removeEventListener('scroll', checkVisible);
+      clearInterval(intervalId);
     };
   }, [pathname]);
 
