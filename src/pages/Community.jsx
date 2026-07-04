@@ -43,7 +43,7 @@ export default function Community() {
           
           <Link 
             to="/dinner" 
-            className="group relative inline-block bg-[#efe8db] text-[#2c2b29] border border-[#2c2b29]/10 shadow-md hover:shadow-xl transition-all duration-300 rounded-md px-10 py-4 font-body text-lg font-bold tracking-wide mt-8 mb-0 hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] z-20"
+            className="group relative inline-block bg-[var(--text-main)] text-white border border-[var(--text-main)] shadow-md hover:shadow-xl transition-all duration-300 rounded-md px-10 py-4 font-body text-lg font-bold tracking-wide mt-8 mb-0 hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] active:bg-[var(--accent-primary)] active:text-white z-20"
           >
             Join the next gathering
           </Link>
@@ -126,7 +126,7 @@ export default function Community() {
           >
             <Link
               to="/dinner"
-              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-white hover:text-[var(--accent-primary)] px-12 py-5 text-xl font-bold tracking-[0.1em] rounded-md shadow-2xl transition-all duration-300 hover:scale-105 uppercase"
+              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] px-12 py-5 text-xl font-bold tracking-[0.1em] rounded-md shadow-2xl transition-all duration-300 hover:scale-105 uppercase"
             >
               Find your seat
             </Link>

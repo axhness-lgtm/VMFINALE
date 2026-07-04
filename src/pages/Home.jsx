@@ -225,28 +225,12 @@ export default function Home() {
             </h2>
           </div>
           
-          <div className="w-full md:w-7/12 relative mt-8 md:mt-0">
-            <div className="bg-[#fcfbf9] text-[var(--text-main)] p-10 md:p-14 shadow-2xl border border-[var(--text-main)]/10 hover-lift relative group -rotate-1 z-10 transition-transform duration-500 rounded-2xl">
-              <div className="masking-tape w-24 h-6 -top-3 left-1/2 -translate-x-1/2 rotate-[-2deg]" />
-              <div className="absolute top-6 right-6 stamp rotate-12 opacity-60 scale-75 border-[var(--accent-primary)] text-[var(--accent-primary)]">INTIMATE</div>
-              
-              <div className="space-y-8 relative z-10">
-                <div>
-                  <h3 className="font-heading text-3xl md:text-4xl text-[var(--text-main)] leading-tight">Small enough</h3>
-                  <p className="font-body text-xl text-[var(--text-main)]/70 italic mt-2">for everyone to be part of the conversation.</p>
-                </div>
-                
-                <div className="w-12 h-[1px] bg-[var(--accent-primary)]/40" />
-                
-                <div>
-                  <h3 className="font-heading text-3xl md:text-4xl text-[var(--accent-primary)] leading-tight">Big enough</h3>
-                  <p className="font-body text-xl text-[var(--text-main)]/70 italic mt-2">for unexpected friendships.</p>
-                </div>
-              </div>
-            </div>
-            
-            {/* Background offset card for depth */}
-            <div className="absolute inset-0 bg-[#efe8db] border border-[var(--text-main)]/10 shadow-lg translate-x-3 translate-y-3 rotate-2 z-0 hidden md:block pointer-events-none rounded-2xl" />
+          <div className="w-full md:w-7/12 relative mt-8 md:mt-0 flex items-center justify-center">
+            <img 
+              src="/es.png" 
+              alt="Eight Seats" 
+              className="w-full max-w-[650px] h-auto object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500" 
+            />
           </div>
           
         </div>
@@ -255,7 +239,7 @@ export default function Home() {
       <EdgeDivider src="/edge4.png" />
 
       {/* 5. EVERY DINNER BEGINS SOMEWHERE ELSE */}
-      <section className="relative overflow-hidden bg-[var(--bg-primary)] w-full py-20 md:py-24 mx-auto">
+      <section className="relative overflow-hidden bg-[var(--bg-primary)] w-full py-20 md:py-28 mx-auto">
         {/* Background Paper Texture */}
         <div className="absolute inset-0 paper-texture opacity-40 mix-blend-multiply z-0 pointer-events-none" />
 
@@ -263,73 +247,45 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
             
             {/* Text Content */}
-            <div className="lg:col-span-5 relative z-20 text-center lg:text-left">
-              <span className="font-logo text-5xl md:text-7xl text-[var(--accent-primary)] mb-4 block transform -rotate-2 drop-shadow-sm">
-                Our Destinations
-              </span>
-              <h2 className="text-5xl md:text-6xl lg:text-7xl font-heading text-[var(--text-main)] leading-tight mb-8">
-                Every dinner begins somewhere else.
-              </h2>
-              <p className="font-body text-xl text-[var(--text-main)]/70 italic max-w-md mx-auto lg:mx-0 leading-relaxed">
-                We draw inspiration from around the globe, turning distant memories into shared plates and unforgettable conversations.
-              </p>
-              
-              {/* Little decorative elements */}
-              <img src="/assets/d1.png" className="absolute -bottom-16 right-10 w-20 opacity-30 rotate-12 hidden lg:block" alt="doodle" />
+            <div className="lg:col-span-5 relative z-20 text-center lg:text-left py-8">
+              {/* Scaled up doodles surrounding the text */}
+              <img src="/d1.png" className="absolute -top-12 -left-8 w-28 md:w-36 opacity-30 -rotate-12 pointer-events-none z-0" alt="doodle" />
+              <img src="/d3.png" className="absolute top-1/2 -right-10 w-24 md:w-32 opacity-25 rotate-45 pointer-events-none z-0 hidden sm:block" alt="doodle" />
+              <img src="/d4.png" className="absolute -bottom-10 left-10 w-20 md:w-28 opacity-35 rotate-12 pointer-events-none z-0" alt="doodle" />
+              <img src="/d5.png" className="absolute top-0 right-0 w-16 md:w-24 opacity-25 -rotate-6 pointer-events-none z-0" alt="doodle" />
+              <img src="/d6.png" className="absolute -bottom-16 right-12 w-32 md:w-40 opacity-30 rotate-6 pointer-events-none z-0" alt="doodle" />
+              <img src="/d7.png" className="absolute top-24 -left-12 w-28 md:w-36 opacity-25 -rotate-15 pointer-events-none z-0 hidden lg:block" alt="doodle" />
+
+              <div className="relative z-10 space-y-6">
+                <span className="font-logo text-6xl md:text-7xl lg:text-8xl text-[var(--accent-primary)] block transform -rotate-2 drop-shadow-sm">
+                  Our Destinations
+                </span>
+                
+                <h2 className="text-5xl md:text-6xl lg:text-7xl font-heading text-[var(--text-main)] leading-[1.08] tracking-tight">
+                  Every dinner begins somewhere else.
+                </h2>
+                
+                <p className="font-logo text-2xl md:text-3xl text-[var(--accent-primary)] italic">
+                  Two places. Countless stories. ♡
+                </p>
+                
+                <div className="pt-4 flex justify-center lg:justify-start">
+                  <div className="inline-block border-2 border-dashed border-[var(--text-main)]/40 bg-[#efe8db]/80 px-6 py-3 rounded-lg shadow-sm transform rotate-1 hover:-rotate-1 transition-transform">
+                    <span className="font-mono text-xs md:text-sm uppercase tracking-[0.25em] font-extrabold text-[var(--text-main)]">
+                      ★ MORE DESTINATIONS COMING SOON ★
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Structured Polaroid Grid */}
-            <div className="lg:col-span-7 relative mt-16 lg:mt-0">
-              {/* Background decorative square */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[120%] bg-[#f4ebd9]/80 border border-[var(--text-main)]/10 rounded-[3rem] -rotate-1 z-0 shadow-inner hidden md:block" />
-              
-              <div className="grid grid-cols-2 gap-6 md:gap-10 relative z-10 p-4 md:p-10">
-                
-                {/* Card 1 */}
-                <div className="polaroid hover-lift rotate-2 translate-y-4 md:translate-y-8 z-10 transition-all duration-500 hover:z-30">
-                  <div className="relative w-full aspect-[4/5] overflow-hidden bg-[#efe8db]">
-                    <img src="/fo1.png" alt="Italy" className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" />
-                  </div>
-                  <div className="mt-4 flex justify-between items-center px-1">
-                    <span className="font-heading text-lg md:text-xl text-[var(--text-main)] font-bold">Roma, IT</span>
-                    <span className="stamp text-[10px] md:text-xs scale-75 border-[var(--accent-primary)] text-[var(--accent-primary)]">POSTED</span>
-                  </div>
-                </div>
-
-                {/* Card 2 */}
-                <div className="polaroid hover-lift -rotate-3 z-20 transition-all duration-500 hover:z-30">
-                  <div className="masking-tape w-20 md:w-24 h-6 md:h-8 -top-3 md:-top-4 left-1/2 -translate-x-1/2 rotate-[-2deg]" />
-                  <div className="relative w-full aspect-[4/5] overflow-hidden bg-[#efe8db]">
-                    <img src="/fo2.png" alt="Destination" className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" />
-                  </div>
-                  <div className="mt-4 flex justify-between items-center px-1">
-                    <span className="font-heading text-lg md:text-xl text-[var(--text-main)] font-bold">Oaxaca, MX</span>
-                  </div>
-                </div>
-
-                {/* Card 3 */}
-                <div className="polaroid hover-lift -rotate-2 translate-y-8 md:translate-y-12 z-20 transition-all duration-500 hover:z-30">
-                  <div className="push-pin" />
-                  <div className="relative w-full aspect-[4/5] overflow-hidden bg-[#efe8db]">
-                    <img src="/fo3.png" alt="Destination" className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" />
-                  </div>
-                  <div className="mt-4 flex justify-between items-center px-1">
-                    <span className="font-heading text-lg md:text-xl text-[var(--text-main)] font-bold">Kyoto, JP</span>
-                  </div>
-                </div>
-
-                {/* Card 4 */}
-                <div className="polaroid hover-lift rotate-4 -translate-y-4 md:-translate-y-2 z-10 transition-all duration-500 hover:z-30">
-                  <div className="relative w-full aspect-[4/5] overflow-hidden bg-[#efe8db]">
-                    <img src="/fo4.png" alt="Destination" className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" />
-                  </div>
-                  <div className="mt-4 flex justify-between items-center px-1">
-                    <span className="font-heading text-lg md:text-xl text-[var(--text-main)] font-bold">Marrakech, MA</span>
-                    <span className="handwritten-note text-sm md:text-base -rotate-6 absolute bottom-10 md:bottom-12 right-2 md:right-4 text-[var(--accent-primary)]">Memories</span>
-                  </div>
-                </div>
-
-              </div>
+            {/* od.png image replacing the 4 polaroids */}
+            <div className="lg:col-span-7 relative mt-12 lg:mt-0 flex items-center justify-center">
+              <img 
+                src="/od.png" 
+                alt="Our Destinations" 
+                className="w-full max-w-[750px] h-auto object-contain drop-shadow-2xl hover:scale-102 transition-transform duration-500 relative z-10" 
+              />
             </div>
 
           </div>

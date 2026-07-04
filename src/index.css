@@ -414,3 +414,43 @@ p {
   background: rgba(255,255,255,0.4);
   border-radius: 50%;
 }
+
+/* Global Texture Rule for all natural cream backgrounds across all pages and sections */
+body,
+[class*="bg-[var(--bg-primary)]"],
+[class*="bg-[var(--bg-secondary)]"],
+[class*="bg-[#f3dbbd]"],
+[class*="bg-[#efe9e1]"],
+[class*="bg-[#efe8db]"],
+[class*="bg-[#fcfbf9]"],
+[class*="bg-[#fdfaf5]"],
+[class*="bg-[#fdfcfb]"],
+[class*="bg-[#f4ebd9]"],
+[class*="bg-[#faf8f5]"],
+[class*="bg-[#fcfbf7]"],
+[class*="bg-[#f8f5f0]"],
+[class*="bg-[#f5efe6]"],
+[class*="bg-[#eedcaf]"],
+[class*="bg-[#eedaaf]"],
+.polaroid,
+.polaroid-frame,
+.notebook-paper,
+.btn-paper {
+  background-image: url("/texture.png") !important;
+  background-size: cover !important;
+  background-blend-mode: multiply !important;
+}
+
+/* Global Slow Fade-In Scroll Reveal Animations */
+.reveal-init:not([style*="opacity"]) {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-visible:not([style*="opacity"]) {
+  opacity: 1;
+  transform: translateY(0);
+}
+

@@ -73,7 +73,7 @@ const ReserveSection = ({ onReserveClick, onInterestClick, canReserve, isSoldOut
                 </div>
                 <button
                   onClick={onInterestClick}
-                  className="bg-[var(--text-main)] text-white font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-md shadow-lg hover:bg-[#1a130f] hover:scale-105 transition-all duration-300"
+                  className="bg-[var(--text-main)] text-white border border-[var(--text-main)] font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-md shadow-lg hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] active:bg-[var(--accent-primary)] active:text-white hover:scale-105 transition-all duration-300 cursor-pointer"
                 >
                   Join Waitlist (I'm Interested)
                 </button>
@@ -88,7 +88,7 @@ const ReserveSection = ({ onReserveClick, onInterestClick, canReserve, isSoldOut
                 </p>
                 <button
                   onClick={onInterestClick}
-                  className="bg-[var(--accent-primary)] text-white font-heading text-base md:text-lg tracking-wider px-6 py-2.5 rounded-md shadow hover:bg-[#c14a27] transition-all"
+                  className="bg-[var(--text-main)] text-white border border-[var(--text-main)] font-heading text-base md:text-lg tracking-wider px-6 py-2.5 rounded-md shadow hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] active:bg-[var(--accent-primary)] active:text-white transition-all cursor-pointer"
                 >
                   Register Again (I'm Interested)
                 </button>
@@ -96,14 +96,14 @@ const ReserveSection = ({ onReserveClick, onInterestClick, canReserve, isSoldOut
             ) : canReserve ? (
               <button
                 onClick={onReserveClick}
-                className="bg-[var(--accent-primary)] text-white font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-md shadow-lg hover:bg-[#c14a27] hover:scale-105 transition-all duration-300"
+                className="bg-[var(--text-main)] text-white border border-[var(--text-main)] font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-md shadow-lg hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] active:bg-[var(--accent-primary)] active:text-white hover:scale-105 transition-all duration-300 cursor-pointer"
               >
                 Reserve Your Seat
               </button>
             ) : (
               <button
                 onClick={onInterestClick}
-                className="bg-[var(--accent-primary)] text-white font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-md shadow-lg hover:bg-[#c14a27] hover:scale-105 transition-all duration-300"
+                className="bg-[var(--text-main)] text-white border border-[var(--text-main)] font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-md shadow-lg hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] active:bg-[var(--accent-primary)] active:text-white hover:scale-105 transition-all duration-300 cursor-pointer"
               >
                 I'm Interested
               </button>
@@ -225,11 +225,11 @@ export default function Dinner() {
     <div className="w-full relative bg-[var(--bg-primary)]">
 
       {/* 1. HERO SECTION */}
-      <section className="relative min-h-[92vh] flex flex-col justify-between pt-28 md:pt-36 pb-0 px-6 lg:px-16 overflow-hidden bg-[var(--bg-primary)]">
+      <section className="relative min-h-[84vh] flex flex-col justify-center pt-24 md:pt-28 pb-8 px-6 lg:px-16 overflow-hidden bg-[var(--bg-primary)]">
         {/* Soft background glow */}
         <div className="absolute top-1/3 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--accent-primary)]/5 rounded-full filter blur-3xl pointer-events-none" />
 
-        <div className="container mx-auto max-w-7xl relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center my-auto pb-16">
+        <div className="container mx-auto max-w-7xl relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center my-2 pb-6">
 
           {/* Left Column: Typography & CTA */}
           <div className="lg:col-span-6 flex flex-col justify-center relative z-30 pl-2 lg:pl-6 text-left">
@@ -275,7 +275,7 @@ export default function Dinner() {
                   </div>
                   <button
                     onClick={() => setIsInterestOpen(true)}
-                    className="bg-[var(--text-main)] text-white font-body uppercase text-base md:text-lg font-extrabold tracking-widest px-8 py-3.5 rounded-md shadow-xl hover:bg-[#1a130f] hover:scale-105 active:scale-95 border-2 border-[#ffffff]/20 transition-all duration-300 z-20 cursor-pointer"
+                    className="bg-[var(--text-main)] text-white border border-[var(--text-main)] font-body uppercase text-base md:text-lg font-extrabold tracking-widest px-8 py-3.5 rounded-md shadow-xl hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] active:bg-[var(--accent-primary)] active:text-white hover:scale-105 active:scale-95 transition-all duration-300 z-20 cursor-pointer"
                   >
                     JOIN WAITLIST (I'M INTERESTED)
                   </button>
@@ -290,7 +290,7 @@ export default function Dinner() {
                   </p>
                   <button
                     onClick={() => setIsInterestOpen(true)}
-                    className="bg-[var(--accent-primary)] text-white font-body uppercase text-sm md:text-base font-extrabold tracking-widest px-6 py-2.5 rounded-md shadow hover:bg-[#c14a27] transition-all cursor-pointer"
+                    className="bg-[var(--text-main)] text-white border border-[var(--text-main)] font-body uppercase text-sm md:text-base font-extrabold tracking-widest px-6 py-2.5 rounded-md shadow hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] active:bg-[var(--accent-primary)] active:text-white transition-all cursor-pointer"
                   >
                     REGISTER AGAIN (I'M INTERESTED)
                   </button>
@@ -298,14 +298,14 @@ export default function Dinner() {
               ) : canReserve ? (
                 <button
                   onClick={() => setIsBookingOpen(true)}
-                  className="bg-[var(--accent-primary)] text-white font-body uppercase text-base md:text-lg font-extrabold tracking-widest px-8 py-3.5 rounded-md shadow-xl hover:bg-[#c14a27] hover:scale-105 active:scale-95 border-2 border-[#ffffff]/20 transition-all duration-300 z-20 cursor-pointer"
+                  className="bg-[var(--text-main)] text-white border border-[var(--text-main)] font-body uppercase text-base md:text-lg font-extrabold tracking-widest px-8 py-3.5 rounded-md shadow-xl hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] active:bg-[var(--accent-primary)] active:text-white hover:scale-105 active:scale-95 transition-all duration-300 z-20 cursor-pointer"
                 >
                   RESERVE YOUR SEAT
                 </button>
               ) : (
                 <button
                   onClick={() => setIsInterestOpen(true)}
-                  className="bg-[var(--accent-primary)] text-white font-body uppercase text-base md:text-lg font-extrabold tracking-widest px-8 py-3.5 rounded-md shadow-xl hover:bg-[#c14a27] hover:scale-105 active:scale-95 border-2 border-[#ffffff]/20 transition-all duration-300 z-20 cursor-pointer"
+                  className="bg-[var(--text-main)] text-white border border-[var(--text-main)] font-body uppercase text-base md:text-lg font-extrabold tracking-widest px-8 py-3.5 rounded-md shadow-xl hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] active:bg-[var(--accent-primary)] active:text-white hover:scale-105 active:scale-95 transition-all duration-300 z-20 cursor-pointer"
                 >
                   I'M INTERESTED
                 </button>
@@ -472,7 +472,7 @@ export default function Dinner() {
                         <img 
                           src={item.img} 
                           alt={item.dish.split('—')[0].trim()} 
-                          className="w-44 h-44 sm:w-52 sm:h-52 md:w-60 md:h-60 object-contain drop-shadow-xl transition-transform duration-500 hover:scale-105" 
+                          className="w-56 h-56 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 object-contain drop-shadow-2xl transition-transform duration-500 hover:scale-105 -my-4" 
                         />
                       </div>
                     )}
@@ -620,7 +620,7 @@ export default function Dinner() {
 
           <div className="flex flex-col gap-16">
             <div className="text-center mb-4">
-              <h2 className="text-5xl md:text-6xl font-heading text-white drop-shadow-sm">House Rules</h2>
+              <h2 className="text-5xl md:text-6xl font-heading text-[var(--text-main)] drop-shadow-sm">House Rules</h2>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">

@@ -173,34 +173,38 @@ export default function Journal() {
 
         <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 relative z-10 w-full">
           
-          <div className="flex flex-col justify-center relative pt-12 lg:pt-0 max-w-xl">
-            <div className="absolute -top-8 left-4 md:-top-12 md:left-8 stamp rotate-[-8deg] opacity-70 border-dashed border-2 border-[#cc785c] text-[#cc785c] px-3 py-1 font-mono text-xs tracking-widest bg-transparent">
+          <div className="flex flex-col justify-center relative pt-12 lg:pt-0 max-w-xl py-8">
+            {/* Scaled up doodles surrounding the text */}
+            <img src="/d1.png" className="absolute -top-12 -left-8 w-28 md:w-36 opacity-30 -rotate-12 pointer-events-none z-0" alt="doodle" />
+            <img src="/d3.png" className="absolute top-1/2 -right-10 w-24 md:w-32 opacity-25 rotate-45 pointer-events-none z-0 hidden sm:block" alt="doodle" />
+            <img src="/d4.png" className="absolute -bottom-10 left-10 w-20 md:w-28 opacity-35 rotate-12 pointer-events-none z-0" alt="doodle" />
+            <img src="/d5.png" className="absolute top-0 right-0 w-16 md:w-24 opacity-25 -rotate-6 pointer-events-none z-0" alt="doodle" />
+            <img src="/d6.png" className="absolute -bottom-16 right-12 w-32 md:w-40 opacity-30 rotate-6 pointer-events-none z-0" alt="doodle" />
+            <img src="/d7.png" className="absolute top-24 -left-12 w-28 md:w-36 opacity-25 -rotate-15 pointer-events-none z-0 hidden lg:block" alt="doodle" />
+
+            <div className="absolute -top-8 left-4 md:-top-12 md:left-8 stamp rotate-[-8deg] opacity-70 border-dashed border-2 border-[#cc785c] text-[#cc785c] px-3 py-1 font-mono text-xs tracking-widest bg-transparent z-10">
               VOL 04 <br/> 2025
             </div>
             
-            <span className="text-[#c16e4f] font-body tracking-[0.2em] uppercase text-xs mb-4 block font-bold">
-              THE JOURNAL
-            </span>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-body leading-[1.1] text-[var(--text-main)] mb-8">
-              The evening doesn't end <br className="hidden md:inline" />
-              <span className="relative inline-block mt-2 md:mt-0">
-                when everyone leaves.
-                <svg className="absolute w-[90%] h-3 -bottom-3 left-[5%] text-[#c16e4f] opacity-80" viewBox="0 0 100 10" preserveAspectRatio="none">
-                  <path d="M5,5 Q40,8 95,5" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-                </svg>
+            <div className="relative z-10">
+              <span className="text-[#c16e4f] font-body tracking-[0.2em] uppercase text-xs mb-4 block font-bold">
+                THE JOURNAL
               </span>
-            </h1>
-            <p className="font-body text-xl md:text-[1.35rem] text-[var(--text-main)] max-w-md leading-relaxed mb-10">
-              Stories, recipes, places, conversations and little things worth holding on to.
-            </p>
-            
-            <div>
-              <a 
-                href="#selected-works" 
-                className="inline-block bg-[#efe8db] text-[var(--text-main)] border border-[var(--text-main)]/15 shadow-sm hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] transition-all duration-300 rounded-md px-8 py-3.5 font-body font-bold text-[1.05rem] uppercase tracking-wider"
-              >
-                Read the latest entry
-              </a>
+              <h1 className="text-6xl md:text-7xl lg:text-8xl font-heading italic leading-[1.08] text-[var(--text-main)] mb-6">
+                the table notes
+              </h1>
+              <p className="font-heading font-normal not-italic text-2xl md:text-3xl text-[var(--text-main)] max-w-lg leading-relaxed mb-10">
+                What happens at the table doesn't always stay there.
+              </p>
+              
+              <div>
+                <a 
+                  href="#selected-works" 
+                  className="group relative inline-block bg-[var(--text-main)] text-white border border-[var(--text-main)] shadow-md hover:shadow-xl transition-all duration-300 rounded-md px-8 py-3.5 font-body font-bold text-[1.05rem] uppercase tracking-wider hover:bg-[var(--accent-primary)] hover:text-white hover:border-[var(--accent-primary)] active:bg-[var(--accent-primary)] active:text-white cursor-pointer"
+                >
+                  Read the latest entry
+                </a>
+              </div>
             </div>
 
             <motion.img 

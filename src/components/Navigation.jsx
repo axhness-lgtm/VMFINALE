@@ -12,12 +12,12 @@ const navLinks = [
   { name: 'Journal', path: '/journal' },
 ];
 
-const RollingText = ({ text, active, hoverColorClass="text-[var(--accent-secondary)]" }) => (
-  <div className="relative overflow-hidden inline-block h-[1.2em]">
+const RollingText = ({ text, active, hoverColorClass="text-[var(--accent-secondary)]", italic = true }) => (
+  <div className="relative overflow-hidden inline-block h-[1.2em] w-full text-center">
     <div className={`transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] ${active ? '-translate-y-full' : 'group-hover:-translate-y-full'}`}>
       <span className="block leading-[1.2em]">{text}</span>
     </div>
-    <div className={`absolute top-0 left-0 w-full transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] ${active ? 'translate-y-0 text-[var(--accent-primary)] italic' : `translate-y-full group-hover:translate-y-0 ${hoverColorClass} italic`}`}>
+    <div className={`absolute top-0 left-0 w-full transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] ${active ? `translate-y-0 text-[var(--accent-primary)] ${italic ? 'italic' : ''}` : `translate-y-full group-hover:translate-y-0 ${hoverColorClass} ${italic ? 'italic' : ''}`}`}>
       <span className="block leading-[1.2em]">{text}</span>
     </div>
   </div>
@@ -92,9 +92,9 @@ export default function Navigation() {
           <Link 
             to="/dinner" 
             onClick={handleScrollTop} 
-            className="ml-6 px-9 py-3 rounded-md font-heading italic font-light text-lg tracking-wider bg-[var(--accent-primary)] text-white hover:bg-[#c14a27] hover:scale-105 active:scale-95 shadow-md transition-all duration-300"
+            className="group ml-6 px-9 py-3 rounded-md font-heading not-italic font-bold text-xl tracking-wider bg-[var(--accent-primary)] text-white hover:bg-[#c14a27] hover:scale-105 active:scale-95 shadow-md transition-all duration-300 flex items-center justify-center min-w-[130px]"
           >
-            Reserve
+            <RollingText text="Reserve" active={false} hoverColorClass="text-white" italic={false} />
           </Link>
           
           <button 

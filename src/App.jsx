@@ -26,11 +26,53 @@ function ScrollToTop() {
   return null;
 }
 
+function GlobalFadeIn() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('reveal-visible');
+          }
+        });
+      },
+      { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+    );
+
+    const observeElements = () => {
+      const elements = document.querySelectorAll('section, h1, h2, h3, p');
+      elements.forEach((el) => {
+        if (!el.classList.contains('reveal-init') && !el.closest('.no-reveal')) {
+          el.classList.add('reveal-init');
+          observer.observe(el);
+        }
+      });
+    };
+
+    observeElements();
+    const mutationObserver = new MutationObserver(() => {
+      observeElements();
+    });
+
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      observer.disconnect();
+      mutationObserver.disconnect();
+    };
+  }, [pathname]);
+
+  return null;
+}
+
 function App() {
   return (
     <ReactLenis root options={{ lerp: 0.05, duration: 1.5, smoothTouch: true }}>
       <Router>
         <ScrollToTop />
+        <GlobalFadeIn />
         <div className="relative min-h-screen">
           <audio id="bg-music" loop preload="auto" crossOrigin="anonymous">
             <source src="https://ia800501.us.archive.org/33/items/OudImprovisation/OudImprovisation.mp3" type="audio/mpeg" />

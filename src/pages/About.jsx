@@ -32,18 +32,18 @@ export default function About() {
           <img src="/g.png" className="absolute bottom-[10%] left-[25%] w-[5%] object-contain opacity-70 pointer-events-none -rotate-12 mix-blend-multiply" alt="" />
           <img src="/h.png" className="absolute bottom-[40%] right-[5%] w-[6%] object-contain opacity-80 pointer-events-none rotate-6 mix-blend-multiply" alt="" />
 
-          {/* Top Headline - Fades in LAST */}
+          {/* Top Headline - Fades in FIRST after 7 wonders (at delay 2.3s) */}
           <div className="absolute top-[2%] left-1/2 transform -translate-x-1/2 text-center w-full z-30">
             <motion.div 
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 2.6, duration: 1 }}
+              transition={{ delay: 2.3, duration: 1 }}
               className="w-full"
             >
               <h2 className="text-lg md:text-xl font-body tracking-widest uppercase text-[var(--accent-primary)] mb-1 font-bold">The World Has</h2>
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-logo text-[var(--text-main)] drop-shadow-sm">Seven Wonders.</h1>
-              <p className="text-2xl md:text-3xl lg:text-4xl font-heading italic text-[var(--accent-primary)] mt-4 md:mt-6 font-bold drop-shadow-sm">
-                We Believe there is an Eighth!
+              <p className="text-2xl md:text-3xl lg:text-4xl font-heading font-normal not-italic text-[var(--accent-primary)] mt-4 md:mt-6 drop-shadow-sm">
+                We believe there is an eighth!
               </p>
             </motion.div>
           </div>
@@ -84,9 +84,9 @@ export default function About() {
           </motion.div>
 
 
-          {/* 8. The Table (Center) */}
+          {/* 8. The Table (Center) - Fades in at the END after a 1 second gap from text (at delay 3.3s) */}
           <div className="absolute top-[44%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[34%] max-w-[390px] z-10">
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 2.3, duration: 1 }} className="w-full">
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 3.3, duration: 1 }} className="w-full">
               <img src="/a9.png" alt="The Eighth Wonder - Table" className="w-full h-auto object-contain drop-shadow-xl" />
             </motion.div>
           </div>
@@ -106,7 +106,7 @@ export default function About() {
         <div className="relative z-10 text-center w-full mb-12">
           <h2 className="text-lg font-body tracking-widest uppercase text-[var(--accent-primary)] mb-1 font-bold">The World Has</h2>
           <h1 className="text-5xl font-logo text-[var(--text-main)] drop-shadow-sm">Seven Wonders.</h1>
-          <p className="text-xl font-heading italic text-[var(--accent-primary)] mt-2 font-bold drop-shadow-sm">We Believe there is an Eighth!</p>
+          <p className="text-xl font-heading font-normal not-italic text-[var(--accent-primary)] mt-2 drop-shadow-sm">We believe there is an eighth!</p>
         </div>
         <motion.img initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2, duration: 1 }} src="/a9.png" alt="The Table" className="w-[90%] h-auto object-contain relative z-10 drop-shadow-xl mb-8" />
       </section>
@@ -230,7 +230,7 @@ export default function About() {
           >
             <Link
               to="/dinner"
-              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-white hover:text-[var(--accent-primary)] px-12 py-5 text-xl font-bold tracking-[0.1em] rounded-md shadow-2xl transition-all duration-300 hover:scale-105 uppercase"
+              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] px-12 py-5 text-xl font-bold tracking-[0.1em] rounded-md shadow-2xl transition-all duration-300 hover:scale-105 uppercase"
             >
               See upcoming dinners
             </Link>
