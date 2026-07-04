@@ -35,10 +35,11 @@ function GlobalFadeIn() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('reveal-visible');
+            observer.unobserve(entry.target);
           }
         });
       },
-      { threshold: 0.05, rootMargin: '0px 0px -20px 0px' }
+      { threshold: 0, rootMargin: '0px 0px 80px 0px' }
     );
 
     const observeElements = () => {
@@ -46,8 +47,8 @@ function GlobalFadeIn() {
       elements.forEach((el) => {
         if (!el.classList.contains('reveal-init') && !el.closest('.no-reveal')) {
           const rect = el.getBoundingClientRect();
-          // If element is already in the top 92% of viewport on initial load, reveal immediately
-          if (rect.top < window.innerHeight * 0.92 && rect.bottom > 0) {
+          // If element is already in the viewport or within 60px of it, reveal immediately
+          if (rect.top < window.innerHeight + 60 && rect.bottom > 0) {
             el.classList.add('reveal-init', 'reveal-visible');
           } else {
             el.classList.add('reveal-init');
