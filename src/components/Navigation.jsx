@@ -92,9 +92,9 @@ export default function Navigation() {
           <Link 
             to="/dinner" 
             onClick={handleScrollTop} 
-            className="group ml-6 px-9 py-3 rounded-md font-heading not-italic font-bold text-xl tracking-wider bg-[var(--accent-primary)] text-white hover:bg-[#c14a27] hover:scale-105 active:scale-95 shadow-md transition-all duration-300 flex items-center justify-center min-w-[130px]"
+            className="group ml-6 px-9 py-3 rounded-md font-heading uppercase not-italic font-bold text-xl tracking-wider bg-[var(--accent-primary)] text-white hover:bg-[#c14a27] hover:scale-105 active:scale-95 shadow-md transition-all duration-300 flex items-center justify-center min-w-[130px]"
           >
-            <RollingText text="Reserve" active={false} hoverColorClass="text-white" italic={false} />
+            <RollingText text="RESERVE" active={false} hoverColorClass="text-white" italic={false} />
           </Link>
           
           <button 
