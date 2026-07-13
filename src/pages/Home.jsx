@@ -71,6 +71,7 @@ export default function Home() {
   flowGridItems.forEach((item, i) => columns[i % cols].push(item));
 
   const heroRef = useRef(null);
+  const videoRef = useRef(null);
   const notJustDinnerRef = useRef(null);
   const flowRef = useRef(null);
   const destConstraintsRef = useRef(null);
@@ -101,6 +102,32 @@ export default function Home() {
     return () => ctx.revert();
   }, []);
 
+  useEffect(() => {
+    const triggerVideoPlay = () => {
+      if (videoRef.current) {
+        videoRef.current.play().catch(() => {});
+      }
+    };
+
+    // Attempt instant play immediately on mount
+    triggerVideoPlay();
+
+    // Trigger instant play right as the 2-second loading screen overlay finishes
+    window.addEventListener('loadingScreenFinished', triggerVideoPlay);
+
+    // Trigger instant play on any user interaction on mobile devices (iOS Safari / Android Chrome)
+    window.addEventListener('touchstart', triggerVideoPlay, { once: true });
+    window.addEventListener('scroll', triggerVideoPlay, { once: true });
+    window.addEventListener('click', triggerVideoPlay, { once: true });
+
+    return () => {
+      window.removeEventListener('loadingScreenFinished', triggerVideoPlay);
+      window.removeEventListener('touchstart', triggerVideoPlay);
+      window.removeEventListener('scroll', triggerVideoPlay);
+      window.removeEventListener('click', triggerVideoPlay);
+    };
+  }, []);
+
   return (
     <div className="w-full relative">
 
@@ -109,10 +136,14 @@ export default function Home() {
         {/* Cinematic Video Background */}
         <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
           <video
+            ref={videoRef}
             autoPlay
             loop
             muted
             playsInline
+            webkit-playsinline="true"
+            x5-playsinline="true"
+            x5-video-player-type="h5"
             preload="auto"
             poster="/assets/hero-reference.jpg"
             className="w-full h-full object-cover"

@@ -23,6 +23,7 @@ export default function LoadingScreen() {
       if (elapsed >= duration) {
         clearInterval(interval);
         setFadeOut(true);
+        window.dispatchEvent(new Event('loadingScreenFinished'));
         setTimeout(() => setVisible(false), 700); // 700ms smooth fade out to reveal the site
       }
     }, 25);
