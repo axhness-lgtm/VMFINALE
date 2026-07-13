@@ -21,8 +21,12 @@ CREATE TABLE IF NOT EXISTS occurrences (
   total_seats INT NOT NULL DEFAULT 8,
   price_inr INT NOT NULL DEFAULT 299900,
   status TEXT NOT NULL DEFAULT 'collecting_interests', -- collecting_interests | bookings_open | closed
+  dietary_type TEXT NOT NULL DEFAULT 'non_veg', -- veg | non_veg | both
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- Note: Run this ALTER command if upgrading an existing database:
+ALTER TABLE occurrences ADD COLUMN IF NOT EXISTS dietary_type TEXT DEFAULT 'non_veg';
 
 -- Seed Occurrence 18
 INSERT INTO occurrences (title, event_date, total_seats, price_inr, status)

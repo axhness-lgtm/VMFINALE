@@ -10,6 +10,8 @@ export default function EdgeDivider({ src, className = "" }) {
         <img 
           src={src} 
           alt="" 
+          loading="lazy"
+          decoding="async"
           className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-[103%] max-w-none h-auto block" 
         />
       </div>
@@ -22,6 +24,8 @@ export default function EdgeDivider({ src, className = "" }) {
       <img 
         src={src} 
         alt="" 
+        loading="lazy"
+        decoding="async"
         className="absolute left-1/2 -translate-x-1/2 bottom-0 w-[103%] max-w-none h-auto block" 
       />
     </div>

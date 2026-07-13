@@ -85,7 +85,23 @@ p {
 }
 
 .font-hibernate, .font-\[Hibernate\] {
-  font-family: var(--font-body) !important;
+  font-family: 'Hibernate', sans-serif !important;
+}
+
+.font-cursive, .font-apricot {
+  font-family: 'Apricot', cursive !important;
+}
+
+.font-seasons {
+  font-family: 'The Seasons', serif !important;
+}
+
+/* Mobile responsive scaling optimization */
+@media (max-width: 640px) {
+  html, body {
+    overflow-x: hidden !important;
+    width: 100% !important;
+  }
 }
 
 .admin-dashboard, .admin-dashboard * {

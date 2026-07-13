@@ -33,27 +33,58 @@ export default async function handler(req, res) {
     // NOTE: We do NOT change occurrence status here — magic links are individual.
     // The occurrence status is managed separately via the admin occurrences tab.
 
+    // Check for rejected users across all interests or tags
+    const { data: rejectedInterests } = await supabase
+      .from('occurrence_interests')
+      .select('user_id')
+    const { data: globalRejectedInterests } = await supabase
+      .from('occurrence_interests')
+      .select('user_id')
+      .in('user_id', selected_user_ids)
+      .eq('status', 'rejected');
+    const rejectedSet = new Set((globalRejectedInterests || []).map(i => i.user_id));
+
+    const { data: allSelectedUsers, error: usersError } = await supabase
+      .from('users')
+      .select('id, name, email, phone, instagram_handle')
+      .in('id', selected_user_ids);
+    if (usersError) throw usersError;
+
+    const users = (allSelectedUsers || []).filter(u => {
+      if (rejectedSet.has(u.id)) return false;
+      if ((u.instagram_handle || '').match(/^\[Tag:\s*rejected\]/i)) return false;
+      return true;
+    });
+
+    if (users.length === 0) {
+      return res.status(400).json({ error: 'No eligible users selected (all selected users are marked as rejected globally and cannot be sent invitations).' });
+    }
+
+    const eligibleUserIds = users.map(u => u.id);
+
     // 1. Update selected users' interest status to 'selected_by_founder'
     await supabase
       .from('occurrence_interests')
       .update({ status: 'selected_by_founder' })
       .eq('occurrence_id', occurrence_id)
-      .in('user_id', selected_user_ids);
-
-    // 3. Fetch user details to send emails
-    const { data: users, error: usersError } = await supabase
-      .from('users')
-      .select('id, name, email, phone')
-      .in('id', selected_user_ids);
-
-    if (usersError) throw usersError;
+      .in('user_id', eligibleUserIds)
+      .neq('status', 'rejected');
 
     // 4. Fetch occurrence details
-    const { data: occurrence } = await supabase
+    let occurrence = { title: 'Curated Dinner', event_date: new Date().toISOString(), dietary_type: 'non_veg' };
+    const { data: occData } = await supabase
       .from('occurrences')
-      .select('title, event_date')
+      .select('*')
       .eq('id', occurrence_id)
-      .single();
+      .maybeSingle();
+    if (occData) {
+      occurrence = occData;
+      if (!occurrence.dietary_type && occurrence.title) {
+        if (occurrence.title.match(/^\[VEG\]/i)) occurrence.dietary_type = 'veg';
+        else if (occurrence.title.match(/^\[BOTH\]/i)) occurrence.dietary_type = 'both';
+        else occurrence.dietary_type = 'non_veg';
+      }
+    }
 
     // 5. Send Magic Link Emails
     const emailPromises = users.map(user => {
@@ -68,15 +99,42 @@ export default async function handler(req, res) {
 
       const formattedMessage = custom_message
         ? custom_message.replace(/\n/g, '<br/>')
-        : `We have thoughtfully curated the guest list for <strong>${occurrence.title}</strong>, and a place at our table has been reserved for you.<br/><br/>Please use your private invitation link below within the next <strong>4 hours</strong> to reserve your seat. Candlelight, conversation, and culinary art await.`;
+        : `We have thoughtfully curated the guest list for <strong style="color: #e86321;">${occurrence.title}</strong>, and a place at our table has been reserved for you.<br/><br/>Please use your private invitation link below within the next <strong style="color: #e86321;">4 hours</strong> to reserve your seat. Candlelight, conversation, and culinary art await.`;
 
       const posterHtml = poster_url
-        ? `<div style="margin-bottom: 24px;"><img src="${poster_url}" alt="Poster for ${occurrence.title}" style="width: 100%; max-width: 600px; border-radius: 8px; display: block;" /></div>`
+        ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 24px;">
+             <tr>
+               <td align="center">
+                 <img src="${poster_url}" alt="Poster for ${occurrence.title}" style="width: 100%; max-width: 580px; height: auto; border-radius: 8px; display: block; margin: 0 auto; border: 0;" />
+               </td>
+             </tr>
+           </table>`
         : '';
 
       const menuHtml = menu_url
-        ? `<div style="margin: 32px 0;"><h3 style="font-family: 'Apricot', Georgia, cursive; color: #e86321; font-size: 24px; margin-bottom: 12px;">Curated Menu</h3><img src="${menu_url}" alt="Menu for ${occurrence.title}" style="width: 100%; max-width: 600px; border-radius: 8px; display: block;" /></div>`
+        ? `<div style="margin: 32px 0;">
+             <h3 style="font-family: 'Apricot', 'Caveat', cursive, Georgia; color: #e86321; font-size: 26px; margin-bottom: 12px; font-weight: normal; text-align: center;">Curated Menu</h3>
+             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+               <tr>
+                 <td align="center">
+                   <img src="${menu_url}" alt="Menu for ${occurrence.title}" style="width: 100%; max-width: 580px; height: auto; border-radius: 8px; display: block; margin: 0 auto; border: 0;" />
+                 </td>
+               </tr>
+             </table>
+           </div>`
         : '';
+
+      const dietaryInfoHtml = occurrence.dietary_type && occurrence.dietary_type !== 'non_veg'
+        ? `<div style="background-color: rgba(232,99,33,0.1); border: 1px solid rgba(232,99,33,0.3); padding: 10px 15px; border-radius: 6px; margin-bottom: 20px; text-align: center;">
+             <strong style="color: #e86321; font-family: 'The Seasons', Georgia, serif; text-transform: uppercase; letter-spacing: 1px; font-size: 14px;">
+               Dietary Course: ${occurrence.dietary_type === 'veg' ? '🌱 100% Vegetarian Course' : 'Chef\'s Custom Tasting / Both'}
+             </strong>
+           </div>`
+        : `<div style="background-color: rgba(44,43,41,0.05); border: 1px solid rgba(44,43,41,0.15); padding: 10px 15px; border-radius: 6px; margin-bottom: 20px; text-align: center;">
+             <strong style="color: #2c2b29; font-family: 'The Seasons', Georgia, serif; text-transform: uppercase; letter-spacing: 1px; font-size: 14px;">
+               Dietary Course: 🥩 Non-Vegetarian Curated Course
+             </strong>
+           </div>`;
 
       const msg = {
         to: user.email,
@@ -87,25 +145,37 @@ export default async function handler(req, res) {
           openTracking: { enable: false }
         },
         html: `
-          <div style="font-family: 'The Seasons', Georgia, serif; max-width: 600px; margin: 0 auto; background-color: #efe8db; padding: 40px 30px; border-radius: 12px; color: #2c2b29; border: 1px solid rgba(44,43,41,0.15); line-height: 1.7;">
-            <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid rgba(232,99,33,0.3); padding-bottom: 20px;">
-              <h1 style="font-family: 'Apricot', Georgia, cursive; color: #e86321; font-size: 34px; margin: 0; letter-spacing: 1px;">Vantammayilu</h1>
-              <p style="font-family: 'The Seasons', Georgia, serif; font-style: italic; font-size: 16px; margin-top: 6px; color: #555;">The Supper Social</p>
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <style>
+              @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+            </style>
+          </head>
+          <body style="margin:0; padding:0; background-color:#efe8db; font-family: 'The Seasons', 'Playfair Display', Georgia, serif;">
+            <div style="max-width: 600px; margin: 0 auto; background-color: #efe8db; padding: 40px 30px; border-radius: 12px; color: #2c2b29; border: 1px solid rgba(44,43,41,0.15); line-height: 1.7;">
+              <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid rgba(232,99,33,0.3); padding-bottom: 20px;">
+                <h1 style="font-family: 'Apricot', 'Caveat', cursive, Georgia; color: #e86321; font-size: 38px; margin: 0; letter-spacing: 1px; font-weight: normal;">Vantammayilu</h1>
+                <p style="font-family: 'Hibernate', 'The Seasons', Georgia, serif; font-style: italic; font-size: 16px; margin-top: 6px; color: #555; letter-spacing: 2px; text-transform: uppercase;">The Supper Social</p>
+              </div>
+              ${posterHtml}
+              ${dietaryInfoHtml}
+              <h2 style="font-family: 'Apricot', 'Caveat', cursive, Georgia; color: #e86321; font-size: 30px; margin-bottom: 16px; font-weight: normal;">An Invitation to the Table.</h2>
+              <p style="font-size: 16px; font-family: 'Hibernate', 'The Seasons', Georgia, serif;">Hi ${user.name},</p>
+              <p style="font-size: 16px; margin-bottom: 24px; font-family: 'Hibernate', 'The Seasons', Georgia, serif;">${formattedMessage}</p>
+              ${menuHtml}
+              <div style="margin: 32px 0; text-align: center;">
+                <a href="${magicLink}" style="background-color: #e86321; color: white; padding: 14px 28px; text-decoration: none; font-weight: bold; border-radius: 6px; display: inline-block; font-size: 16px; font-family: 'Hibernate', sans-serif; letter-spacing: 1px; text-transform: uppercase;">Reserve Your Seat Now</a>
+              </div>
+              <p style="font-size: 14px; color: #b91c1c; font-style: italic; text-align: center; font-family: 'Hibernate', 'The Seasons', Georgia, serif;">Note: This private invitation link is active for 4 hours from the time of sending. After 4 hours, expired seats will be offered to the next guest on the waitlist.</p>
+              <div style="margin-top: 36px; border-top: 1px solid rgba(44,43,41,0.1); text-align: center; padding-top: 20px;">
+                <p style="font-style: italic; font-size: 16px; margin-bottom: 4px; color: #555; font-family: 'The Seasons', Georgia, serif;">Warmly,</p>
+                <p style="font-family: 'Apricot', 'Caveat', cursive, Georgia; font-size: 26px; color: #e86321; margin: 0;">Hyndavi & Artee</p>
+              </div>
             </div>
-            ${posterHtml}
-            <h2 style="font-family: 'Apricot', Georgia, cursive; color: #e86321; font-size: 28px; margin-bottom: 16px;">An Invitation to the Table.</h2>
-            <p style="font-size: 16px;">Hi ${user.name},</p>
-            <p style="font-size: 16px; margin-bottom: 24px;">${formattedMessage}</p>
-            ${menuHtml}
-            <div style="margin: 32px 0; text-align: center;">
-              <a href="${magicLink}" style="background-color: #e86321; color: white; padding: 14px 28px; text-decoration: none; font-weight: bold; border-radius: 6px; display: inline-block; font-size: 16px;">Reserve Your Seat Now</a>
-            </div>
-            <p style="font-size: 14px; color: #b91c1c; font-style: italic;">Note: This private invitation link is active for 4 hours from the time of sending. After 4 hours, expired seats will be offered to the next guest on the waitlist.</p>
-            <div style="margin-top: 36px; border-top: 1px solid rgba(44,43,41,0.1); text-align: center; padding-top: 20px;">
-              <p style="font-style: italic; font-size: 16px; margin-bottom: 4px; color: #555;">Warmly,</p>
-              <p style="font-family: 'Apricot', Georgia, cursive; font-size: 22px; color: #e86321; margin: 0;">Hyndavi & Artee</p>
-            </div>
-          </div>
+          </body>
+          </html>
         `,
       };
 

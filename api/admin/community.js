@@ -43,10 +43,11 @@ export default async function handler(req, res) {
 
         const enrichedUsers = (allUsers || []).map(u => {
           let computedTag = 'general';
-          if (attendedSet.has(u.id)) {
-            computedTag = 'attended';
-          } else if (rejectedSet.has(u.id)) {
+          const isRejectedTag = (u.instagram_handle || '').match(/^\[Tag:\s*rejected\]/i);
+          if (rejectedSet.has(u.id) || isRejectedTag) {
             computedTag = 'rejected';
+          } else if (attendedSet.has(u.id)) {
+            computedTag = 'attended';
           } else if (activeSet.has(u.id)) {
             computedTag = 'general';
           } else {
@@ -59,6 +60,40 @@ export default async function handler(req, res) {
         return res.status(200).json({ success: true, users: enrichedUsers });
       } catch (error) {
         return res.status(500).json({ error: 'Failed to fetch community list', details: error.message });
+      }
+    }
+
+    if (action === 'export') {
+      try {
+        const { data: allUsers, error } = await supabase.from('users').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
+
+        const { data: bookings } = await supabase.from('bookings').select('user_id').eq('status', 'confirmed');
+        const { data: interests } = await supabase.from('occurrence_interests').select('user_id, status');
+
+        const attendedSet = new Set((bookings || []).map(b => b.user_id));
+        const rejectedSet = new Set((interests || []).filter(i => i.status === 'rejected').map(i => i.user_id));
+        const activeSet = new Set((interests || []).map(i => i.user_id));
+
+        const exportedUsers = (allUsers || []).map(u => {
+          let computedTag = 'general';
+          const isRejectedTag = (u.instagram_handle || '').match(/^\[Tag:\s*rejected\]/i);
+          if (rejectedSet.has(u.id) || isRejectedTag) {
+            computedTag = 'rejected';
+          } else if (attendedSet.has(u.id)) {
+            computedTag = 'attended';
+          } else if (activeSet.has(u.id)) {
+            computedTag = 'general';
+          } else {
+            const match = (u.instagram_handle || '').match(/^\[Tag:\s*(.*?)\]/i);
+            computedTag = match ? match[1].toLowerCase() : 'general';
+          }
+          return { ...u, segregation_tag: computedTag };
+        });
+
+        return res.status(200).json({ success: true, users: exportedUsers });
+      } catch (error) {
+        return res.status(500).json({ error: 'Failed to export community list', details: error.message });
       }
     }
 
@@ -81,16 +116,26 @@ export default async function handler(req, res) {
     }
 
     if (action === 'reject') {
-      const { user_ids, occurrence_id } = req.body;
-      if (!user_ids || !Array.isArray(user_ids) || user_ids.length === 0 || !occurrence_id) {
-        return res.status(400).json({ error: 'Missing user_ids or occurrence_id for rejection.' });
+      const { user_ids } = req.body;
+      if (!user_ids || !Array.isArray(user_ids) || user_ids.length === 0) {
+        return res.status(400).json({ error: 'No user IDs provided for rejection.' });
       }
       try {
+        // ALWAYS update status across ALL occurrences where this user has expressed interest so rejection propagates everywhere
         await supabase.from('occurrence_interests')
           .update({ status: 'rejected' })
-          .eq('occurrence_id', occurrence_id)
           .in('user_id', user_ids);
-        return res.status(200).json({ success: true, message: `Marked ${user_ids.length} guest(s) as rejected.` });
+
+        const { data: usersToReject } = await supabase.from('users').select('id, instagram_handle').in('id', user_ids);
+        if (usersToReject && usersToReject.length > 0) {
+          for (const u of usersToReject) {
+            const cleanHandle = (u.instagram_handle || '').replace(/^\[Tag:\s*.*?\]\s*/i, '');
+            const newHandle = `[Tag: rejected] ${cleanHandle}`.trim();
+            await supabase.from('users').update({ instagram_handle: newHandle }).eq('id', u.id);
+          }
+        }
+
+        return res.status(200).json({ success: true, message: `Marked ${user_ids.length} guest(s) as rejected globally across active and community lists.` });
       } catch (err) {
         return res.status(500).json({ error: 'Failed to mark rejected', details: err.message });
       }
@@ -121,67 +166,75 @@ export default async function handler(req, res) {
 
           if (batch.length === 0) continue;
 
-          const { data, error } = await supabase
-            .from('users')
-            .upsert(batch, { onConflict: 'email', ignoreDuplicates: false })
-            .select();
-
-          if (error) {
-            console.error('Batch upsert error:', error);
+          const { error: insertErr } = await supabase.from('users').upsert(batch, { onConflict: 'email' });
+          if (insertErr) {
+            console.error('Batch upsert error:', insertErr.message);
             errorCount += batch.length;
-          } else if (data) {
-            insertedCount += data.length;
-            if (occurrence_id && data.length > 0) {
-              const interestBatch = data.map(u => ({
-                occurrence_id,
-                user_id: u.id,
-                status: 'interested'
-              }));
-              await supabase
-                .from('occurrence_interests')
-                .upsert(interestBatch, { onConflict: 'occurrence_id, user_id' });
-            }
+          } else {
+            insertedCount += batch.length;
           }
         }
 
-        const msgTail = occurrence_id ? ` and linked to active dinner occurrence.` : `.`;
-        return res.status(200).json({ 
-          success: true, 
-          message: `Successfully processed list. Imported/Updated ${insertedCount} community members${msgTail}` 
-        });
-      } catch (error) {
-        console.error('Error importing CSV/list:', error);
-        return res.status(500).json({ error: 'Internal Server Error', details: error.message });
+        return res.status(200).json({ success: true, message: `Imported/Updated ${insertedCount} guests successfully. (${errorCount} failed)` });
+      } catch (err) {
+        return res.status(500).json({ error: 'CSV Upload Failed', details: err.message });
       }
     }
 
-    if (action === 'blast' || occurrence_id) {
-      if (!occurrence_id) {
-        return res.status(400).json({ error: 'Occurrence ID is required.' });
-      }
+    if (action === 'blast') {
+      const { occurrence_id, custom_subject, custom_message, poster_url } = req.body;
+      if (!occurrence_id) return res.status(400).json({ error: 'Occurrence ID required for blast.' });
 
       try {
         const { data: occ } = await supabase.from('occurrences').select('*').eq('id', occurrence_id).maybeSingle();
         if (!occ) throw new Error('Occurrence not found');
 
-        const { data: dbUsers, error: usersError } = await supabase.from('users').select('email, name');
+        const { data: dbUsers, error: usersError } = await supabase.from('users').select('id, email, name, instagram_handle');
         if (usersError) throw usersError;
 
-        if (!dbUsers || dbUsers.length === 0) {
-          return res.status(400).json({ error: 'No community members found to send email.' });
+        const { data: rejectedInterests } = await supabase.from('occurrence_interests').select('user_id').eq('status', 'rejected');
+        const rejectedSet = new Set((rejectedInterests || []).map(i => i.user_id));
+
+        const eligibleUsers = (dbUsers || []).filter(user => {
+          if (!user.email || !user.email.includes('@')) return false;
+          if (rejectedSet.has(user.id)) return false;
+          if ((user.instagram_handle || '').match(/^\[Tag:\s*rejected\]/i)) return false;
+          return true;
+        });
+
+        if (eligibleUsers.length === 0) {
+          return res.status(400).json({ error: 'No eligible community members found to send email (all members may be rejected or missing valid emails).' });
         }
 
         const formattedMessage = custom_message
           ? custom_message.replace(/\n/g, '<br/>')
-          : `We are delighted to announce our upcoming gathering: <strong>${occ.title}</strong>.<br/><br/>As a cherished member of our community waitlist, you receive this secret announcement before the doors open to the world. A table filled with warm candlelight, shared laughter, and culinary storytelling awaits.`;
+          : `We are delighted to announce our upcoming gathering: <strong style="color: #e86321;">${occ.title}</strong>.<br/><br/>As a cherished member of our community waitlist, you receive this secret announcement before the doors open to the world. A table filled with warm candlelight, shared laughter, and culinary storytelling awaits.`;
 
         const posterHtml = poster_url
-          ? `<div style="margin-bottom: 24px;"><img src="${poster_url}" alt="${occ.title}" style="width: 100%; max-width: 600px; border-radius: 8px; display: block;" /></div>`
+          ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 24px;">
+               <tr>
+                 <td align="center">
+                   <img src="${poster_url}" alt="${occ.title}" style="width: 100%; max-width: 580px; height: auto; border-radius: 8px; display: block; margin: 0 auto; border: 0;" />
+                 </td>
+               </tr>
+             </table>`
           : '';
+
+        const dietaryInfoHtml = occ.dietary_type && occ.dietary_type !== 'non_veg'
+          ? `<div style="background-color: rgba(232,99,33,0.1); border: 1px solid rgba(232,99,33,0.3); padding: 10px 15px; border-radius: 6px; margin-bottom: 20px; text-align: center;">
+               <strong style="color: #e86321; font-family: 'The Seasons', Georgia, serif; text-transform: uppercase; letter-spacing: 1px; font-size: 14px;">
+                 Dietary Course: ${occ.dietary_type === 'veg' ? '🌱 100% Vegetarian Course' : 'Chef\'s Custom Tasting / Both'}
+               </strong>
+             </div>`
+          : `<div style="background-color: rgba(44,43,41,0.05); border: 1px solid rgba(44,43,41,0.15); padding: 10px 15px; border-radius: 6px; margin-bottom: 20px; text-align: center;">
+               <strong style="color: #2c2b29; font-family: 'The Seasons', Georgia, serif; text-transform: uppercase; letter-spacing: 1px; font-size: 14px;">
+                 Dietary Course: 🥩 Non-Vegetarian Curated Course
+               </strong>
+             </div>`;
 
         const interestLink = `${DOMAIN}/dinner`;
 
-        const msgs = dbUsers.map(user => ({
+        const msgs = eligibleUsers.map(user => ({
           to: user.email,
           from: process.env.SENDGRID_FROM_EMAIL || 'hyndavio@vantammayilu.com',
           subject: custom_subject || `Announcing: ${occ.title}`,
@@ -190,31 +243,49 @@ export default async function handler(req, res) {
             openTracking: { enable: false }
           },
           html: `
-            <div style="font-family: 'The Seasons', Georgia, serif; max-width: 600px; margin: 0 auto; background-color: #efe8db; padding: 40px 30px; border-radius: 12px; color: #2c2b29; border: 1px solid rgba(44,43,41,0.15); line-height: 1.7;">
-              <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid rgba(232,99,33,0.3); padding-bottom: 20px;">
-                <h1 style="font-family: 'Apricot', Georgia, cursive; color: #e86321; font-size: 34px; margin: 0; letter-spacing: 1px;">Vantammayilu</h1>
-                <p style="font-family: 'The Seasons', Georgia, serif; font-style: italic; font-size: 16px; margin-top: 6px; color: #555;">The Supper Social</p>
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <meta charset="utf-8">
+              <style>
+                @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+              </style>
+            </head>
+            <body style="margin:0; padding:0; background-color:#efe8db; font-family: 'The Seasons', 'Playfair Display', Georgia, serif;">
+              <div style="max-width: 600px; margin: 0 auto; background-color: #efe8db; padding: 40px 30px; border-radius: 12px; color: #2c2b29; border: 1px solid rgba(44,43,41,0.15); line-height: 1.7;">
+                <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid rgba(232,99,33,0.3); padding-bottom: 20px;">
+                  <h1 style="font-family: 'Apricot', 'Caveat', cursive, Georgia; color: #e86321; font-size: 38px; margin: 0; letter-spacing: 1px; font-weight: normal;">Vantammayilu</h1>
+                  <p style="font-family: 'Hibernate', 'The Seasons', Georgia, serif; font-style: italic; font-size: 16px; margin-top: 6px; color: #555; letter-spacing: 2px; text-transform: uppercase;">The Supper Social</p>
+                </div>
+                ${posterHtml}
+                ${dietaryInfoHtml}
+                <h2 style="font-family: 'Apricot', 'Caveat', cursive, Georgia; color: #e86321; font-size: 30px; margin-bottom: 16px; font-weight: normal;">An Invitation to the Table.</h2>
+                <p style="font-size: 16px; font-family: 'Hibernate', 'The Seasons', Georgia, serif;">Hi ${user.name},</p>
+                <p style="font-size: 16px; margin-bottom: 24px; font-family: 'Hibernate', 'The Seasons', Georgia, serif;">${formattedMessage}</p>
+                <div style="margin: 32px 0; text-align: center;">
+                  <a href="${interestLink}" style="background-color: #e86321; color: white; padding: 14px 28px; text-decoration: none; font-weight: bold; border-radius: 6px; display: inline-block; font-size: 16px; font-family: 'Hibernate', sans-serif; letter-spacing: 1px; text-transform: uppercase;">Express Interest Now</a>
+                </div>
+                <p style="font-size: 14px; color: #666; font-style: italic; text-align: center; font-family: 'Hibernate', 'The Seasons', Georgia, serif;">Only guests who express interest will be curated for the active guest list.</p>
+                <div style="margin-top: 36px; border-top: 1px solid rgba(44,43,41,0.1); text-align: center; padding-top: 20px;">
+                  <p style="font-style: italic; font-size: 16px; margin-bottom: 4px; color: #555; font-family: 'The Seasons', Georgia, serif;">Warmly,</p>
+                  <p style="font-family: 'Apricot', 'Caveat', cursive, Georgia; font-size: 26px; color: #e86321; margin: 0;">Hyndavi & Artee</p>
+                </div>
               </div>
-              ${posterHtml}
-              <h2 style="font-family: 'Apricot', Georgia, cursive; color: #e86321; font-size: 28px; margin-bottom: 16px;">An Invitation to the Table.</h2>
-              <p style="font-size: 16px;">Hi ${user.name},</p>
-              <p style="font-size: 16px; margin-bottom: 24px;">${formattedMessage}</p>
-              <div style="margin: 32px 0; text-align: center;">
-                <a href="${interestLink}" style="background-color: #e86321; color: white; padding: 14px 28px; text-decoration: none; font-weight: bold; border-radius: 6px; display: inline-block; font-size: 16px;">Express Interest Now</a>
-              </div>
-              <p style="font-size: 14px; color: #666; font-style: italic;">Only guests who express interest will be curated for the active guest list.</p>
-              <div style="margin-top: 36px; border-top: 1px solid rgba(44,43,41,0.1); text-align: center; padding-top: 20px;">
-                <p style="font-style: italic; font-size: 16px; margin-bottom: 4px; color: #555;">Warmly,</p>
-                <p style="font-family: 'Apricot', Georgia, cursive; font-size: 22px; color: #e86321; margin: 0;">Hyndavi & Artee</p>
-              </div>
-            </div>
+            </body>
+            </html>
           `
         }));
 
         if (process.env.SENDGRID_API_KEY) {
           try {
-            for (let i = 0; i < msgs.length; i += 100) {
-              await sgMail.send(msgs.slice(i, i + 100));
+            for (let i = 0; i < msgs.length; i += 50) {
+              const batch = msgs.slice(i, i + 50);
+              const sendPromises = batch.map(msg => sgMail.send(msg));
+              const results = await Promise.allSettled(sendPromises);
+              const failures = results.filter(r => r.status === 'rejected');
+              if (failures.length > 0) {
+                console.error(`SendGrid batch had ${failures.length} failure(s):`, failures[0].reason);
+              }
             }
           } catch (emailErr) {
             console.error('SendGrid Blast Error:', emailErr);

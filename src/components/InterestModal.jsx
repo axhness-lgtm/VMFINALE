@@ -70,6 +70,13 @@ export default function InterestModal({ isOpen, onClose, dinner }) {
                 <div className="bm-step-tag uppercase tracking-[0.2em] font-normal mb-1" style={{ fontFamily: 'Hibernate, sans-serif', letterSpacing: '0.2em', lineHeight: '1.8' }}>STEP 01 — EXPRESS INTEREST</div>
                 <h2 className="bm-title uppercase" style={{ fontFamily: 'Hibernate, sans-serif', letterSpacing: '0.12em', lineHeight: '1.4', fontSize: '36px' }}>JOIN THE ACTIVE LIST.</h2>
                 <p className="bm-subtitle uppercase text-sm mt-1" style={{ fontFamily: 'Hibernate, sans-serif', letterSpacing: '0.12em', lineHeight: '1.6' }}>Let us know you're available for {dinner?.title || 'this occurrence'}.</p>
+                {dinner?.event_date && (
+                  <div className="mt-3 p-2.5 bg-[var(--accent-primary)]/10 rounded-lg border border-[var(--accent-primary)]/30 text-center">
+                    <p className="text-xs uppercase font-mono font-bold tracking-wider text-[var(--accent-primary)]">
+                      📅 Date: {new Date(dinner.event_date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })} • ⏰ {new Date(dinner.event_date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                  </div>
+                )}
               </div>
               
               <div className="bm-field-group" style={{ marginBottom: '8px' }}>

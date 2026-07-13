@@ -304,6 +304,13 @@ export default function BookingModal({ isOpen, onClose, dinner, onBookingComplet
               <h2 className="bm-title">Reserve your seat</h2>
 
               <div className="mb-6 p-4 bg-[var(--accent-primary)]/10 rounded-lg border border-[var(--accent-primary)]/20 text-center">
+                {dinner?.event_date && (
+                  <div className="mb-2 pb-2 border-b border-[var(--accent-primary)]/20">
+                    <p className="text-xs uppercase font-mono font-bold tracking-wider text-[var(--accent-primary)]">
+                      📅 Date: {new Date(dinner.event_date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })} • ⏰ {new Date(dinner.event_date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                  </div>
+                )}
                 <p className="font-body text-[var(--accent-primary)] font-bold text-lg mb-1">
                   {interestedCount} people expressed interest for this dinner.
                 </p>

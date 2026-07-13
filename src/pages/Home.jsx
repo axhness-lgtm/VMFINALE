@@ -113,6 +113,8 @@ export default function Home() {
             loop
             muted
             playsInline
+            preload="auto"
+            poster="/assets/hero-reference.jpg"
             className="w-full h-full object-cover"
           >
             <source src="/assets/heroland.mp4" type="video/mp4" />

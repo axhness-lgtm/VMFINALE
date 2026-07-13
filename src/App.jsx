@@ -1,14 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
 import Navigation from './components/Navigation';
+import LoadingScreen from './components/LoadingScreen';
 import Home from './pages/Home';
-import About from './pages/About';
-import Community from './pages/Community';
-import Dinner from './pages/Dinner';
-import Journal from './pages/Journal';
-import Admin from './pages/Admin';
 import Footer from './components/Footer';
+
+const About = lazy(() => import('./pages/About'));
+const Community = lazy(() => import('./pages/Community'));
+const Dinner = lazy(() => import('./pages/Dinner'));
+const Journal = lazy(() => import('./pages/Journal'));
+const Admin = lazy(() => import('./pages/Admin'));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -95,25 +97,28 @@ function GlobalFadeIn() {
 function App() {
   return (
     <ReactLenis root options={{ lerp: 0.05, duration: 1.5, smoothTouch: true }}>
+      <LoadingScreen />
       <Router>
         <ScrollToTop />
         <GlobalFadeIn />
         <div className="relative min-h-screen">
-          <audio id="bg-music" loop preload="auto" crossOrigin="anonymous">
+          <audio id="bg-music" loop preload="none" crossOrigin="anonymous">
             <source src="https://ia800501.us.archive.org/33/items/OudImprovisation/OudImprovisation.mp3" type="audio/mpeg" />
             <source src="https://upload.wikimedia.org/wikipedia/commons/4/44/Taqsim_Oud_Maqam_Rast.ogg" type="audio/ogg" />
           </audio>
           <Navigation />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/community" element={<Community />} />
-            <Route path="/dinner" element={<Dinner />} />
-            <Route path="/journal" element={<Journal />} />
-            <Route path="/hyndavio" element={<Admin />} />
-            <Route path="/founder-admin" element={<Admin />} />
-            <Route path="/admin" element={<Admin />} />
-          </Routes>
+          <Suspense fallback={<div className="min-h-[80vh] w-full bg-[var(--bg-primary)] flex items-center justify-center"><div className="w-8 h-8 border-2 border-[var(--accent-primary)] border-t-transparent rounded-full animate-spin" /></div>}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/community" element={<Community />} />
+              <Route path="/dinner" element={<Dinner />} />
+              <Route path="/journal" element={<Journal />} />
+              <Route path="/hyndavio" element={<Admin />} />
+              <Route path="/founder-admin" element={<Admin />} />
+              <Route path="/admin" element={<Admin />} />
+            </Routes>
+          </Suspense>
           <Footer />
         </div>
       </Router>

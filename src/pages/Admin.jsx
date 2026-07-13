@@ -90,6 +90,7 @@ function AdminDashboardContent() {
   const [newSeats, setNewSeats] = useState(8);
   const [newPrice, setNewPrice] = useState(2999);
   const [newStatus, setNewStatus] = useState('collecting_interests');
+  const [newDietaryType, setNewDietaryType] = useState('non_veg');
 
   // Community Blast state
   const [blastOccId, setBlastOccId] = useState('');
@@ -201,6 +202,8 @@ function AdminDashboardContent() {
   }, [isAuthenticated, selectedOccurrenceId, activeTab, password]);
 
   const toggleUserSelection = (userId) => {
+    const target = (waitlistGuests || []).find(g => g?.users?.id === userId || g?.user_id === userId);
+    if (target && (target.status === 'rejected' || target.users?.segregation_tag === 'rejected' || (target.users?.instagram_handle || '').match(/^\[Tag:\s*rejected\]/i))) return;
     const newSelection = new Set(selectedUsers);
     if (newSelection.has(userId)) newSelection.delete(userId);
     else newSelection.add(userId);
@@ -208,6 +211,8 @@ function AdminDashboardContent() {
   };
 
   const toggleCommunityUserSelection = (userId) => {
+    const target = (communityList || []).find(u => u?.id === userId);
+    if (target && (target.segregation_tag === 'rejected' || (target.instagram_handle || '').match(/^\[Tag:\s*rejected\]/i))) return;
     const newSelection = new Set(selectedCommunityUsers);
     if (newSelection.has(userId)) newSelection.delete(userId);
     else newSelection.add(userId);
@@ -229,6 +234,7 @@ function AdminDashboardContent() {
       alert(data.message);
       setSelectedUsers(new Set());
       fetchInterests(selectedOccurrenceId);
+      fetchCommunityCount();
     } catch (err) {
       alert('Error: ' + err.message);
     } finally {
@@ -238,7 +244,7 @@ function AdminDashboardContent() {
 
   const handleRejectWaitlistUsers = async (userIds) => {
     if (!userIds || userIds.length === 0) return;
-    if (!confirm(`Mark ${userIds.length} guest(s) as Rejected?`)) return;
+    if (!confirm(`Mark ${userIds.length} guest(s) as Rejected globally?`)) return;
     setLoading(true);
     try {
       const res = await fetch('/api/admin/community', {
@@ -251,6 +257,7 @@ function AdminDashboardContent() {
       alert(data.message);
       setSelectedUsers(new Set());
       fetchInterests(selectedOccurrenceId);
+      fetchCommunityCount();
     } catch (err) {
       alert('Error: ' + err.message);
     } finally {
@@ -272,9 +279,116 @@ function AdminDashboardContent() {
       if (!res.ok) throw new Error(data.details || data.error || 'Failed to delete');
       alert(data.message);
       setSelectedCommunityUsers(new Set());
-      fetchCommunityList();
+      fetchCommunityCount();
     } catch (err) {
       alert('Error: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRejectCommunityUsers = async (userIds) => {
+    if (!userIds || userIds.length === 0) return;
+    if (!confirm(`Mark ${userIds.length} member(s) as Rejected globally?`)) return;
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/community', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'reject', password, user_ids: userIds })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.details || data.error || 'Failed to reject');
+      alert(data.message);
+      setSelectedCommunityUsers(new Set());
+      fetchCommunityCount();
+      if (selectedOccurrenceId) fetchInterests(selectedOccurrenceId);
+    } catch (err) {
+      alert('Error: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateOccurrence = async (id, updates) => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/occurrences', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'update', id, ...updates, password })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.details || data.error || 'Failed to update occurrence');
+      alert('✅ Occurrence updated!');
+      fetchOccurrences();
+    } catch (err) {
+      alert('Error updating occurrence: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleExportCSV = (list, filename) => {
+    if (!list || list.length === 0) return alert('No data available to export.');
+    const headers = ['Name', 'Email', 'Phone', 'Segregation Tag', 'Instagram Handle', 'Added Date'];
+    const rows = list.map(u => [
+      `"${(u.name || '').replace(/"/g, '""')}"`,
+      `"${(u.email || '').replace(/"/g, '""')}"`,
+      `"${(u.phone || '').replace(/"/g, '""')}"`,
+      `"${(u.segregation_tag || 'general').replace(/"/g, '""')}"`,
+      `"${(u.instagram_handle || '').replace(/"/g, '""')}"`,
+      `"${(u.created_at || '').replace(/"/g, '""')}"`
+    ]);
+    const csvContent = [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `${filename || 'waitlist_export'}_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleExportAllCommunityCSV = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/community', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'export', password })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.users) throw new Error((data && (data.details || data.error)) || 'Failed to export');
+      
+      const headers = ['User ID', 'Name', 'Email', 'Phone', 'Segregation Tag', 'Instagram Handle', 'Clean Handle', 'Added Date'];
+      const rows = data.users.map(u => {
+        const handle = u.instagram_handle || '';
+        const cleanHandle = handle.replace(/^\[Tag:\s*.*?\]\s*/i, '');
+        return [
+          `"${(u.id || '').replace(/"/g, '""')}"`,
+          `"${(u.name || '').replace(/"/g, '""')}"`,
+          `"${(u.email || '').replace(/"/g, '""')}"`,
+          `"${(u.phone || '').replace(/"/g, '""')}"`,
+          `"${(u.segregation_tag || 'general').replace(/"/g, '""')}"`,
+          `"${handle.replace(/"/g, '""')}"`,
+          `"${cleanHandle.replace(/"/g, '""')}"`,
+          `"${(u.created_at || '').replace(/"/g, '""')}"`
+        ];
+      });
+      const csvContent = [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `community_waitlist_ALL_DETAILS_${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      alert(`✅ Exported ${data.users.length} total community members with all details!`);
+    } catch (err) {
+      alert('Export failed: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -362,6 +476,7 @@ function AdminDashboardContent() {
           total_seats: newSeats,
           price_inr: newPrice * 100,
           status: newStatus,
+          dietary_type: newDietaryType,
           password
         })
       });
@@ -559,7 +674,7 @@ function AdminDashboardContent() {
               🍽️ Create & Manage Occurrences
             </button>
             <button 
-              onClick={() => setActiveTab('community')}
+              onClick={() => { setActiveTab('community'); fetchCommunityCount(); }}
               className={`px-4 py-2 rounded font-bold text-sm transition-all ${activeTab === 'community' ? 'bg-[var(--accent-primary)] text-white shadow' : 'text-[var(--text-main)]/70 hover:bg-[var(--text-main)]/5'}`}
             >
               📢 Community Waitlist ({communityCount || 0})
@@ -703,6 +818,17 @@ function AdminDashboardContent() {
                       onChange={e => setCustomMessage(e.target.value)}
                     />
                   </div>
+
+                  <div className="pt-4 border-t border-[var(--text-main)]/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <span className="text-xs text-[var(--text-main)]/70 font-bold">Images & notes will attach to booking invitations sent to selected guests.</span>
+                    <button 
+                      onClick={openBookings} 
+                      disabled={loading || selectedUsers.size === 0}
+                      className="bg-[var(--accent-primary)] hover:bg-[#c95318] text-white px-6 py-3 rounded font-bold uppercase tracking-wider shadow-md disabled:opacity-50 transition-all text-xs w-full sm:w-auto"
+                    >
+                      {loading ? 'Sending Emails...' : `🚀 Send Magic Links (${selectedUsers.size} Selected Guests)`}
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -806,6 +932,12 @@ function AdminDashboardContent() {
                               onChange={e => setWaitlistSearchQuery(e.target.value)}
                               className="p-2 border rounded text-xs bg-[var(--bg-secondary)] w-full sm:w-64"
                             />
+                            <button
+                              onClick={() => handleExportCSV(waitlistGuests.map(g => ({ ...g.users, segregation_tag: g.status })), 'active_waitlist')}
+                              className="bg-green-600 text-white px-3 py-1.5 rounded text-xs font-bold hover:bg-green-700 shadow-sm"
+                            >
+                              📥 Export CSV ({waitlistGuests.length})
+                            </button>
                             {selectedUsers.size > 0 && (
                               <>
                                 <button
@@ -852,15 +984,20 @@ function AdminDashboardContent() {
                                   })
                                   .map(item => {
                                     const u = (item && item.users) || {};
+                                    const isGloballyRejected = item?.status === 'rejected' || u?.segregation_tag === 'rejected' || (u?.instagram_handle || '').match(/^\[Tag:\s*rejected\]/i);
                                     return (
                                       <tr key={item?.id || Math.random()} className="border-b border-[var(--text-main)]/5 hover:bg-[var(--text-main)]/5 text-sm">
                                         <td className="py-3 px-3">
-                                          <input 
-                                            type="checkbox" 
-                                            checked={selectedUsers.has(u?.id)}
-                                            onChange={() => u?.id && toggleUserSelection(u.id)}
-                                            className="w-4 h-4 accent-[var(--accent-primary)]"
-                                          />
+                                          {isGloballyRejected ? (
+                                            <span className="text-[10px] font-bold text-red-600 bg-red-100 px-1.5 py-0.5 rounded border border-red-200 uppercase">🚫 Rejected</span>
+                                          ) : (
+                                            <input 
+                                              type="checkbox" 
+                                              checked={selectedUsers.has(u?.id)}
+                                              onChange={() => u?.id && toggleUserSelection(u.id)}
+                                              className="w-4 h-4 accent-[var(--accent-primary)]"
+                                            />
+                                          )}
                                         </td>
                                         <td className="py-3 px-3 font-bold">{u?.name || 'Anonymous Guest'}</td>
                                         <td className="py-3 px-3 text-xs font-mono">{u?.email || 'N/A'}<br/>{u?.phone || ''}</td>
@@ -930,6 +1067,14 @@ function AdminDashboardContent() {
                     <option value="closed">Closed</option>
                   </select>
                 </div>
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-[var(--text-main)]/70 mb-1">Dietary Course</label>
+                  <select className="w-full p-3 border rounded text-sm font-bold text-[var(--accent-primary)]" value={newDietaryType} onChange={e => setNewDietaryType(e.target.value)}>
+                    <option value="non_veg">🥩 Non-Vegetarian Curated Course</option>
+                    <option value="veg">🌱 100% Vegetarian / Plant-Forward</option>
+                    <option value="both">🍛 Both / Custom Tasting</option>
+                  </select>
+                </div>
                 <button type="submit" disabled={loading} className="w-full bg-[var(--accent-primary)] text-white p-3 rounded font-bold uppercase tracking-wider hover:bg-[#c95318]">
                   {loading ? 'Creating...' : '+ Create Occurrence'}
                 </button>
@@ -960,11 +1105,37 @@ function AdminDashboardContent() {
                           </div>
                           <p className="text-xs font-mono text-[var(--text-main)]/70 mt-1">{occ?.event_date ? new Date(occ.event_date).toLocaleString() : 'TBD'} • ₹{((occ?.price_inr || 0) / 100).toLocaleString('en-IN')} • {total} total seats</p>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto mt-2 sm:mt-0">
+                          <div className="flex flex-col text-left">
+                            <label className="text-[10px] font-bold uppercase text-[var(--accent-primary)]">Dinner Date & Time (Edit)</label>
+                            <input
+                              type="datetime-local"
+                              defaultValue={occ?.event_date ? new Date(new Date(occ.event_date).getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16) : ''}
+                              onBlur={e => {
+                                if (e.target.value && e.target.value !== occ?.event_date?.slice(0, 16)) {
+                                  handleUpdateOccurrence(occ.id, { event_date: new Date(e.target.value).toISOString() });
+                                }
+                              }}
+                              title="Click or tab out to save updated Date & Time"
+                              className="p-1.5 border rounded text-xs font-mono bg-[var(--bg-secondary)] text-[var(--text-main)] cursor-pointer"
+                            />
+                          </div>
+                          <div className="flex flex-col text-left">
+                            <label className="text-[10px] font-bold uppercase text-[var(--accent-primary)]">Dietary Course</label>
+                            <select
+                              className="border rounded text-xs p-1.5 font-bold text-[var(--accent-primary)] bg-[var(--bg-secondary)]"
+                              value={occ?.dietary_type || 'non_veg'}
+                              onChange={e => occ?.id && handleUpdateOccurrence(occ.id, { dietary_type: e.target.value })}
+                            >
+                              <option value="non_veg">🥩 Non-Vegetarian</option>
+                              <option value="veg">🌱 100% Vegetarian</option>
+                              <option value="both">🍛 Both / Custom</option>
+                            </select>
+                          </div>
                           <select 
                             value={occ?.status || 'closed'} 
                             onChange={e => occ?.id && handleUpdateStatus(occ.id, e.target.value)}
-                            className="p-2 border rounded text-xs font-bold uppercase bg-[var(--bg-secondary)]"
+                            className="p-2 border rounded text-xs font-bold uppercase bg-[var(--bg-secondary)] mt-auto"
                           >
                             <option value="collecting_interests">Collecting Interests</option>
                             <option value="bookings_open">Bookings Open</option>
@@ -1128,13 +1299,34 @@ function AdminDashboardContent() {
                       <option key={tag} value={tag}>{tag}</option>
                     ))}
                   </select>
+                  <button
+                    onClick={() => handleExportAllCommunityCSV()}
+                    className="bg-[var(--accent-primary)] text-white px-3 py-1.5 rounded text-xs font-bold hover:bg-[#c95318] shadow-sm whitespace-nowrap"
+                    title="Directly export all community waitlist members and all details"
+                  >
+                    📥 Export All Details (CSV)
+                  </button>
+                  <button
+                    onClick={() => handleExportCSV(communityList, 'community_waitlist')}
+                    className="bg-green-600 text-white px-3 py-1.5 rounded text-xs font-bold hover:bg-green-700 shadow-sm whitespace-nowrap"
+                  >
+                    📥 Export Filtered View ({(communityList || []).length})
+                  </button>
                   {selectedCommunityUsers.size > 0 && (
-                    <button
-                      onClick={() => handleDeleteCommunityUsers(Array.from(selectedCommunityUsers))}
-                      className="bg-red-600 text-white px-3 py-1.5 rounded text-xs font-bold hover:bg-red-700 shadow-sm"
-                    >
-                      🗑️ Delete ({selectedCommunityUsers.size})
-                    </button>
+                    <>
+                      <button
+                        onClick={() => handleRejectCommunityUsers(Array.from(selectedCommunityUsers))}
+                        className="bg-orange-600 text-white px-3 py-1.5 rounded text-xs font-bold hover:bg-orange-700 shadow-sm"
+                      >
+                        🚫 Reject ({selectedCommunityUsers.size})
+                      </button>
+                      <button
+                        onClick={() => handleDeleteCommunityUsers(Array.from(selectedCommunityUsers))}
+                        className="bg-red-600 text-white px-3 py-1.5 rounded text-xs font-bold hover:bg-red-700 shadow-sm"
+                      >
+                        🗑️ Delete ({selectedCommunityUsers.size})
+                      </button>
+                    </>
                   )}
                 </div>
               </div>
@@ -1176,10 +1368,11 @@ function AdminDashboardContent() {
                           return tag.toLowerCase() === listFilterTag.toLowerCase() || handleTag.toLowerCase() === listFilterTag.toLowerCase();
                         })
                         .map(u => {
-                          const tag = u.segregation_tag || 'general';
                           const handle = u?.instagram_handle || '';
+                          const isRejected = u?.segregation_tag === 'rejected' || handle.match(/^\[Tag:\s*rejected\]/i);
+                          const tag = isRejected ? 'rejected' : (u?.segregation_tag || 'general');
                           const match = handle.match(/^\[Tag:\s*(.*?)\]/i);
-                          const displayTag = match ? match[1] : tag;
+                          const displayTag = isRejected ? 'rejected' : (match ? match[1] : tag);
                           const cleanHandle = handle.replace(/^\[Tag:\s*.*?\]\s*/i, '');
 
                           let tagColor = 'bg-blue-100 text-blue-800 border-blue-200';
@@ -1190,12 +1383,16 @@ function AdminDashboardContent() {
                           return (
                             <tr key={u?.id || Math.random()} className="border-b border-[var(--text-main)]/5 hover:bg-[var(--text-main)]/5">
                               <td className="py-3 px-3">
-                                <input 
-                                  type="checkbox" 
-                                  checked={selectedCommunityUsers.has(u?.id)}
-                                  onChange={() => u?.id && toggleCommunityUserSelection(u.id)}
-                                  className="w-4 h-4 accent-[var(--accent-primary)]"
-                                />
+                                {isRejected ? (
+                                  <span className="text-[10px] font-bold text-red-600 bg-red-100 px-1.5 py-0.5 rounded border border-red-200 uppercase">🚫 Rejected</span>
+                                ) : (
+                                  <input 
+                                    type="checkbox" 
+                                    checked={selectedCommunityUsers.has(u?.id)}
+                                    onChange={() => u?.id && toggleCommunityUserSelection(u.id)}
+                                    className="w-4 h-4 accent-[var(--accent-primary)]"
+                                  />
+                                )}
                               </td>
                               <td className="py-3 px-3 font-bold">{u?.name || 'Anonymous'}</td>
                               <td className="py-3 px-3 font-mono text-xs">{u?.email || 'N/A'}</td>
@@ -1305,32 +1502,39 @@ function AdminDashboardContent() {
                 )}
               </div>
 
-              <div className="bg-[var(--bg-secondary)] p-4 rounded-xl border border-[var(--text-main)]/10">
-                <label className="block text-xs font-bold uppercase tracking-widest text-[var(--text-main)]/70 mb-1 flex items-center justify-between">
-                  <span>🔗 Guest's Private Magic Link</span>
-                  <span className="text-[10px] text-[var(--accent-primary)] font-normal">Trackable Access URL</span>
-                </label>
-                <div className="flex gap-2">
-                  <input 
-                    type="text" 
-                    readOnly 
-                    value={viewModalGuest.magic_link || ''} 
-                    className="w-full p-2 bg-[var(--bg-primary)] border rounded font-mono text-xs text-[var(--text-main)]/80 select-all" 
-                  />
-                  <button 
-                    onClick={() => {
-                      navigator.clipboard.writeText(viewModalGuest.magic_link || '');
-                      alert('✅ Tracking Link copied to clipboard!');
-                    }}
-                    className="bg-[var(--accent-primary)] hover:bg-[#c14a27] text-white px-4 py-2 rounded text-xs font-bold whitespace-nowrap transition-all shadow"
-                  >
-                    📋 Copy Link
-                  </button>
+              {viewModalGuest.status === 'rejected' || viewModalGuest?.users?.segregation_tag === 'rejected' || (viewModalGuest?.users?.instagram_handle || '').match(/^\[Tag:\s*rejected\]/i) ? (
+                <div className="bg-red-100 p-4 rounded-xl border border-red-300 text-red-900 text-center mt-4">
+                  <p className="font-bold text-sm uppercase tracking-wider mb-1">🚫 Rejected Guest</p>
+                  <p className="text-xs">This guest is marked as rejected globally across active and community lists. They cannot be sent invitation links or booking emails.</p>
                 </div>
-                <p className="text-[11px] text-[var(--text-main)]/60 mt-2 italic">
-                  Sharing this exact URL allows this guest to bypass the public waitlist and immediately access the reservation page for this dinner.
-                </p>
-              </div>
+              ) : (
+                <div className="bg-[var(--bg-secondary)] p-4 rounded-xl border border-[var(--text-main)]/10">
+                  <label className="block text-xs font-bold uppercase tracking-widest text-[var(--text-main)]/70 mb-1 flex items-center justify-between">
+                    <span>🔗 Guest's Private Magic Link</span>
+                    <span className="text-[10px] text-[var(--accent-primary)] font-normal">Trackable Access URL</span>
+                  </label>
+                  <div className="flex gap-2">
+                    <input 
+                      type="text" 
+                      readOnly 
+                      value={viewModalGuest.magic_link || ''} 
+                      className="w-full p-2 bg-[var(--bg-primary)] border rounded font-mono text-xs text-[var(--text-main)]/80 select-all" 
+                    />
+                    <button 
+                      onClick={() => {
+                        navigator.clipboard.writeText(viewModalGuest.magic_link || '');
+                        alert('✅ Tracking Link copied to clipboard!');
+                      }}
+                      className="bg-[var(--accent-primary)] hover:bg-[#c14a27] text-white px-4 py-2 rounded text-xs font-bold whitespace-nowrap transition-all shadow"
+                    >
+                      📋 Copy Link
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-[var(--text-main)]/60 mt-2 italic">
+                    Sharing this exact URL allows this guest to bypass the public waitlist and immediately access the reservation page for this dinner.
+                  </p>
+                </div>
+              )}
 
               <div className="mt-6 text-right">
                 <button onClick={() => setViewModalGuest(null)} className="bg-[var(--text-main)] hover:bg-black text-white px-6 py-2 rounded-lg font-bold text-sm">
