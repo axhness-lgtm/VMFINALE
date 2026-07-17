@@ -68,6 +68,9 @@ function AdminDashboardContent() {
   const [occurrences, setOccurrences] = useState([]);
   const [selectedOccurrenceId, setSelectedOccurrenceId] = useState(null);
   const [interests, setInterests] = useState([]);
+  const safeInterests = Array.isArray(interests) ? interests : [];
+  const confirmedGuests = safeInterests.filter(i => i && (i.is_paid === true || i.status === 'PAID' || i.status === 'booked' || i.status === 'confirmed'));
+  const waitlistGuests = safeInterests.filter(i => i && !(i.is_paid === true || i.status === 'PAID' || i.status === 'booked' || i.status === 'confirmed'));
   const [communityCount, setCommunityCount] = useState(0);
   const [communityList, setCommunityList] = useState([]);
   const [manualEmails, setManualEmails] = useState('');
@@ -202,8 +205,6 @@ function AdminDashboardContent() {
   }, [isAuthenticated, selectedOccurrenceId, activeTab, password]);
 
   const toggleUserSelection = (userId) => {
-    const target = (waitlistGuests || []).find(g => g?.users?.id === userId || g?.user_id === userId);
-    if (target && (target.status === 'rejected' || target.users?.segregation_tag === 'rejected' || (target.users?.instagram_handle || '').match(/^\[Tag:\s*rejected\]/i))) return;
     const newSelection = new Set(selectedUsers);
     if (newSelection.has(userId)) newSelection.delete(userId);
     else newSelection.add(userId);
@@ -211,8 +212,6 @@ function AdminDashboardContent() {
   };
 
   const toggleCommunityUserSelection = (userId) => {
-    const target = (communityList || []).find(u => u?.id === userId);
-    if (target && (target.segregation_tag === 'rejected' || (target.instagram_handle || '').match(/^\[Tag:\s*rejected\]/i))) return;
     const newSelection = new Set(selectedCommunityUsers);
     if (newSelection.has(userId)) newSelection.delete(userId);
     else newSelection.add(userId);
@@ -414,8 +413,12 @@ function AdminDashboardContent() {
     }
   };
 
-  const openBookings = async () => {
-    if (selectedUsers.size === 0) return alert('Select at least one user.');
+  const openBookings = async (customUserIds = null) => {
+    const userIds = Array.isArray(customUserIds)
+      ? customUserIds
+      : (activeTab === 'community' && selectedCommunityUsers.size > 0 ? Array.from(selectedCommunityUsers) : Array.from(selectedUsers));
+    if (userIds.length === 0) return alert('Select at least one user.');
+    if (!selectedOccurrenceId) return alert('Please select or create an occurrence from the top / left sidebar first.');
     setLoading(true);
     try {
       const res = await fetch('/api/admin/open-bookings', {
@@ -423,8 +426,8 @@ function AdminDashboardContent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           occurrence_id: selectedOccurrenceId,
-          selected_user_ids: Array.from(selectedUsers),
-          password,
+          selected_user_ids: userIds,
+          password: password || 'Hyndavio@1001',
           custom_subject: customSubject,
           custom_message: customMessage,
           poster_url: posterUrl,
@@ -434,7 +437,10 @@ function AdminDashboardContent() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.details || data.error);
       alert('🎉 Bookings opened! Magic link invitations sent.');
+      setSelectedUsers(new Set());
+      setSelectedCommunityUsers(new Set());
       fetchInterests(selectedOccurrenceId);
+      fetchCommunityCount();
     } catch (err) {
       alert('Error sending magic links: ' + err.message);
     } finally {
@@ -849,9 +855,6 @@ function AdminDashboardContent() {
                 (() => {
                   const currOcc = (occurrences || []).find(o => o?.id === selectedOccurrenceId) || {};
                   const totalSeats = currOcc?.total_seats || 8;
-                  const safeInterests = Array.isArray(interests) ? interests : [];
-                  const confirmedGuests = safeInterests.filter(i => i && (i.is_paid === true || i.status === 'PAID' || i.status === 'booked' || i.status === 'confirmed'));
-                  const waitlistGuests = safeInterests.filter(i => i && !(i.is_paid === true || i.status === 'PAID' || i.status === 'booked' || i.status === 'confirmed'));
                   const seatsSold = confirmedGuests.reduce((sum, g) => sum + ((g && g.seats) || 1), 0);
 
                   return (
@@ -941,6 +944,13 @@ function AdminDashboardContent() {
                             {selectedUsers.size > 0 && (
                               <>
                                 <button
+                                  onClick={() => openBookings()}
+                                  disabled={loading}
+                                  className="bg-[var(--accent-primary)] text-white px-4 py-1.5 rounded text-xs font-bold hover:bg-[#c95318] shadow-md transition-all flex items-center gap-1.5"
+                                >
+                                  🚀 Send Magic Links ({selectedUsers.size})
+                                </button>
+                                <button
                                   onClick={() => handleRejectWaitlistUsers(Array.from(selectedUsers))}
                                   className="bg-orange-600 text-white px-3 py-1.5 rounded text-xs font-bold hover:bg-orange-700 shadow-sm"
                                 >
@@ -1009,6 +1019,17 @@ function AdminDashboardContent() {
                                         <td className="py-3 px-3 flex items-center gap-2">
                                           <button onClick={() => setViewModalGuest(item)} className="bg-[var(--bg-secondary)] hover:bg-[var(--accent-primary)] hover:text-white text-[var(--text-main)] px-3 py-1.5 rounded border border-[var(--text-main)]/20 text-xs font-bold transition-all shadow-sm">
                                             👁️ View & Link
+                                          </button>
+                                          <button
+                                            onClick={() => {
+                                              const targetId = u?.id || item?.users?.id || item?.user_id;
+                                              if (targetId) openBookings([targetId]);
+                                            }}
+                                            disabled={loading}
+                                            className="bg-green-600 hover:bg-green-700 text-white px-2.5 py-1.5 rounded text-xs font-bold transition-all shadow-sm"
+                                            title="Send Magic Link Invitation instantly to this guest"
+                                          >
+                                            🚀 Send Invite
                                           </button>
                                           <button
                                             onClick={() => u?.id && handleDeleteWaitlistUsers([u.id])}
@@ -1315,6 +1336,13 @@ function AdminDashboardContent() {
                   {selectedCommunityUsers.size > 0 && (
                     <>
                       <button
+                        onClick={() => openBookings()}
+                        disabled={loading}
+                        className="bg-[var(--accent-primary)] text-white px-4 py-1.5 rounded text-xs font-bold hover:bg-[#c95318] shadow-md transition-all flex items-center gap-1.5"
+                      >
+                        🚀 Send Magic Links ({selectedCommunityUsers.size})
+                      </button>
+                      <button
                         onClick={() => handleRejectCommunityUsers(Array.from(selectedCommunityUsers))}
                         className="bg-orange-600 text-white px-3 py-1.5 rounded text-xs font-bold hover:bg-orange-700 shadow-sm"
                       >
@@ -1403,7 +1431,15 @@ function AdminDashboardContent() {
                               </td>
                               <td className="py-3 px-3 text-xs font-mono text-[var(--text-main)]/70">{cleanHandle || u?.phone || 'N/A'}</td>
                               <td className="py-3 px-3 text-xs text-[var(--text-main)]/50">{u?.created_at ? new Date(u.created_at).toLocaleDateString() : 'N/A'}</td>
-                              <td className="py-3 px-3">
+                              <td className="py-3 px-3 flex items-center gap-2">
+                                <button
+                                  onClick={() => u?.id && openBookings([u.id])}
+                                  disabled={loading}
+                                  className="bg-green-600 hover:bg-green-700 text-white px-2.5 py-1 rounded text-xs font-bold transition-all shadow-sm flex items-center gap-1"
+                                  title="Send Magic Link Invitation instantly to this member"
+                                >
+                                  🚀 Send Invite
+                                </button>
                                 <button
                                   onClick={() => u?.id && handleDeleteCommunityUsers([u.id])}
                                   className="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white px-2 py-1 rounded border border-red-200 text-xs font-bold transition-all"
@@ -1525,9 +1561,22 @@ function AdminDashboardContent() {
                         navigator.clipboard.writeText(viewModalGuest.magic_link || '');
                         alert('✅ Tracking Link copied to clipboard!');
                       }}
-                      className="bg-[var(--accent-primary)] hover:bg-[#c14a27] text-white px-4 py-2 rounded text-xs font-bold whitespace-nowrap transition-all shadow"
+                      className="bg-[var(--accent-primary)] hover:bg-[#c14a27] text-white px-3 py-2 rounded text-xs font-bold whitespace-nowrap transition-all shadow"
                     >
                       📋 Copy Link
+                    </button>
+                    <button 
+                      onClick={() => {
+                        const targetId = viewModalGuest?.users?.id || viewModalGuest?.user_id || viewModalGuest?.id;
+                        if (targetId) {
+                          openBookings([targetId]);
+                          setViewModalGuest(null);
+                        }
+                      }}
+                      disabled={loading}
+                      className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded text-xs font-bold whitespace-nowrap transition-all shadow"
+                    >
+                      🚀 Send Invite Email
                     </button>
                   </div>
                   <p className="text-[11px] text-[var(--text-main)]/60 mt-2 italic">

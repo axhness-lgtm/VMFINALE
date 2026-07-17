@@ -70,13 +70,31 @@ export default function InterestModal({ isOpen, onClose, dinner }) {
                 <div className="bm-step-tag uppercase tracking-[0.2em] font-normal mb-1" style={{ fontFamily: 'Hibernate, sans-serif', letterSpacing: '0.2em', lineHeight: '1.8' }}>STEP 01 — EXPRESS INTEREST</div>
                 <h2 className="bm-title uppercase" style={{ fontFamily: 'Hibernate, sans-serif', letterSpacing: '0.12em', lineHeight: '1.4', fontSize: '36px' }}>JOIN THE ACTIVE LIST.</h2>
                 <p className="bm-subtitle uppercase text-sm mt-1" style={{ fontFamily: 'Hibernate, sans-serif', letterSpacing: '0.12em', lineHeight: '1.6' }}>Let us know you're available for {dinner?.title || 'this occurrence'}.</p>
-                {dinner?.event_date && (
-                  <div className="mt-3 p-2.5 bg-[var(--accent-primary)]/10 rounded-lg border border-[var(--accent-primary)]/30 text-center">
-                    <p className="text-xs uppercase font-mono font-bold tracking-wider text-[var(--accent-primary)]">
-                      📅 Date: {new Date(dinner.event_date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })} • ⏰ {new Date(dinner.event_date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                    </p>
+                <div className="mt-3.5 p-3 bg-[var(--accent-primary)]/5 rounded-lg border border-[var(--accent-primary)]/20 flex flex-col gap-2.5">
+                  {dinner?.event_date && (
+                    <div className="uppercase tracking-[0.14em] text-[var(--accent-primary)] flex items-center justify-center gap-2 font-bold" style={{ fontFamily: 'Hibernate, sans-serif', fontSize: '18px', lineHeight: '1.4', fontWeight: 800, textShadow: '0.5px 0.5px 0px var(--accent-primary)' }}>
+                      <span className="font-extrabold text-xl">DATE:</span>
+                      <span className="font-bold">{new Date(dinner.event_date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })} • {new Date(dinner.event_date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-center pt-1">
+                    {dinner?.dietary_type === 'veg' ? (
+                      <div className="inline-flex items-center gap-2.5 bg-green-50 border-2 border-green-700 px-4 py-1.5 rounded-md text-green-900 text-[15px] font-bold uppercase tracking-wider shadow-md" style={{ fontFamily: 'Hibernate, sans-serif', letterSpacing: '0.12em', lineHeight: '1.4', fontWeight: 800, textShadow: '0.4px 0.4px 0px currentColor' }}>
+                        <span className="inline-flex items-center justify-center w-4 h-4 border-2 border-green-700 rounded-sm p-[2px] shrink-0" title="100% Vegetarian">
+                          <span className="w-2 h-2 rounded-full bg-green-700 block"></span>
+                        </span>
+                        <span>100% Vegetarian Occurrence</span>
+                      </div>
+                    ) : (
+                      <div className="inline-flex items-center gap-2.5 bg-red-50 border-2 border-red-700 px-4 py-1.5 rounded-md text-red-900 text-[15px] font-bold uppercase tracking-wider shadow-md" style={{ fontFamily: 'Hibernate, sans-serif', letterSpacing: '0.12em', lineHeight: '1.4', fontWeight: 800, textShadow: '0.4px 0.4px 0px currentColor' }}>
+                        <span className="inline-flex items-center justify-center w-4 h-4 border-2 border-red-700 rounded-sm p-[2px] shrink-0" title="Non-Vegetarian">
+                          <span className="w-2 h-2 rounded-full bg-red-700 block"></span>
+                        </span>
+                        <span>Non-Vegetarian Occurrence</span>
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
               
               <div className="bm-field-group" style={{ marginBottom: '8px' }}>

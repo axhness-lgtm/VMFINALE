@@ -4,15 +4,14 @@ import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import ScrollHighlight from '../components/ScrollHighlight';
 import EdgeDivider from '../components/EdgeDivider';
+import NotJustDinnerScroll from '../components/NotJustDinnerScroll';
 
 function useColumns() {
-  const [cols, setCols] = useState(5);
+  const [cols, setCols] = useState(4);
   useEffect(() => {
     const update = () => {
       const w = window.innerWidth;
-      if (w < 640) setCols(1);
-      else if (w < 1024) setCols(2);
-      else if (w < 1280) setCols(3);
+      if (w < 640) setCols(2);
       else setCols(4);
     };
     update();
@@ -23,42 +22,31 @@ function useColumns() {
 }
 
 const gridPhotos = [
-  "/grid/PUS01765.jpg",
-  "/grid/PUS01922 (1).jpg",
-  "/grid/PUS02024 (1).jpg",
-  "/grid/PUS02027.jpg",
-  "/grid/PUS02031.jpg",
-  "/grid/_DSC0296.jpg",
-  "/grid/_DSC0343 (1).jpg"
+  "/grid%20images/Screenshot%202026-07-16%20215509.png",
+  "/grid%20images/Screenshot%202026-07-16%20215531.png",
+  "/grid%20images/Screenshot%202026-07-16%20215809.png",
+  "/grid%20images/Screenshot%202026-07-16%20215822.png",
+  "/grid%20images/Screenshot%202026-07-16%20220019.png",
+  "/grid%20images/Screenshot%202026-07-16%20220101.png",
+  "/grid%20images/Screenshot%202026-07-16%20220202.png",
+  "/grid/PUS01765.jpg"
 ];
 
-const flowGridItems = Array.from({ length: 12 }).map((_, i) => {
-  const pseudoRandom = Math.abs(Math.sin(i * 12.9898 + 78.233)) * 43758.5453;
-  const uniqueAspectRatio = 0.7 + (pseudoRandom % 0.8);
-  
-  return {
-    id: i + 1,
-    imgSrc: gridPhotos[i % gridPhotos.length],
-    aspectRatio: uniqueAspectRatio,
-    altText: `Vantammayilu Gathering ${i + 1}`
-  };
-});
+const flowGridItems = Array.from({ length: 8 }).map((_, i) => ({
+  id: i + 1,
+  imgSrc: gridPhotos[i % gridPhotos.length],
+  altText: `Vantammayilu Gathering ${i + 1}`
+}));
 
-const HoverVideoCard = ({ imgSrc, aspectRatio, altText, isLast }) => {
+const HoverVideoCard = ({ imgSrc, altText }) => {
   return (
-    <div 
-      style={{ 
-        aspectRatio: isLast ? undefined : aspectRatio,
-        minHeight: isLast ? '220px' : undefined
-      }}
-      className={`relative w-full rounded-xl overflow-hidden shadow-lg hover-lift hover:shadow-2xl group cursor-pointer inline-block bg-[#efe8db] will-change-transform ${isLast ? 'flex-grow mb-0' : 'mb-0'}`}
-    >
+    <div className="relative w-full h-[260px] sm:h-[300px] md:h-[340px] rounded-xl overflow-hidden shadow-md hover-lift hover:shadow-xl group cursor-pointer bg-[#efe8db] transition-all duration-300 hover:-translate-y-1 mb-0 flex items-center justify-center">
       <img 
         src={imgSrc} 
         alt={altText} 
         loading="lazy"
         decoding="async"
-        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 will-change-transform" 
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[160%] h-[160%] object-cover transform -rotate-90 scale-[0.65] transition-transform duration-700 group-hover:scale-[0.7] will-change-transform" 
       />
       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500 pointer-events-none" />
     </div>
@@ -104,27 +92,36 @@ export default function Home() {
 
   useEffect(() => {
     const triggerVideoPlay = () => {
-      if (videoRef.current) {
-        videoRef.current.play().catch(() => {});
+      const vid = videoRef.current;
+      if (vid && (vid.paused || vid.readyState === 0)) {
+        vid.defaultMuted = true;
+        vid.muted = true;
+        vid.playsInline = true;
+        const playPromise = vid.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {});
+        }
       }
     };
 
     // Attempt instant play immediately on mount
     triggerVideoPlay();
 
-    // Trigger instant play right as the 2-second loading screen overlay finishes
+    // Persistent interaction events across window & document to ensure mobile playback without manual clicking
+    const events = ['touchstart', 'touchend', 'pointerdown', 'click', 'scroll', 'keydown', 'visibilitychange'];
+    events.forEach((event) => {
+      window.addEventListener(event, triggerVideoPlay, { passive: true });
+      document.addEventListener(event, triggerVideoPlay, { passive: true });
+    });
+
     window.addEventListener('loadingScreenFinished', triggerVideoPlay);
 
-    // Trigger instant play on any user interaction on mobile devices (iOS Safari / Android Chrome)
-    window.addEventListener('touchstart', triggerVideoPlay, { once: true });
-    window.addEventListener('scroll', triggerVideoPlay, { once: true });
-    window.addEventListener('click', triggerVideoPlay, { once: true });
-
     return () => {
+      events.forEach((event) => {
+        window.removeEventListener(event, triggerVideoPlay);
+        document.removeEventListener(event, triggerVideoPlay);
+      });
       window.removeEventListener('loadingScreenFinished', triggerVideoPlay);
-      window.removeEventListener('touchstart', triggerVideoPlay);
-      window.removeEventListener('scroll', triggerVideoPlay);
-      window.removeEventListener('click', triggerVideoPlay);
     };
   }, []);
 
@@ -136,17 +133,44 @@ export default function Home() {
         {/* Cinematic Video Background */}
         <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
           <video
-            ref={videoRef}
+            ref={(el) => {
+              videoRef.current = el;
+              if (el) {
+                el.defaultMuted = true;
+                el.muted = true;
+                el.playsInline = true;
+                el.setAttribute('playsinline', 'true');
+                el.setAttribute('webkit-playsinline', 'true');
+                el.setAttribute('x5-playsinline', 'true');
+                el.setAttribute('muted', 'true');
+                el.play().catch(() => {});
+              }
+            }}
             autoPlay
             loop
             muted
             playsInline
+            controls={false}
+            disablePictureInPicture
+            controlsList="nodownload noplaybackrate noremoteplayback"
             webkit-playsinline="true"
             x5-playsinline="true"
             x5-video-player-type="h5"
             preload="auto"
             poster="/assets/hero-reference.jpg"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover pointer-events-none"
+            onLoadedMetadata={(e) => {
+              e.target.defaultMuted = true;
+              e.target.muted = true;
+              e.target.playsInline = true;
+              e.target.play().catch(() => {});
+            }}
+            onCanPlay={(e) => {
+              e.target.defaultMuted = true;
+              e.target.muted = true;
+              e.target.playsInline = true;
+              e.target.play().catch(() => {});
+            }}
           >
             <source src="/assets/heroland.mp4" type="video/mp4" />
           </video>
@@ -192,14 +216,8 @@ export default function Home() {
 
       <EdgeDivider src="/edge.png" />
 
-      {/* 2. NOT JUST DINNER */}
-      <section className="bg-[var(--bg-primary)] relative py-20 md:py-28 flex flex-col justify-center items-center overflow-hidden">
-        <div className="relative z-10 flex flex-col items-center justify-center px-6">
-          <h2 className="text-5xl md:text-7xl lg:text-8xl font-logo text-[var(--accent-primary)] drop-shadow-md text-center">
-            Not just a dinner.
-          </h2>
-        </div>
-      </section>
+      {/* 2. NOT JUST DINNER SCROLL SEQUENCE */}
+      <NotJustDinnerScroll />
 
       <EdgeDivider src="/edge5.png" />
 
@@ -212,10 +230,10 @@ export default function Home() {
           </h2>
         </div>
 
-        <div className="container mx-auto max-w-5xl relative z-10">
-          <div className="flex w-full gap-2 md:gap-3 items-stretch">
+        <div className="container mx-auto max-w-3xl relative z-10">
+          <div className="flex w-full gap-2.5 md:gap-3.5 items-stretch">
             {columns.map((col, colIdx) => (
-              <div key={colIdx} className="flex flex-col gap-2 md:gap-3 flex-1">
+              <div key={colIdx} className="flex flex-col gap-2.5 md:gap-3.5 flex-1">
                 {col.map((item, itemIdx) => (
                   <HoverVideoCard key={item.id} {...item} isLast={itemIdx === col.length - 1} />
                 ))}
@@ -412,7 +430,7 @@ export default function Home() {
           >
             <Link
               to="/dinner"
-              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-[var(--accent-primary)] hover:text-[var(--bg-primary)] hover:border-[var(--bg-primary)] px-12 py-5 text-xl font-bold tracking-[0.15em] rounded-md shadow-2xl transition-all duration-300 hover:scale-105 uppercase"
+              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-[var(--accent-primary)] hover:text-[var(--bg-primary)] hover:border-[var(--bg-primary)] px-8 py-3.5 text-sm md:text-base font-bold tracking-[0.15em] rounded-md shadow-xl transition-all duration-300 hover:scale-105 uppercase"
             >
               Join the next evening
             </Link>

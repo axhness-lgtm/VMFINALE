@@ -45,13 +45,22 @@ export default function Navigation() {
         audio.pause();
         setIsPlaying(false);
       } else {
+        if (audio.readyState === 0) {
+          audio.load();
+        }
         audio.volume = 0.5;
         audio.play().then(() => {
           setIsPlaying(true);
         }).catch(err => {
           console.error("Audio play error:", err);
-          alert("Could not start audio. Please click anywhere on the page first or verify your browser audio permissions.");
-          setIsPlaying(false);
+          setTimeout(() => {
+            audio.play().then(() => {
+              setIsPlaying(true);
+            }).catch(() => {
+              alert("Could not start audio. Please click anywhere on the page first or verify your browser audio permissions.");
+              setIsPlaying(false);
+            });
+          }, 350);
         });
       }
     }

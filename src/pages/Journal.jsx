@@ -502,7 +502,7 @@ export default function Journal() {
           >
             <Link
               to="/dinner"
-              className="inline-block bg-[#fcf8f2] text-[#d45d3a] border-2 border-[#fcf8f2] font-sans text-sm md:text-base font-bold tracking-wider uppercase px-10 py-4 rounded-full shadow-lg hover:bg-[#d45d3a] hover:text-[#fcf8f2] transition-colors duration-300"
+              className="inline-block bg-[#fcf8f2] text-[#d45d3a] border-2 border-[#fcf8f2] font-sans text-sm md:text-base font-bold tracking-wider uppercase px-8 py-3.5 rounded-full shadow-md hover:bg-[#d45d3a] hover:text-[#fcf8f2] transition-colors duration-300"
             >
               See the next dinner
             </Link>

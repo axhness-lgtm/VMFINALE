@@ -364,7 +364,7 @@ export default function About() {
           >
             <Link
               to="/dinner"
-              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] px-12 py-5 text-xl font-bold tracking-[0.1em] rounded-md shadow-2xl transition-all duration-300 hover:scale-105 uppercase"
+              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] px-8 py-3.5 text-sm md:text-base font-bold tracking-[0.15em] rounded-md shadow-xl transition-all duration-300 hover:scale-105 uppercase"
             >
               See upcoming dinners
             </Link>

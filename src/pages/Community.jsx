@@ -85,22 +85,25 @@ export default function Community() {
       <EdgeDivider src="/edge4.png" />
 
       {/* 3. SNIPPET ECHOES SECTION */}
-      <section className="py-16 md:py-24 relative overflow-hidden bg-[var(--bg-primary)] flex flex-col items-center justify-center px-4">
-        <div className="relative w-full max-w-[850px] mx-auto flex flex-col items-center justify-center">
+      {/* 3. SNIPPET ECHOES SECTION */}
+      <section className="py-20 md:py-28 relative overflow-hidden bg-[var(--bg-primary)] flex flex-col items-center justify-center px-4">
+        <div className="relative w-full max-w-[900px] mx-auto flex flex-col items-center justify-center gap-1 sm:gap-2">
           
-          {/* Text in Seasons font overlapping upper center of the image like a headline */}
-          <div className="absolute top-[6%] md:top-[8%] left-1/2 -translate-x-1/2 w-[90%] max-w-3xl text-center z-20 pointer-events-none">
-            <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-[2.6rem] text-[var(--accent-primary)] font-bold leading-tight drop-shadow-[0_2px_4px_rgba(243,219,189,0.9)]">
-              "It's the thread that binds hearts together, that's what we stitch at Vantammayilu"
+          {/* Text positioned cleanly above image */}
+          <div className="w-[95%] max-w-3xl text-center z-20 pointer-events-none mb-1">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.6rem] text-[var(--accent-primary)] font-normal leading-tight drop-shadow-[0_2px_4px_rgba(243,219,189,0.9)]" style={{ fontFamily: 'Hibernate, sans-serif' }}>
+              It's the thread that binds hearts together, that's what we stitch at Vantammayilu
             </h2>
           </div>
           
-          {/* se.png image - width just enough to fit its border */}
-          <img 
-            src="/se.png" 
-            alt="Snippet Echoes" 
-            className="w-full h-auto object-contain shadow-2xl rounded-2xl border border-[var(--text-main)]/15" 
-          />
+          {/* se.png image brought slightly closer (more up) to the text */}
+          <div className="w-full -mt-2 sm:-mt-4 flex items-center justify-center">
+            <img 
+              src="/se.png" 
+              alt="Snippet Echoes" 
+              className="w-full h-auto object-contain mix-blend-multiply opacity-95 pointer-events-none" 
+            />
+          </div>
         </div>
       </section>
 
@@ -135,7 +138,7 @@ export default function Community() {
           >
             <Link
               to="/dinner"
-              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] px-12 py-5 text-xl font-bold tracking-[0.1em] rounded-md shadow-2xl transition-all duration-300 hover:scale-105 uppercase"
+              className="inline-block bg-[var(--bg-primary)] text-[var(--accent-primary)] border-2 border-[var(--bg-primary)] hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] px-8 py-3.5 text-sm md:text-base font-bold tracking-[0.15em] rounded-md shadow-xl transition-all duration-300 hover:scale-105 uppercase"
             >
               Find your seat
             </Link>

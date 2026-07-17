@@ -13,6 +13,7 @@ const CURRENT_DINNER = {
   price_inr: 260000, // ₹2,600
   event_date: '2026-07-25',
   status: 'collecting_interests',
+  dietary_type: 'non_veg',
 };
 
 const menuItems = [
@@ -49,7 +50,7 @@ const faqs = [
 
 
 
-const ReserveSection = ({ onReserveClick, onInterestClick, canReserve, isSoldOut, isTokenExpired }) => {
+const ReserveSection = ({ onReserveClick, onInterestClick, canReserve, isSoldOut, isTokenExpired, dinner }) => {
   return (
     <section className="relative w-full bg-[var(--bg-primary)] flex flex-col items-center pt-24 pb-0 overflow-hidden no-reveal">
       <div className="relative z-30 flex flex-col items-center w-full mx-auto">
@@ -60,6 +61,25 @@ const ReserveSection = ({ onReserveClick, onInterestClick, canReserve, isSoldOut
           <p className="font-body italic text-lg md:text-xl text-[var(--text-main)] mb-4">
             Good food. Warm company.<br />Stories that stay with you.
           </p>
+          {dinner && (
+            <div className="mb-4">
+              {dinner?.dietary_type === 'veg' ? (
+                <div className="inline-flex items-center gap-2.5 bg-green-50 border-2 border-green-700 px-4 py-1.5 rounded-md text-green-900 text-[15px] font-bold uppercase tracking-wider shadow-md" style={{ fontFamily: 'Hibernate, sans-serif', letterSpacing: '0.12em', lineHeight: '1.4', fontWeight: 800, textShadow: '0.4px 0.4px 0px currentColor' }}>
+                  <span className="inline-flex items-center justify-center w-4 h-4 border-2 border-green-700 rounded-sm p-[2px] shrink-0" title="100% Vegetarian">
+                    <span className="w-2 h-2 rounded-full bg-green-700 block"></span>
+                  </span>
+                  <span>100% Vegetarian Occurrence</span>
+                </div>
+              ) : (
+                <div className="inline-flex items-center gap-2.5 bg-red-50 border-2 border-red-700 px-4 py-1.5 rounded-md text-red-900 text-[15px] font-bold uppercase tracking-wider shadow-md" style={{ fontFamily: 'Hibernate, sans-serif', letterSpacing: '0.12em', lineHeight: '1.4', fontWeight: 800, textShadow: '0.4px 0.4px 0px currentColor' }}>
+                  <span className="inline-flex items-center justify-center w-4 h-4 border-2 border-red-700 rounded-sm p-[2px] shrink-0" title="Non-Vegetarian">
+                    <span className="w-2 h-2 rounded-full bg-red-700 block"></span>
+                  </span>
+                  <span>Non-Vegetarian Occurrence</span>
+                </div>
+              )}
+            </div>
+          )}
           <div className="flex flex-col items-center gap-3 relative z-40">
             {isSoldOut ? (
               <>
@@ -68,7 +88,7 @@ const ReserveSection = ({ onReserveClick, onInterestClick, canReserve, isSoldOut
                 </div>
                 <button
                   onClick={onInterestClick}
-                  className="bg-[var(--accent-primary)] text-white border-2 border-[var(--accent-primary)] font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-md shadow-lg hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] active:bg-[var(--text-main)] active:text-white hover:scale-105 transition-all duration-300 cursor-pointer"
+                  className="bg-[var(--accent-primary)] text-white border-2 border-[var(--accent-primary)] font-heading text-sm md:text-base tracking-wider px-8 py-3.5 rounded-md shadow-md hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] active:bg-[var(--text-main)] active:text-white hover:scale-105 transition-all duration-300 cursor-pointer"
                 >
                   Join Waitlist (I'm Interested)
                 </button>
@@ -83,7 +103,7 @@ const ReserveSection = ({ onReserveClick, onInterestClick, canReserve, isSoldOut
                 </p>
                 <button
                   onClick={onInterestClick}
-                  className="bg-[var(--accent-primary)] text-white border-2 border-[var(--accent-primary)] font-heading text-base md:text-lg tracking-wider px-6 py-2.5 rounded-md shadow hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] active:bg-[var(--text-main)] active:text-white transition-all cursor-pointer"
+                  className="bg-[var(--accent-primary)] text-white border-2 border-[var(--accent-primary)] font-heading text-sm md:text-base tracking-wider px-6 py-2.5 rounded-md shadow hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] active:bg-[var(--text-main)] active:text-white transition-all cursor-pointer"
                 >
                   Register Again (I'm Interested)
                 </button>
@@ -91,14 +111,14 @@ const ReserveSection = ({ onReserveClick, onInterestClick, canReserve, isSoldOut
             ) : canReserve ? (
               <button
                 onClick={onReserveClick}
-                className="bg-[var(--accent-primary)] text-white border-2 border-[var(--accent-primary)] font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-md shadow-lg hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] active:bg-[var(--text-main)] active:text-white hover:scale-105 transition-all duration-300 cursor-pointer"
+                className="bg-[var(--accent-primary)] text-white border-2 border-[var(--accent-primary)] font-heading text-sm md:text-base tracking-wider px-8 py-3.5 rounded-md shadow-md hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] active:bg-[var(--text-main)] active:text-white hover:scale-105 transition-all duration-300 cursor-pointer"
               >
                 Reserve Your Seat
               </button>
             ) : (
               <button
                 onClick={onInterestClick}
-                className="bg-[var(--accent-primary)] text-white border-2 border-[var(--accent-primary)] font-heading text-lg md:text-xl tracking-wider px-8 py-3 md:px-10 md:py-4 rounded-md shadow-lg hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] active:bg-[var(--text-main)] active:text-white hover:scale-105 transition-all duration-300 cursor-pointer"
+                className="bg-[var(--accent-primary)] text-white border-2 border-[var(--accent-primary)] font-heading text-sm md:text-base tracking-wider px-8 py-3.5 rounded-md shadow-md hover:bg-[var(--text-main)] hover:text-white hover:border-[var(--text-main)] active:bg-[var(--text-main)] active:text-white hover:scale-105 transition-all duration-300 cursor-pointer"
               >
                 I'm Interested
               </button>
@@ -701,6 +721,7 @@ export default function Dinner() {
         canReserve={canReserve}
         isSoldOut={isSoldOut}
         isTokenExpired={isTokenExpired}
+        dinner={activeDinner}
       />
 
       <EdgeDivider src="/edge4.png" />

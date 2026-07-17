@@ -33,42 +33,51 @@ export default async function handler(req, res) {
     // NOTE: We do NOT change occurrence status here — magic links are individual.
     // The occurrence status is managed separately via the admin occurrences tab.
 
-    // Check for rejected users across all interests or tags
-    const { data: rejectedInterests } = await supabase
-      .from('occurrence_interests')
-      .select('user_id')
-    const { data: globalRejectedInterests } = await supabase
-      .from('occurrence_interests')
-      .select('user_id')
-      .in('user_id', selected_user_ids)
-      .eq('status', 'rejected');
-    const rejectedSet = new Set((globalRejectedInterests || []).map(i => i.user_id));
-
     const { data: allSelectedUsers, error: usersError } = await supabase
       .from('users')
       .select('id, name, email, phone, instagram_handle')
       .in('id', selected_user_ids);
     if (usersError) throw usersError;
 
-    const users = (allSelectedUsers || []).filter(u => {
-      if (rejectedSet.has(u.id)) return false;
-      if ((u.instagram_handle || '').match(/^\[Tag:\s*rejected\]/i)) return false;
-      return true;
-    });
-
+    const users = allSelectedUsers || [];
     if (users.length === 0) {
-      return res.status(400).json({ error: 'No eligible users selected (all selected users are marked as rejected globally and cannot be sent invitations).' });
+      return res.status(400).json({ error: 'No user records found for the selected IDs.' });
     }
 
     const eligibleUserIds = users.map(u => u.id);
 
-    // 1. Update selected users' interest status to 'selected_by_founder'
-    await supabase
-      .from('occurrence_interests')
-      .update({ status: 'selected_by_founder' })
-      .eq('occurrence_id', occurrence_id)
-      .in('user_id', eligibleUserIds)
-      .neq('status', 'rejected');
+    // 1. Update or insert selected users' interest status to 'selected_by_founder', overriding previous rejection if explicitly chosen by admin
+    for (const userId of eligibleUserIds) {
+      // If user had [Tag: rejected] in instagram_handle, clean it up since founder explicitly invited them
+      const userObj = users.find(u => u.id === userId);
+      if (userObj && (userObj.instagram_handle || '').match(/^\[Tag:\s*rejected\]/i)) {
+        const cleanHandle = userObj.instagram_handle.replace(/^\[Tag:\s*rejected\]\s*/i, '').trim();
+        await supabase.from('users').update({ instagram_handle: cleanHandle }).eq('id', userId);
+        userObj.instagram_handle = cleanHandle;
+      }
+
+      const { data: existing } = await supabase
+        .from('occurrence_interests')
+        .select('id, status')
+        .eq('occurrence_id', occurrence_id)
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (existing) {
+        await supabase
+          .from('occurrence_interests')
+          .update({ status: 'selected_by_founder' })
+          .eq('id', existing.id);
+      } else {
+        await supabase
+          .from('occurrence_interests')
+          .insert({
+            occurrence_id,
+            user_id: userId,
+            status: 'selected_by_founder'
+          });
+      }
+    }
 
     // 4. Fetch occurrence details
     let occurrence = { title: 'Curated Dinner', event_date: new Date().toISOString(), dietary_type: 'non_veg' };

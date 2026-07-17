@@ -278,12 +278,32 @@ p {
   z-index: 30;
 }
 
-/* Paper Texture */
+/* Paper Texture using texture.png */
 .paper-texture {
-  background-image: 
-    linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px);
-  background-size: 20px 20px;
+  background-image: url('/texture.png');
+  background-repeat: repeat;
+  background-size: 360px;
+}
+
+/* Automatically apply texture.png to any layout container/section with cream background */
+section[class*="bg-[var(--bg-primary)]"],
+div[class*="bg-[var(--bg-primary)]"],
+header[class*="bg-[var(--bg-primary)]"],
+footer[class*="bg-[var(--bg-primary)]"],
+main[class*="bg-[var(--bg-primary)]"],
+.bg-cream,
+[class*="bg-[#efe8db]"] {
+  background-image: url('/texture.png');
+  background-repeat: repeat;
+  background-size: 360px;
+  background-blend-mode: multiply;
+}
+
+button[class*="bg-[var(--bg-primary)]"],
+a[class*="bg-[var(--bg-primary)]"],
+input[class*="bg-[var(--bg-primary)]"],
+textarea[class*="bg-[var(--bg-primary)]"] {
+  background-image: none !important;
 }
 
 /* Ticket Edge Mask */
