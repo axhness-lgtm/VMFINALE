@@ -103,9 +103,7 @@ function App() {
         <GlobalFadeIn />
         <div className="relative min-h-screen">
           <audio id="bg-music" loop preload="auto">
-            <source src="https://ia800501.us.archive.org/33/items/OudImprovisation/OudImprovisation.mp3" type="audio/mpeg" />
-            <source src="https://upload.wikimedia.org/wikipedia/commons/4/44/Taqsim_Oud_Maqam_Rast.ogg" type="audio/ogg" />
-            <source src="https://cdn.pixabay.com/download/audio/2022/05/16/audio_db6591201e.mp3" type="audio/mpeg" />
+            <source src="/bgmusic.mp3" type="audio/mpeg" />
           </audio>
           <Navigation />
           <Suspense fallback={<div className="min-h-[80vh] w-full bg-[var(--bg-primary)] flex items-center justify-center"><div className="w-8 h-8 border-2 border-[var(--accent-primary)] border-t-transparent rounded-full animate-spin" /></div>}>

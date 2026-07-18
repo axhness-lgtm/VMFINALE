@@ -428,7 +428,7 @@ export default function Dinner() {
             <span className="font-body italic text-3xl text-[var(--bg-primary)] block mb-2 font-logo">- Culinary -</span>
             <h2 className="text-5xl md:text-6xl font-heading text-white drop-shadow-sm">The menu</h2>
             <p className="font-body text-lg text-white/90 mt-4 italic">
-              Instead of revealing the entire menu, we prefer curiosity. Pull a card to the right to reveal its dish.
+              Instead of revealing the entire menu, we prefer curiosity. Click a card to reveal its dish.
             </p>
           </div>
 
@@ -443,19 +443,11 @@ export default function Dinner() {
               >
                 {!revealedItems[idx] && (
                   <motion.div
-                    drag="x"
-                    dragConstraints={{ left: 0, right: 100 }}
-                    dragElastic={0.1}
-                    onDragEnd={(e, { offset, velocity }) => {
-                      if (offset.x > 50 || velocity.x > 300) {
-                        toggleReveal(idx);
-                      }
-                    }}
                     onClick={(e) => {
                       e.stopPropagation();
                       toggleReveal(idx);
                     }}
-                    className="absolute top-0 right-0 bottom-0 w-24 z-20 cursor-grab active:cursor-grabbing flex items-center justify-end pr-6 bg-gradient-to-l from-[var(--bg-primary)] to-transparent"
+                    className="absolute top-0 right-0 bottom-0 w-24 z-20 cursor-pointer flex items-center justify-end pr-6 bg-gradient-to-l from-[var(--bg-primary)] to-transparent"
                   >
                     <motion.div animate={{ x: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 1.5 }} className="text-[var(--accent-primary)] font-bold text-2xl">→</motion.div>
                   </motion.div>
@@ -474,7 +466,7 @@ export default function Dinner() {
 
                     {!revealedItems[idx] && (
                       <div className="mt-2 font-body text-xs uppercase tracking-widest text-[#2c2b29]/50 flex items-center gap-2">
-                        <span>Click or pull right edge to reveal</span>
+                        <span>Click to reveal</span>
                       </div>
                     )}
                   </div>
@@ -615,7 +607,7 @@ export default function Dinner() {
                   {item.label}
                 </div>
                 <div className="w-full aspect-square mb-6 relative flex items-center justify-center">
-                  <img src={item.img} alt={`Guest ${idx + 1}`} loading="lazy" decoding="async" className="w-full h-full object-contain grayscale group-hover:grayscale-0 transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] scale-[1.5] group-hover:scale-[1.6]" />
+                  <img src={item.img} alt={`Guest ${idx + 1}`} loading="lazy" decoding="async" className="w-full h-full object-contain grayscale-0 md:grayscale group-hover:grayscale-0 transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] scale-[1.5] group-hover:scale-[1.55]" />
                 </div>
                 <p className="font-body text-sm md:text-base text-[var(--text-main)]/85 leading-relaxed mt-2">
                   {item.text}

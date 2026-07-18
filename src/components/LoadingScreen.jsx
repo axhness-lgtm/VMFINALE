@@ -50,7 +50,7 @@ export default function LoadingScreen() {
         />
 
         {/* Minimal Loading Bar brought right under the logo */}
-        <div className="w-64 sm:w-72 max-w-xs flex flex-col items-center relative">
+        <div className="w-[80vw] max-w-[288px] flex flex-col items-center relative">
           {/* Fork doodle illustration - larger size tracking right over the loading bar */}
           <div 
             className="w-full flex items-center transition-all duration-75 ease-out mb-1"

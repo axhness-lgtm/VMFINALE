@@ -46,7 +46,7 @@ const HoverVideoCard = ({ imgSrc, altText }) => {
         alt={altText} 
         loading="lazy"
         decoding="async"
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[160%] h-[160%] object-cover transform -rotate-90 scale-[0.65] transition-transform duration-700 group-hover:scale-[0.7] will-change-transform" 
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 will-change-transform" 
       />
       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500 pointer-events-none" />
     </div>
@@ -157,7 +157,6 @@ export default function Home() {
             x5-playsinline="true"
             x5-video-player-type="h5"
             preload="auto"
-            poster="/assets/hero-reference.jpg"
             className="w-full h-full object-cover pointer-events-none"
             onLoadedMetadata={(e) => {
               e.target.defaultMuted = true;
@@ -246,7 +245,7 @@ export default function Home() {
       <EdgeDivider src="/edge3.png" />
 
       {/* 4. EIGHT SEATS */}
-      <section className="py-14 md:py-16 bg-[var(--accent-primary)] relative overflow-hidden text-[#efe8db]" style={{ cursor: "url('/custcor.png'), auto" }}>
+      <section className="py-8 md:py-16 bg-[var(--accent-primary)] relative overflow-hidden text-[#efe8db]" style={{ cursor: "url('/custcor.png'), auto" }}>
         {/* Large overlapping background "8" */}
         <div className="absolute right-0 bottom-0 lg:right-[-5%] lg:-bottom-20 text-[20rem] md:text-[30rem] lg:text-[40rem] font-heading font-light text-white/10 select-none pointer-events-none leading-none">
           8
@@ -255,16 +254,16 @@ export default function Home() {
         {/* Small floating doodle */}
         <img src="/ass2.png" className="absolute top-[20%] right-[15%] w-24 md:w-32 opacity-20 rotate-12 mix-blend-multiply pointer-events-none" alt="" />
         
-        <div className="container mx-auto px-6 max-w-6xl relative z-10 flex flex-col md:flex-row items-center gap-10 md:gap-16">
+        <div className="container mx-auto px-6 max-w-6xl relative z-10 flex flex-col md:flex-row items-center gap-4 md:gap-16">
           
           <div className="w-full md:w-5/12 relative pl-4 md:pl-0">
-            <span className="font-mono text-xs tracking-[0.2em] uppercase text-[#efe8db] mb-4 block border-b border-[#efe8db]/30 pb-2 w-max">The Capacity</span>
-            <h2 className="text-6xl md:text-7xl lg:text-8xl font-heading text-[var(--bg-primary)] leading-[0.9] tracking-tight mb-4 drop-shadow-sm">
+            <span className="font-mono text-xs tracking-[0.2em] uppercase text-[#efe8db] mb-2 md:mb-4 block border-b border-[#efe8db]/30 pb-2 w-max">The Capacity</span>
+            <h2 className="text-6xl md:text-7xl lg:text-8xl font-heading text-[var(--bg-primary)] leading-[0.9] tracking-tight mb-0 md:mb-4 drop-shadow-sm">
               Eight<br /><span className="text-white italic">seats.</span>
             </h2>
           </div>
           
-          <div className="w-full md:w-7/12 relative mt-4 md:mt-0 flex items-center justify-center">
+          <div className="w-full md:w-7/12 relative mt-2 md:mt-0 flex items-center justify-center">
             <img 
               src="/es.png" 
               alt="Eight Seats" 
@@ -298,8 +297,8 @@ export default function Home() {
                 </p>
                 
                 <div className="pt-2 flex justify-center lg:justify-start">
-                  <div className="inline-block border-2 border-dashed border-[var(--text-main)]/40 bg-[#efe8db]/80 px-5 py-2.5 rounded-lg shadow-sm transform rotate-1 hover:-rotate-1 transition-transform">
-                    <span className="font-mono text-xs uppercase tracking-[0.2em] font-extrabold text-[var(--text-main)]">
+                  <div className="inline-block border-2 border-dashed border-[var(--text-main)]/40 bg-[#efe8db]/80 px-4 md:px-5 py-2 md:py-2.5 rounded-lg shadow-sm transform rotate-1 hover:-rotate-1 transition-transform">
+                    <span className="font-mono text-[9px] md:text-xs uppercase tracking-[0.1em] md:tracking-[0.2em] font-extrabold text-[var(--text-main)]">
                       ★ MORE DESTINATIONS COMING SOON ★
                     </span>
                   </div>
@@ -345,43 +344,22 @@ export default function Home() {
             <img src="/g.png" className="absolute bottom-[-10px] left-[22%] w-20 md:w-32 lg:w-40 object-contain opacity-95 pointer-events-none -rotate-12 mix-blend-multiply" alt="" />
             <img src="/h.png" className="absolute bottom-[40%] right-[2%] w-24 md:w-36 lg:w-44 object-contain opacity-100 pointer-events-none rotate-6 mix-blend-multiply" alt="" />
 
-            {/* Row 1 */}
-            <div className="flex justify-center items-end relative z-10 space-x-4 md:space-x-8 w-full">
-              {[1, 2, 3].map((num, i) => (
+            {/* Cards Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-y-6 md:gap-y-0 gap-x-4 md:gap-x-8 justify-items-center items-end relative z-10 w-full mt-4 md:mt-0">
+              {[1, 2, 3, 4, 5, 6].map((num, i) => (
                 <motion.div
                   key={num}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-50px" }}
                   transition={{ delay: i * 0.1 }}
-                  whileHover={{ y: -20, scale: 1.2, rotate: i % 2 === 0 ? 4 : -4, zIndex: 50, transition: { type: "spring", stiffness: 300 } }}
-                  className="inline-block cursor-pointer relative z-10"
+                  whileHover={{ y: -10, scale: 1.05, rotate: i % 2 === 0 ? 2 : -2, zIndex: 50, transition: { type: "spring", stiffness: 300 } }}
+                  className={`inline-block cursor-pointer relative w-full flex justify-center ${i >= 3 ? 'md:-mt-12 lg:-mt-16 z-20' : 'z-10'}`}
                 >
                   <img 
                     src={`/c${num}.png`} 
                     alt={`Artifact ${num}`} 
-                    className="h-40 md:h-56 lg:h-64 w-auto object-contain pointer-events-auto drop-shadow-2xl" 
-                  />
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Row 2 */}
-            <div className="flex justify-center items-end relative z-20 space-x-4 md:space-x-8 w-full -mt-8 md:-mt-12 lg:-mt-16">
-              {[4, 5, 6].map((num, i) => (
-                <motion.div
-                  key={num}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ delay: (i + 3) * 0.1 }}
-                  whileHover={{ y: -20, scale: 1.2, rotate: i % 2 === 0 ? -4 : 4, zIndex: 50, transition: { type: "spring", stiffness: 300 } }}
-                  className="inline-block cursor-pointer relative z-20"
-                >
-                  <img 
-                    src={`/c${num}.png`} 
-                    alt={`Artifact ${num}`} 
-                    className="h-40 md:h-56 lg:h-64 w-auto object-contain pointer-events-auto drop-shadow-2xl" 
+                    className="w-[90%] max-w-[200px] md:max-w-none h-auto md:h-56 lg:h-64 md:w-auto object-contain pointer-events-auto drop-shadow-2xl" 
                   />
                 </motion.div>
               ))}

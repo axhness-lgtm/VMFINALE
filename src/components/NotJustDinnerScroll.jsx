@@ -13,12 +13,12 @@ export default function NotJustDinnerScroll() {
   };
 
   return (
-    <section className="relative w-full min-h-[540px] md:min-h-[600px] py-12 flex flex-col justify-center items-center bg-[var(--bg-primary)] text-[var(--text-main)] select-none overflow-hidden">
+    <section className="relative w-full min-h-[440px] md:min-h-[600px] py-8 md:py-12 flex flex-col justify-center items-center bg-[var(--bg-primary)] text-[var(--text-main)] select-none overflow-hidden">
       {/* Paper texture overlay */}
       <div className="absolute inset-0 paper-texture opacity-30 mix-blend-multiply pointer-events-none z-0" />
 
       {/* Main Display Container */}
-      <div className="w-full flex items-center justify-center relative container mx-auto px-6 md:px-12 max-w-7xl z-10 min-h-[380px] md:min-h-[440px]">
+      <div className="w-full flex items-center justify-center relative container mx-auto px-6 md:px-12 max-w-7xl z-10 min-h-[300px] md:min-h-[440px]">
         
         {/* ================= BACKGROUND WATERMARK / TITLE: Not just a dinner. ================= */}
         <motion.div
@@ -53,13 +53,13 @@ export default function NotJustDinnerScroll() {
                   src="/nd1.png"
                   alt="Food starting point"
                   loading="eager"
-                  className="w-full max-w-[520px] md:max-w-[620px] lg:max-w-[700px] h-[340px] md:h-[440px] lg:h-[500px] object-contain drop-shadow-2xl mx-auto scale-115 md:scale-130"
+                  className="w-full max-w-[520px] md:max-w-[620px] lg:max-w-[700px] h-[280px] md:h-[440px] lg:h-[500px] object-contain drop-shadow-2xl mx-auto scale-100 md:scale-130"
                 />
               </div>
 
               {/* Text Right */}
               <div className="lg:col-span-6 text-center lg:text-left relative z-20 px-4">
-                <h3 className="font-heading text-2xl md:text-3xl lg:text-4xl text-[var(--text-main)] leading-[1.35] tracking-tight font-normal max-w-lg mx-auto lg:mx-0">
+                <h3 className="font-heading text-xl md:text-3xl lg:text-4xl text-[var(--text-main)] leading-[1.35] tracking-tight font-normal max-w-lg mx-auto lg:mx-0">
                   Food is where it begins.<br />
                   <span className="text-[var(--accent-primary)] italic">Where it ends is up to the room.</span>
                 </h3>
@@ -79,7 +79,7 @@ export default function NotJustDinnerScroll() {
             >
               {/* Text Left */}
               <div className="lg:col-span-6 order-2 lg:order-1 text-center lg:text-left relative z-20 px-4">
-                <h3 className="font-heading text-2xl md:text-3xl lg:text-4xl text-[var(--text-main)] leading-[1.35] tracking-tight font-normal max-w-lg mx-auto lg:mx-0">
+                <h3 className="font-heading text-xl md:text-3xl lg:text-4xl text-[var(--text-main)] leading-[1.35] tracking-tight font-normal max-w-lg mx-auto lg:mx-0">
                   No hosts steering the table.<br />
                   <span className="text-[var(--accent-primary)] italic">No forced icebreakers.</span>
                 </h3>
@@ -91,7 +91,7 @@ export default function NotJustDinnerScroll() {
                   src="/nd2.png"
                   alt="No hosts steering table"
                   loading="eager"
-                  className="w-full max-w-[520px] md:max-w-[620px] lg:max-w-[700px] h-[340px] md:h-[440px] lg:h-[500px] object-contain drop-shadow-2xl mx-auto scale-115 md:scale-130"
+                  className="w-full max-w-[520px] md:max-w-[620px] lg:max-w-[700px] h-[280px] md:h-[440px] lg:h-[500px] object-contain drop-shadow-2xl mx-auto scale-100 md:scale-130"
                 />
               </div>
             </motion.div>
@@ -109,7 +109,7 @@ export default function NotJustDinnerScroll() {
             >
               {/* Text Left */}
               <div className="lg:col-span-6 order-2 lg:order-1 text-center lg:text-left relative z-20 px-4">
-                <h3 className="font-heading text-2xl md:text-3xl lg:text-4xl text-[var(--text-main)] leading-[1.35] tracking-tight font-normal max-w-lg mx-auto lg:mx-0">
+                <h3 className="font-heading text-xl md:text-3xl lg:text-4xl text-[var(--text-main)] leading-[1.35] tracking-tight font-normal max-w-lg mx-auto lg:mx-0">
                   It's about the people around the table.
                 </h3>
               </div>
@@ -120,7 +120,7 @@ export default function NotJustDinnerScroll() {
                   src="/nd3.png"
                   alt="The people around the table"
                   loading="eager"
-                  className="w-full max-w-[520px] md:max-w-[620px] lg:max-w-[700px] h-[340px] md:h-[440px] lg:h-[500px] object-contain drop-shadow-2xl mx-auto scale-115 md:scale-130"
+                  className="w-full max-w-[520px] md:max-w-[620px] lg:max-w-[700px] h-[280px] md:h-[440px] lg:h-[500px] object-contain drop-shadow-2xl mx-auto scale-100 md:scale-130"
                 />
               </div>
             </motion.div>
@@ -137,8 +137,8 @@ export default function NotJustDinnerScroll() {
               className="flex flex-col items-center justify-center w-full z-20"
             >
               {/* Centered Final Text brought lower down right over/closer to the thread */}
-              <div className="text-center relative z-20 max-w-5xl px-4 mx-auto -mb-6 md:-mb-12">
-                <h3 className="font-heading text-2xl md:text-3xl lg:text-4xl text-[var(--text-main)] leading-[1.35] tracking-tight font-normal">
+              <div className="text-center relative z-20 max-w-5xl px-4 mx-auto -mb-2 md:-mb-12">
+                <h3 className="font-heading text-xl md:text-3xl lg:text-4xl text-[var(--text-main)] leading-[1.35] tracking-tight font-normal">
                   It's about the frequency the room creates.
                 </h3>
               </div>
@@ -149,7 +149,7 @@ export default function NotJustDinnerScroll() {
                   src="/nd4.png"
                   alt="Threading doodle line"
                   loading="eager"
-                  className="w-full max-w-7xl h-[280px] md:h-[380px] lg:h-[450px] object-contain opacity-95 mix-blend-multiply mx-auto scale-125 md:scale-150"
+                  className="w-full max-w-7xl h-[180px] md:h-[380px] lg:h-[450px] object-contain opacity-95 mix-blend-multiply mx-auto scale-100 md:scale-150"
                 />
               </div>
             </motion.div>

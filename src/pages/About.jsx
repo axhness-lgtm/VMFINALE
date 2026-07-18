@@ -93,7 +93,14 @@ export default function About() {
           <h1 className="text-5xl font-logo text-[var(--text-main)] drop-shadow-sm">Seven Wonders.</h1>
           <p className="text-xl font-heading font-normal not-italic text-[var(--accent-primary)] mt-2 drop-shadow-sm">We believe there is an eighth!</p>
         </div>
-        <motion.img initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2, duration: 1 }} src="/a9.png" alt="The Table" className="w-[90%] h-auto object-contain relative z-10 drop-shadow-xl mb-8" />
+        <motion.div 
+          initial={{ opacity: 0 }} 
+          animate={{ opacity: 1, y: [0, -10, 0] }} 
+          transition={{ delay: 0.2, duration: 1, y: { repeat: Infinity, duration: 4, ease: "easeInOut" } }} 
+          className="w-full flex justify-center"
+        >
+          <img src="/a9.png" alt="The Table" className="w-[90%] h-auto object-contain relative z-10 drop-shadow-xl mb-8" />
+        </motion.div>
       </section>
 
       <EdgeDivider src="/edge4.png" />
@@ -125,7 +132,7 @@ export default function About() {
               
               {/* Headline */}
               <motion.div 
-                initial={{ opacity: 0.2, y: 15 }} 
+                initial={{ opacity: 0.2, y: 5 }} 
                 whileInView={{ opacity: 1, y: 0 }} 
                 viewport={{ once: false, margin: "-10%" }} 
                 transition={{ duration: 0.5 }}
@@ -136,7 +143,7 @@ export default function About() {
 
               {/* Body Paragraphs */}
               <motion.p 
-                initial={{ opacity: 0.2, y: 15 }} 
+                initial={{ opacity: 0.2, y: 5 }} 
                 whileInView={{ opacity: 1, y: 0 }} 
                 viewport={{ once: false, margin: "-10%" }} 
                 transition={{ duration: 0.5 }}
@@ -145,7 +152,7 @@ export default function About() {
               </motion.p>
 
               <motion.p 
-                initial={{ opacity: 0.2, y: 15 }} 
+                initial={{ opacity: 0.2, y: 5 }} 
                 whileInView={{ opacity: 1, y: 0 }} 
                 viewport={{ once: false, margin: "-10%" }} 
                 transition={{ duration: 0.5 }}
@@ -154,7 +161,7 @@ export default function About() {
               </motion.p>
 
               <motion.p 
-                initial={{ opacity: 0.2, y: 15 }} 
+                initial={{ opacity: 0.2, y: 5 }} 
                 whileInView={{ opacity: 1, y: 0 }} 
                 viewport={{ once: false, margin: "-10%" }} 
                 transition={{ duration: 0.5 }}
@@ -163,7 +170,7 @@ export default function About() {
               </motion.p>
 
               <motion.p 
-                initial={{ opacity: 0.2, y: 15 }} 
+                initial={{ opacity: 0.2, y: 5 }} 
                 whileInView={{ opacity: 1, y: 0 }} 
                 viewport={{ once: false, margin: "-10%" }} 
                 transition={{ duration: 0.5 }}
@@ -173,7 +180,7 @@ export default function About() {
               </motion.p>
 
               <motion.p 
-                initial={{ opacity: 0.2, y: 15 }} 
+                initial={{ opacity: 0.2, y: 5 }} 
                 whileInView={{ opacity: 1, y: 0 }} 
                 viewport={{ once: false, margin: "-10%" }} 
                 transition={{ duration: 0.5 }}
@@ -182,7 +189,7 @@ export default function About() {
               </motion.p>
 
               <motion.div 
-                initial={{ opacity: 0.2, y: 15 }} 
+                initial={{ opacity: 0.2, y: 5 }} 
                 whileInView={{ opacity: 1, y: 0 }} 
                 viewport={{ once: false, margin: "-10%" }} 
                 transition={{ duration: 0.5 }}
@@ -195,7 +202,7 @@ export default function About() {
               </motion.div>
 
               <motion.p 
-                initial={{ opacity: 0.2, y: 15 }} 
+                initial={{ opacity: 0.2, y: 5 }} 
                 whileInView={{ opacity: 1, y: 0 }} 
                 viewport={{ once: false, margin: "-10%" }} 
                 transition={{ duration: 0.5 }}
@@ -204,7 +211,7 @@ export default function About() {
               </motion.p>
 
               <motion.p 
-                initial={{ opacity: 0.2, y: 15 }} 
+                initial={{ opacity: 0.2, y: 5 }} 
                 whileInView={{ opacity: 1, y: 0 }} 
                 viewport={{ once: false, margin: "-10%" }} 
                 transition={{ duration: 0.5 }}
@@ -213,7 +220,7 @@ export default function About() {
               </motion.p>
 
               <motion.p 
-                initial={{ opacity: 0.2, y: 15 }} 
+                initial={{ opacity: 0.2, y: 5 }} 
                 whileInView={{ opacity: 1, y: 0 }} 
                 viewport={{ once: false, margin: "-10%" }} 
                 transition={{ duration: 0.5 }}
@@ -222,7 +229,7 @@ export default function About() {
               </motion.p>
 
               <motion.p 
-                initial={{ opacity: 0.2, y: 15 }} 
+                initial={{ opacity: 0.2, y: 5 }} 
                 whileInView={{ opacity: 1, y: 0 }} 
                 viewport={{ once: false, margin: "-10%" }} 
                 transition={{ duration: 0.5 }}
@@ -231,7 +238,7 @@ export default function About() {
               </motion.p>
 
               <motion.p 
-                initial={{ opacity: 0.2, y: 15 }} 
+                initial={{ opacity: 0.2, y: 5 }} 
                 whileInView={{ opacity: 1, y: 0 }} 
                 viewport={{ once: false, margin: "-10%" }} 
                 transition={{ duration: 0.5 }}
@@ -240,7 +247,7 @@ export default function About() {
               </motion.p>
 
               <motion.p 
-                initial={{ opacity: 0.2, y: 15 }} 
+                initial={{ opacity: 0.2, y: 5 }} 
                 whileInView={{ opacity: 1, y: 0 }} 
                 viewport={{ once: false, margin: "-10%" }} 
                 transition={{ duration: 0.5 }}
@@ -249,7 +256,7 @@ export default function About() {
               </motion.p>
 
               <motion.p 
-                initial={{ opacity: 0.2, y: 15 }} 
+                initial={{ opacity: 0.2, y: 5 }} 
                 whileInView={{ opacity: 1, y: 0 }} 
                 viewport={{ once: false, margin: "-10%" }} 
                 transition={{ duration: 0.5 }}
@@ -259,7 +266,7 @@ export default function About() {
               </motion.p>
 
               <motion.div 
-                initial={{ opacity: 0.2, y: 15 }} 
+                initial={{ opacity: 0.2, y: 5 }} 
                 whileInView={{ opacity: 1, y: 0 }} 
                 viewport={{ once: false, margin: "-10%" }} 
                 transition={{ duration: 0.5 }}
@@ -273,7 +280,7 @@ export default function About() {
 
               {/* Closing Statement */}
               <motion.div 
-                initial={{ opacity: 0.2, y: 15 }} 
+                initial={{ opacity: 0.2, y: 5 }} 
                 whileInView={{ opacity: 1, y: 0 }} 
                 viewport={{ once: false, margin: "-10%" }} 
                 transition={{ duration: 0.5 }}
